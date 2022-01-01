@@ -130,6 +130,10 @@ Public Class MainForm
             GC.Collect()
             LogSep("=")
 
+        Else
+
+            Log("!!! NO CAMERA FOUND")
+
         End If
 
 
@@ -221,6 +225,11 @@ Public Class MainForm
 
     Private Sub DE()
         System.Windows.Forms.Application.DoEvents()
+    End Sub
+
+    Private Sub btnClearLog_Click(sender As Object, e As EventArgs) Handles btnClearLog.Click
+        M.DB.Log_Generic.Clear()
+        DisplayLog()
     End Sub
 
 End Class
