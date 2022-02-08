@@ -24,6 +24,7 @@ Partial Class MainForm
     Private Sub InitializeComponent()
         Me.btnRunTest = New System.Windows.Forms.Button()
         Me.tbLogOutput = New System.Windows.Forms.TextBox()
+        Me.btnClearLog = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'btnRunTest
@@ -49,11 +50,22 @@ Partial Class MainForm
         Me.tbLogOutput.TabIndex = 1
         Me.tbLogOutput.WordWrap = False
         '
+        'btnClearLog
+        '
+        Me.btnClearLog.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.btnClearLog.Location = New System.Drawing.Point(1187, 12)
+        Me.btnClearLog.Name = "btnClearLog"
+        Me.btnClearLog.Size = New System.Drawing.Size(75, 23)
+        Me.btnClearLog.TabIndex = 2
+        Me.btnClearLog.Text = "Clear log"
+        Me.btnClearLog.UseVisualStyleBackColor = True
+        '
         'MainForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(7.0!, 15.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1274, 1078)
+        Me.Controls.Add(Me.btnClearLog)
         Me.Controls.Add(Me.tbLogOutput)
         Me.Controls.Add(Me.btnRunTest)
         Me.Name = "MainForm"
@@ -65,4 +77,5 @@ Partial Class MainForm
 
     Friend WithEvents btnRunTest As Button
     Friend WithEvents tbLogOutput As TextBox
+    Friend WithEvents btnClearLog As Button
 End Class
