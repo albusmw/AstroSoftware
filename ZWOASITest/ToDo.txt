@@ -1,0 +1,3 @@
+﻿- Graph-Zoom-Funktion (Bildbereich ausschneiden, Kamera liefer vollen ROI)
+- ROI einstellbar machen (Eintellungen im GUI nicht überschreiben)
+- Speicherfunktion (RAW-Werte Kamera und dargestellter Bild mit LUT)
