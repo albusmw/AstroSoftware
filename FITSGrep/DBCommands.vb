@@ -42,7 +42,7 @@ Public Class DBCommands
     End Function
 
     Private Shared Sub AddParam(ByRef AllParams As Dictionary(Of String, String), ByVal Name As String, ByVal Parameter As Object)
-        'If IsNothing(Parameter) = False Then AllParams.Add(Name, SQLT.Q(Parameter))
+        If IsNothing(Parameter) = False Then AllParams.Add("'" & Name & "'", SQLT.Q(Parameter))
     End Sub
 
 End Class
