@@ -84,7 +84,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\AstroImageStatistics\AstroImageStatistics\cFITSGrepper.vb">
+    <Compile Include="..\..\src\atomics\cFITSGrepper.vb">
       <Link>cFITSGrepper.vb</Link>
     </Compile>
     <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb">
