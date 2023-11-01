@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <StartupObject>AstroCoordinates.MainForm</StartupObject>
+    <UseWindowsForms>true</UseWindowsForms>
+    <MyType>WindowsForms</MyType>
+    <Platforms>x64</Platforms>
+    <ApplicationIcon>AstroCoordinates.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="catalogs\messier.txt" />
+    <None Remove="catalogs\namedStars.txt" />
+    <None Remove="catalogs\ngc2000.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
+    <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="AstroCoordinates.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="catalogs\messier.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="catalogs\namedStars.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="catalogs\ngc2000.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="My Project\Application.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="common\" />
+  </ItemGroup>
+
+</Project>
