@@ -17,8 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
+    <Compile Include="..\..\src\atomics\cAstroCats.vb" Link="common\cAstroCats.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
+    <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
+    <Compile Include="..\..\src\atomics\GZIP.vb" Link="common\GZIP.vb" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +65,7 @@
 
   <ItemGroup>
     <Folder Include="common\" />
+    <Folder Include="MyLib\" />
   </ItemGroup>
 
 </Project>

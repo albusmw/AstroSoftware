@@ -22,12 +22,15 @@ Partial Class frmGetObject
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As ComponentModel.ComponentResourceManager = New ComponentModel.ComponentResourceManager(GetType(frmGetObject))
         tbSearchString = New TextBox()
         Label1 = New Label()
         lbResults = New ListBox()
         ssMain = New StatusStrip()
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
+        tssbLoad = New ToolStripSplitButton()
+        tsmiLoadCat = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         SuspendLayout()
         ' 
@@ -64,7 +67,7 @@ Partial Class frmGetObject
         ' 
         ' ssMain
         ' 
-        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength})
+        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength, tssbLoad})
         ssMain.Location = New Point(0, 428)
         ssMain.Name = "ssMain"
         ssMain.Size = New Size(800, 22)
@@ -82,6 +85,22 @@ Partial Class frmGetObject
         tsslSelectionLength.Name = "tsslSelectionLength"
         tsslSelectionLength.Size = New Size(22, 17)
         tsslSelectionLength.Text = "---"
+        ' 
+        ' tssbLoad
+        ' 
+        tssbLoad.DisplayStyle = ToolStripItemDisplayStyle.Text
+        tssbLoad.DropDownItems.AddRange(New ToolStripItem() {tsmiLoadCat})
+        tssbLoad.Image = CType(resources.GetObject("tssbLoad.Image"), Image)
+        tssbLoad.ImageTransparentColor = Color.Magenta
+        tssbLoad.Name = "tssbLoad"
+        tssbLoad.Size = New Size(61, 20)
+        tssbLoad.Text = "Load ..."
+        ' 
+        ' tsmiLoadCat
+        ' 
+        tsmiLoadCat.Name = "tsmiLoadCat"
+        tsmiLoadCat.Size = New Size(180, 22)
+        tsmiLoadCat.Text = "Load catalogs"
         ' 
         ' frmGetObject
         ' 
@@ -106,4 +125,6 @@ Partial Class frmGetObject
     Friend WithEvents ssMain As StatusStrip
     Friend WithEvents tsslLoaded As ToolStripStatusLabel
     Friend WithEvents tsslSelectionLength As ToolStripStatusLabel
+    Friend WithEvents tssbLoad As ToolStripSplitButton
+    Friend WithEvents tsmiLoadCat As ToolStripMenuItem
 End Class

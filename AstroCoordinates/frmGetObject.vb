@@ -4,6 +4,7 @@ Imports System.IO
 Imports System.Net.Security
 Imports System.Reflection
 Imports System.Resources
+Imports AstroCoordinates.cAstroCats
 
 Public Class frmGetObject
 
@@ -116,6 +117,12 @@ Public Class frmGetObject
         MySelectedDec = Selection(2)
         Me.DialogResult = DialogResult.OK
         Me.Close()
+    End Sub
+
+    Private Sub tsmiLoadCat_Click(sender As Object, e As EventArgs) Handles tsmiLoadCat.Click
+        'Load catalogs
+        Dim Loader As New cHenryDraper
+        Loader.DownloadData()
     End Sub
 
 End Class

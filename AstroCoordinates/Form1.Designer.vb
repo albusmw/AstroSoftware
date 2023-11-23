@@ -36,6 +36,7 @@ Partial Class MainForm
         tlpMain = New TableLayoutPanel()
         btnGetObject = New Button()
         tbSelected = New TextBox()
+        btnGoTo = New Button()
         tlpMain.SuspendLayout()
         SuspendLayout()
         ' 
@@ -177,14 +178,25 @@ Partial Class MainForm
         tbSelected.Location = New Point(89, 138)
         tbSelected.Name = "tbSelected"
         tbSelected.ReadOnly = True
-        tbSelected.Size = New Size(625, 21)
+        tbSelected.Size = New Size(541, 21)
         tbSelected.TabIndex = 10
+        ' 
+        ' btnGoTo
+        ' 
+        btnGoTo.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        btnGoTo.Location = New Point(636, 136)
+        btnGoTo.Name = "btnGoTo"
+        btnGoTo.Size = New Size(75, 23)
+        btnGoTo.TabIndex = 12
+        btnGoTo.Text = "Goto"
+        btnGoTo.UseVisualStyleBackColor = True
         ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(718, 166)
+        Controls.Add(btnGoTo)
         Controls.Add(tbSelected)
         Controls.Add(btnGetObject)
         Controls.Add(tlpMain)
@@ -210,4 +222,5 @@ Partial Class MainForm
     Friend WithEvents tlpMain As TableLayoutPanel
     Friend WithEvents btnGetObject As Button
     Friend WithEvents tbSelected As TextBox
+    Friend WithEvents btnGoTo As Button
 End Class
