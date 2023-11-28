@@ -58,7 +58,13 @@ Public Class MainForm
     Private Sub btnGoTo_Click(sender As Object, e As EventArgs) Handles btnGoTo.Click
         Dim PWI_adr As String = "http://localhost:8220"
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(PWI_adr & "/mount/goto_ra_dec_j2000?ra_hours=" & tbRAParsedDecimal.Text & "&dec_degs=" & tbDecParsedDecimal.Text)
+        Dim Epoche As String = CStr(IIf(cbJ2000.Checked = True, "j2000", "apparent"))
+        Response = Download.GetResponse(PWI_adr & "/mount/goto_ra_dec_" & Epoche & "?ra_hours=" & tbRAParsedDecimal.Text & "&dec_degs=" & tbDecParsedDecimal.Text)
+        Dim RAOffset As Double = tbRAOffset.Text.ValRegIndep
+        Dim DecOffset As Double = tbDecOffset.Text.ValRegIndep
+        If (RAOffset <> 0.0) Or (DecOffset <> 0) Then
+            Response = Download.GetResponse(PWI_adr & "/mount/offset?ra_add_arcsec=" & (RAOffset * 60).ValRegIndep & "&dec_add_arcsec=" & (DecOffset * 60).ValRegIndep)
+        End If
     End Sub
 
 End Class

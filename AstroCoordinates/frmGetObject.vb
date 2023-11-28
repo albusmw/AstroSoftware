@@ -112,7 +112,7 @@ Public Class frmGetObject
     Private Sub lbResults_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbResults.SelectedIndexChanged
         Dim Selection As String() = Split(CStr(lbResults.SelectedItem), vbTab)
         MySelectedObject = Selection(0).Trim
-        If Selection.Length >= 6 Then MySelectedObject &= "( " & Selection(Selection.GetUpperBound(0)) & ")"
+        If Selection.Length >= 6 Then MySelectedObject &= "(" & Selection(Selection.GetUpperBound(0)) & ")"
         MySelectedRA = Selection(1)
         MySelectedDec = Selection(2)
         Me.DialogResult = DialogResult.OK
