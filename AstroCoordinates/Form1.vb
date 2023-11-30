@@ -40,14 +40,17 @@ Public Class MainForm
         tbDecParsedDecimal.Text = Format(Parsed, "00.000000").Replace(",", ".")
     End Sub
 
-    Private Sub tbRAParsed_Click(sender As Object, e As EventArgs) Handles tbRAParsed.Click, tbDecParsed.Click, tbRAParsedDecimal.Click, tbDecParsedDecimal.Click, tbRAParsedShort.Click, tbDecParsedShort.Click
+    Private Sub tbRAParsed_Click(sender As Object, e As EventArgs) Handles tbRAParsed.Click, tbDecParsed.Click, tbRAParsedDecimal.Click, tbDecParsedDecimal.Click, tbRAParsedShort.Click, tbDecParsedShort.Click, tbSelected.Click
         tbRAParsed.BackColor = Color.White
         tbRAParsedDecimal.BackColor = Color.White
         tbRAParsedShort.BackColor = Color.White
         tbDecParsed.BackColor = Color.White
         tbDecParsedDecimal.BackColor = Color.White
         tbDecParsedShort.BackColor = Color.White
+        tbSelected.BackColor = Color.White
         With CType(sender, TextBox)
+            If IsNothing(.Text) Then Exit Sub
+            If .Text.Length = 0 Then Exit Sub
             Clipboard.Clear()
             Clipboard.SetText(.Text)
             .BackColor = Color.LimeGreen
