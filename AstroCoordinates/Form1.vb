@@ -55,7 +55,6 @@ Public Class MainForm
             Clipboard.SetText(.Text)
             .BackColor = Color.LimeGreen
         End With
-
     End Sub
 
     Private Sub btnGoTo_Click(sender As Object, e As EventArgs) Handles btnGoTo.Click
