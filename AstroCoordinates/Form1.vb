@@ -3,6 +3,8 @@ Option Strict On
 
 Public Class MainForm
 
+    Public Shared ReadOnly Property MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.CenterToScreen()
     End Sub
@@ -67,6 +69,10 @@ Public Class MainForm
         If (RAOffset <> 0.0) Or (DecOffset <> 0) Then
             Response = Download.GetResponse(PWI_adr & "/mount/offset?ra_add_arcsec=" & (RAOffset * 60).ValRegIndep & "&dec_add_arcsec=" & (DecOffset * 60).ValRegIndep)
         End If
+    End Sub
+
+    Private Sub btnOpenMyFolder_Click(sender As Object, e As EventArgs) Handles btnOpenMyFolder.Click
+        Process.Start("explorer.exe", MyPath)
     End Sub
 
 End Class

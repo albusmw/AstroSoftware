@@ -40,6 +40,12 @@ Public Class frmGetObject
         DoubleEntries += AddToCat(GetResourceLines("AstroCoordinates.namedStars.txt"))
         DoubleEntries += AddToCat(GetResourceLines("AstroCoordinates.ngc2000.txt"))
 
+        'Load custom objects
+        Dim CustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
+        If System.IO.File.Exists(CustomCat) = True Then
+            DoubleEntries += AddToCat(System.IO.File.ReadAllLines(CustomCat))
+        End If
+
         tsslLoaded.Text = Objects.Count.ToString.Trim & " objects loaded, " & DoubleEntries.ToString.Trim & " double enties"
 
     End Sub

@@ -42,6 +42,7 @@ Partial Class MainForm
         tbDecOffset = New TextBox()
         tbRAOffset = New TextBox()
         ttMain = New ToolTip(components)
+        btnOpenMyFolder = New Button()
         tlpMain.SuspendLayout()
         SuspendLayout()
         ' 
@@ -50,7 +51,7 @@ Partial Class MainForm
         Label1.Dock = DockStyle.Fill
         Label1.Location = New Point(3, 0)
         Label1.Name = "Label1"
-        Label1.Size = New Size(121, 26)
+        Label1.Size = New Size(121, 35)
         Label1.TabIndex = 0
         Label1.Text = "RA (Right ascension)"
         Label1.TextAlign = ContentAlignment.MiddleLeft
@@ -58,9 +59,9 @@ Partial Class MainForm
         ' Label2
         ' 
         Label2.Dock = DockStyle.Fill
-        Label2.Location = New Point(3, 26)
+        Label2.Location = New Point(3, 35)
         Label2.Name = "Label2"
-        Label2.Size = New Size(121, 26)
+        Label2.Size = New Size(121, 36)
         Label2.TabIndex = 1
         Label2.Text = "DEC (Declination)"
         Label2.TextAlign = ContentAlignment.MiddleLeft
@@ -68,7 +69,7 @@ Partial Class MainForm
         ' btnParseRA
         ' 
         btnParseRA.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        btnParseRA.Location = New Point(130, 29)
+        btnParseRA.Location = New Point(130, 43)
         btnParseRA.Name = "btnParseRA"
         btnParseRA.Size = New Size(56, 20)
         btnParseRA.TabIndex = 2
@@ -78,7 +79,7 @@ Partial Class MainForm
         ' btnParseDec
         ' 
         btnParseDec.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        btnParseDec.Location = New Point(130, 3)
+        btnParseDec.Location = New Point(130, 7)
         btnParseDec.Name = "btnParseDec"
         btnParseDec.Size = New Size(56, 20)
         btnParseDec.TabIndex = 3
@@ -89,54 +90,54 @@ Partial Class MainForm
         ' 
         tbRAParsed.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbRAParsed.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
-        tbRAParsed.Location = New Point(192, 3)
+        tbRAParsed.Location = New Point(192, 7)
         tbRAParsed.Name = "tbRAParsed"
-        tbRAParsed.Size = New Size(110, 21)
+        tbRAParsed.Size = New Size(96, 21)
         tbRAParsed.TabIndex = 4
         ' 
         ' tbRAParsedShort
         ' 
         tbRAParsedShort.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbRAParsedShort.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
-        tbRAParsedShort.Location = New Point(308, 3)
+        tbRAParsedShort.Location = New Point(294, 7)
         tbRAParsedShort.Name = "tbRAParsedShort"
-        tbRAParsedShort.Size = New Size(110, 21)
+        tbRAParsedShort.Size = New Size(96, 21)
         tbRAParsedShort.TabIndex = 5
         ' 
         ' tbRAParsedDecimal
         ' 
         tbRAParsedDecimal.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbRAParsedDecimal.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
-        tbRAParsedDecimal.Location = New Point(424, 3)
+        tbRAParsedDecimal.Location = New Point(396, 7)
         tbRAParsedDecimal.Name = "tbRAParsedDecimal"
-        tbRAParsedDecimal.Size = New Size(110, 21)
+        tbRAParsedDecimal.Size = New Size(97, 21)
         tbRAParsedDecimal.TabIndex = 6
         ' 
         ' tbDecParsed
         ' 
         tbDecParsed.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbDecParsed.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
-        tbDecParsed.Location = New Point(192, 29)
+        tbDecParsed.Location = New Point(192, 42)
         tbDecParsed.Name = "tbDecParsed"
-        tbDecParsed.Size = New Size(110, 21)
+        tbDecParsed.Size = New Size(96, 21)
         tbDecParsed.TabIndex = 7
         ' 
         ' tbDecParsedShort
         ' 
         tbDecParsedShort.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbDecParsedShort.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
-        tbDecParsedShort.Location = New Point(308, 29)
+        tbDecParsedShort.Location = New Point(294, 42)
         tbDecParsedShort.Name = "tbDecParsedShort"
-        tbDecParsedShort.Size = New Size(110, 21)
+        tbDecParsedShort.Size = New Size(96, 21)
         tbDecParsedShort.TabIndex = 8
         ' 
         ' tbDecParsedDecimal
         ' 
         tbDecParsedDecimal.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbDecParsedDecimal.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
-        tbDecParsedDecimal.Location = New Point(424, 29)
+        tbDecParsedDecimal.Location = New Point(396, 42)
         tbDecParsedDecimal.Name = "tbDecParsedDecimal"
-        tbDecParsedDecimal.Size = New Size(110, 21)
+        tbDecParsedDecimal.Size = New Size(97, 21)
         tbDecParsedDecimal.TabIndex = 9
         ' 
         ' tlpMain
@@ -158,18 +159,18 @@ Partial Class MainForm
         tlpMain.Controls.Add(btnParseRA, 1, 1)
         tlpMain.Controls.Add(tbRAParsed, 2, 0)
         tlpMain.Controls.Add(tbDecParsedShort, 3, 1)
-        tlpMain.Location = New Point(5, 12)
+        tlpMain.Location = New Point(59, 12)
         tlpMain.Name = "tlpMain"
         tlpMain.RowCount = 2
         tlpMain.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
         tlpMain.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
-        tlpMain.Size = New Size(537, 52)
+        tlpMain.Size = New Size(496, 71)
         tlpMain.TabIndex = 10
         ' 
         ' btnGetObject
         ' 
         btnGetObject.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        btnGetObject.Location = New Point(8, 70)
+        btnGetObject.Location = New Point(8, 89)
         btnGetObject.Name = "btnGetObject"
         btnGetObject.Size = New Size(75, 23)
         btnGetObject.TabIndex = 11
@@ -180,16 +181,16 @@ Partial Class MainForm
         ' 
         tbSelected.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         tbSelected.Font = New Font("Courier New", 9F, FontStyle.Bold, GraphicsUnit.Point)
-        tbSelected.Location = New Point(89, 72)
+        tbSelected.Location = New Point(89, 91)
         tbSelected.Name = "tbSelected"
         tbSelected.ReadOnly = True
-        tbSelected.Size = New Size(185, 21)
+        tbSelected.Size = New Size(198, 21)
         tbSelected.TabIndex = 10
         ' 
         ' btnGoTo
         ' 
         btnGoTo.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        btnGoTo.Location = New Point(464, 70)
+        btnGoTo.Location = New Point(477, 89)
         btnGoTo.Name = "btnGoTo"
         btnGoTo.Size = New Size(75, 23)
         btnGoTo.TabIndex = 12
@@ -202,7 +203,7 @@ Partial Class MainForm
         cbJ2000.AutoSize = True
         cbJ2000.Checked = True
         cbJ2000.CheckState = CheckState.Checked
-        cbJ2000.Location = New Point(404, 73)
+        cbJ2000.Location = New Point(417, 92)
         cbJ2000.Name = "cbJ2000"
         cbJ2000.Size = New Size(54, 19)
         cbJ2000.TabIndex = 13
@@ -212,7 +213,7 @@ Partial Class MainForm
         ' tbDecOffset
         ' 
         tbDecOffset.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        tbDecOffset.Location = New Point(342, 70)
+        tbDecOffset.Location = New Point(355, 89)
         tbDecOffset.Name = "tbDecOffset"
         tbDecOffset.Size = New Size(56, 23)
         tbDecOffset.TabIndex = 14
@@ -223,7 +224,7 @@ Partial Class MainForm
         ' tbRAOffset
         ' 
         tbRAOffset.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        tbRAOffset.Location = New Point(280, 70)
+        tbRAOffset.Location = New Point(293, 89)
         tbRAOffset.Name = "tbRAOffset"
         tbRAOffset.Size = New Size(56, 23)
         tbRAOffset.TabIndex = 15
@@ -231,11 +232,22 @@ Partial Class MainForm
         tbRAOffset.TextAlign = HorizontalAlignment.Center
         ttMain.SetToolTip(tbRAOffset, "RA Offset in ArcMin")
         ' 
+        ' btnOpenMyFolder
+        ' 
+        btnOpenMyFolder.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left
+        btnOpenMyFolder.Location = New Point(6, 12)
+        btnOpenMyFolder.Name = "btnOpenMyFolder"
+        btnOpenMyFolder.Size = New Size(47, 71)
+        btnOpenMyFolder.TabIndex = 16
+        btnOpenMyFolder.Text = "Open" & vbCrLf & "EXE" & vbCrLf & "folder"
+        btnOpenMyFolder.UseVisualStyleBackColor = True
+        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(546, 100)
+        ClientSize = New Size(559, 119)
+        Controls.Add(btnOpenMyFolder)
         Controls.Add(tbRAOffset)
         Controls.Add(tbDecOffset)
         Controls.Add(cbJ2000)
@@ -270,4 +282,5 @@ Partial Class MainForm
     Friend WithEvents tbDecOffset As TextBox
     Friend WithEvents tbRAOffset As TextBox
     Friend WithEvents ttMain As ToolTip
+    Friend WithEvents btnOpenMyFolder As Button
 End Class
