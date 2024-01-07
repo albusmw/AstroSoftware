@@ -22,7 +22,8 @@ Partial Class frmGetObject
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim resources As ComponentModel.ComponentResourceManager = New ComponentModel.ComponentResourceManager(GetType(frmGetObject))
+        components = New ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmGetObject))
         tbSearchString = New TextBox()
         Label1 = New Label()
         lbResults = New ListBox()
@@ -31,7 +32,14 @@ Partial Class frmGetObject
         tsslSelectionLength = New ToolStripStatusLabel()
         tssbLoad = New ToolStripSplitButton()
         tsmiLoadCat = New ToolStripMenuItem()
+        scMain = New SplitContainer()
+        tbDetails = New TextBox()
+        tUpdateDetails = New Timer(components)
         ssMain.SuspendLayout()
+        CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
+        scMain.Panel1.SuspendLayout()
+        scMain.Panel2.SuspendLayout()
+        scMain.SuspendLayout()
         SuspendLayout()
         ' 
         ' tbSearchString
@@ -60,9 +68,9 @@ Partial Class frmGetObject
         lbResults.HorizontalScrollbar = True
         lbResults.IntegralHeight = False
         lbResults.ItemHeight = 15
-        lbResults.Location = New Point(12, 41)
+        lbResults.Location = New Point(3, 3)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(776, 368)
+        lbResults.Size = New Size(582, 380)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
@@ -99,22 +107,61 @@ Partial Class frmGetObject
         ' tsmiLoadCat
         ' 
         tsmiLoadCat.Name = "tsmiLoadCat"
-        tsmiLoadCat.Size = New Size(180, 22)
+        tsmiLoadCat.Size = New Size(147, 22)
         tsmiLoadCat.Text = "Load catalogs"
+        ' 
+        ' scMain
+        ' 
+        scMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        scMain.Location = New Point(12, 39)
+        scMain.Name = "scMain"
+        ' 
+        ' scMain.Panel1
+        ' 
+        scMain.Panel1.Controls.Add(lbResults)
+        ' 
+        ' scMain.Panel2
+        ' 
+        scMain.Panel2.Controls.Add(tbDetails)
+        scMain.Size = New Size(776, 386)
+        scMain.SplitterDistance = 588
+        scMain.TabIndex = 4
+        ' 
+        ' tbDetails
+        ' 
+        tbDetails.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        tbDetails.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbDetails.Location = New Point(3, 3)
+        tbDetails.Multiline = True
+        tbDetails.Name = "tbDetails"
+        tbDetails.ScrollBars = ScrollBars.Both
+        tbDetails.Size = New Size(178, 380)
+        tbDetails.TabIndex = 0
+        tbDetails.WordWrap = False
+        ' 
+        ' tUpdateDetails
+        ' 
+        tUpdateDetails.Enabled = True
+        tUpdateDetails.Interval = 1000
         ' 
         ' frmGetObject
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(800, 450)
+        Controls.Add(scMain)
         Controls.Add(ssMain)
-        Controls.Add(lbResults)
         Controls.Add(Label1)
         Controls.Add(tbSearchString)
         Name = "frmGetObject"
         Text = "Object search"
         ssMain.ResumeLayout(False)
         ssMain.PerformLayout()
+        scMain.Panel1.ResumeLayout(False)
+        scMain.Panel2.ResumeLayout(False)
+        scMain.Panel2.PerformLayout()
+        CType(scMain, ComponentModel.ISupportInitialize).EndInit()
+        scMain.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -127,4 +174,7 @@ Partial Class frmGetObject
     Friend WithEvents tsslSelectionLength As ToolStripStatusLabel
     Friend WithEvents tssbLoad As ToolStripSplitButton
     Friend WithEvents tsmiLoadCat As ToolStripMenuItem
+    Friend WithEvents scMain As SplitContainer
+    Friend WithEvents tbDetails As TextBox
+    Friend WithEvents tUpdateDetails As Timer
 End Class
