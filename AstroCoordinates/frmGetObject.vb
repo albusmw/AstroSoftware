@@ -122,10 +122,6 @@ Public Class frmGetObject
         Return Join(Element, ColSep)
     End Function
 
-    Private Sub lbResults_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbResults.SelectedIndexChanged
-
-    End Sub
-
     Private Sub tsmiLoadCat_Click(sender As Object, e As EventArgs) Handles tsmiLoadCat.Click
         'Load catalogs
         Dim Loader As New cHenryDraper

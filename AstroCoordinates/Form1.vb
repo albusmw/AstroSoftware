@@ -34,11 +34,9 @@ Public Class MainForm
     End Sub
 
     Private Sub UpdateDec(ByVal Dec As Double)
-        If String.IsNullOrEmpty(Text) Then Exit Sub
-        Dim Parsed As Double = AstroParser.ParseDeclination(Text)
-        tbDecParsed.Text = Ato.AstroCalc.Format360Degree(Parsed)
-        tbDecParsedShort.Text = Ato.AstroCalc.Format360Degree(Parsed, ":", ":", "", 2)
-        tbDecParsedDecimal.Text = Format(Parsed, "00.000000").Replace(",", ".")
+        tbDecParsed.Text = Ato.AstroCalc.Format360Degree(Dec)
+        tbDecParsedShort.Text = Ato.AstroCalc.Format360Degree(Dec, ":", ":", "", 2)
+        tbDecParsedDecimal.Text = Format(Dec, "00.000000").Replace(",", ".")
     End Sub
 
     Private Sub tbRAParsed_Click(sender As Object, e As EventArgs) Handles tbRAParsed.Click, tbDecParsed.Click, tbRAParsedDecimal.Click, tbDecParsedDecimal.Click, tbRAParsedShort.Click, tbDecParsedShort.Click, tbSelected.Click
