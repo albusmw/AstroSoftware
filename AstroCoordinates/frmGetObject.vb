@@ -8,13 +8,11 @@ Imports AstroCoordinates.cAstroCats
 
 Public Class frmGetObject
 
-    'DSC coordinates
-    'Private MyLat As Double = -30.526432061890691
-    'Private MyLong As Double = -70.8534912986521
+    Dim ColSep As String = "|"
 
-    'Holzkirchen
-    Private MyLat As Double = 47.878503874990805
-    Private MyLong As Double = 11.691537333035741
+    'DSC coordinates
+    Private MyLat As Double = -(30 + (31 / 60) + (34.7 / 3600))     'according to Overview.md
+    Private MyLong As Double = -(70 + (51 / 60) + (11.8 / 3600))    'according to Overview.md
 
     Public ReadOnly Property SelectedObject As String
         Get
@@ -112,15 +110,16 @@ Public Class frmGetObject
         Next Entry
         lbResults.Items.Clear()
         lbResults.Items.AddRange(FoundEntries.ToArray)
+        If lbResults.Items.Count = 1 Then lbResults.SelectedIndex = 0
         tsslSelectionLength.Text = FoundEntries.Count.ToString.Trim & " entries filtered"
     End Sub
 
     Private Function FormatElement(ByVal Element As String()) As String
         'Make a nice table
-        Element(0) = Element(0).Trim.PadRight(20)
-        Element(1) = Element(1).Trim.PadLeft(15)
-        Element(2) = Element(2).Trim.PadLeft(15)
-        Return Join(Element, vbTab)
+        Element(0) = Element(0).Trim.PadRight(15)
+        Element(1) = Element(1).Trim.PadLeft(10)
+        Element(2) = Element(2).Trim.PadLeft(10)
+        Return Join(Element, ColSep)
     End Function
 
     Private Sub lbResults_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbResults.SelectedIndexChanged
@@ -140,7 +139,7 @@ Public Class frmGetObject
     End Sub
 
     Private Sub ParseSelection()
-        Dim Selection As String() = Split(CStr(lbResults.SelectedItem), vbTab)
+        Dim Selection As String() = Split(CStr(lbResults.SelectedItem), ColSep)
         MySelectedObject = Selection(0).Trim
         If Selection.Length >= 6 Then MySelectedObject &= " (" & Selection(Selection.GetUpperBound(0)) & ")"
         MySelectedRA = AstroParser.ParseRA(Selection(1))
@@ -151,22 +150,39 @@ Public Class frmGetObject
         Try
             'Display selected object information
             ParseSelection()
-            Dim TimeToCalc As DateTime = DateTime.UtcNow
-            Dim Pos As Ato.AstroCalc.sAzAlt = Ato.AstroCalc.GetHorizontalPosition(TimeToCalc, New Ato.AstroCalc.sLatLong(MyLat, MyLong), New Ato.AstroCalc.sRADec(SelectedRA, SelectedDec))
+            Dim CurrentUTC As DateTime = DateTime.UtcNow
+            Dim CurrentLocation As New Ato.AstroCalc.sLatLong(MyLat, MyLong)
+            Dim ObjectCoord As New Ato.AstroCalc.sRADec(SelectedRA, SelectedDec)
+            Dim ObjectHourAngle As Double = Double.NaN
+            Dim Pos As Ato.AstroCalc.sAzAlt = Ato.AstroCalc.GetObjectPosition(CurrentUTC, CurrentLocation, ObjectCoord, ObjectHourAngle)
             Dim Details As New List(Of String)
             Details.Add("Details:")
-            Details.Add(" Object: " & Split(CStr(lbResults.SelectedItem), vbTab)(0).Trim)
-            Details.Add(" RA    : " & Ato.AstroCalc.FormatHMS(SelectedRA))
-            Details.Add(" Dec   : " & Ato.AstroCalc.Format360Degree(SelectedDec))
-            Details.Add(" Alt   :  " & Ato.AstroCalc.Format360Degree(Pos.ALT))
-            Details.Add(" Az    :  " & Ato.AstroCalc.Format360Degree(Pos.AZ))
-            Details.Add("=======================================")
-            Details.Add(" Lat   : " & Ato.AstroCalc.Format360Degree(MyLat))
-            Details.Add(" Long  : " & Ato.AstroCalc.Format360Degree(MyLong))
+            Details.Add(" Object: " & Split(CStr(lbResults.SelectedItem), ColSep)(0).Trim)
+            Details.Add("   RA                : " & Ato.AstroCalc.FormatHMS(SelectedRA))
+            Details.Add("   Dec               : " & Ato.AstroCalc.Format360Degree(SelectedDec))
+            Details.Add("   Alt               :  " & Ato.AstroCalc.Format360Degree(Pos.ALT))
+            Details.Add("   Az                :  " & Ato.AstroCalc.Format360Degree(Pos.AZ))
+            Details.Add("   Hour angle        :  " & Ato.AstroCalc.FormatHMS(ObjectHourAngle * (24 / 360)))
+            Details.Add("═══════════════════════════════════════════════════════")
+            Details.Add(" UTC time            : " & Format(CurrentUTC, "HH:mm:ss zzz"))
+            Details.Add(" Local Siderial Time : " & Ato.AstroCalc.LST(CurrentUTC, MyLong).ValRegIndep)
+            Details.Add(" Local Siderial Time : " & Ato.AstroCalc.LSTFormated(CurrentUTC, MyLong))
+            Details.Add(" Location latitude   : " & Ato.AstroCalc.Format360Degree(MyLat))
+            Details.Add(" Location longitude  : " & Ato.AstroCalc.Format360Degree(MyLong))
             tbDetails.Text = Join(Details.ToArray, System.Environment.NewLine)
         Catch ex As Exception
 
         End Try
+    End Sub
+
+    Private Sub btnLocationDSC_Click(sender As Object, e As EventArgs) Handles btnLocationDSC.Click
+        MyLat = -(30 + (31 / 60) + (34.7 / 3600))       'according to Overview.md
+        MyLong = -(70 + (51 / 60) + (11.8 / 3600))      'according to Overview.md
+    End Sub
+
+    Private Sub btnLocationHolz_Click(sender As Object, e As EventArgs) Handles btnLocationHolz.Click
+        MyLat = 47.878503874990805
+        MyLong = 11.691537333035741
     End Sub
 
 End Class
