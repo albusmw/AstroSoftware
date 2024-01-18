@@ -33,6 +33,8 @@ Partial Class frmGetObject
         tssbLoad = New ToolStripSplitButton()
         tsmiLoadCat = New ToolStripMenuItem()
         scMain = New SplitContainer()
+        btnLocationHolz = New Button()
+        btnLocationDSC = New Button()
         tbDetails = New TextBox()
         tUpdateDetails = New Timer(components)
         ssMain.SuspendLayout()
@@ -70,7 +72,7 @@ Partial Class frmGetObject
         lbResults.ItemHeight = 15
         lbResults.Location = New Point(3, 3)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(582, 380)
+        lbResults.Size = New Size(351, 380)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
@@ -122,10 +124,31 @@ Partial Class frmGetObject
         ' 
         ' scMain.Panel2
         ' 
+        scMain.Panel2.Controls.Add(btnLocationHolz)
+        scMain.Panel2.Controls.Add(btnLocationDSC)
         scMain.Panel2.Controls.Add(tbDetails)
         scMain.Size = New Size(776, 386)
-        scMain.SplitterDistance = 588
+        scMain.SplitterDistance = 357
         scMain.TabIndex = 4
+        ' 
+        ' btnLocationHolz
+        ' 
+        btnLocationHolz.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnLocationHolz.Location = New Point(298, 356)
+        btnLocationHolz.Name = "btnLocationHolz"
+        btnLocationHolz.Size = New Size(114, 23)
+        btnLocationHolz.TabIndex = 2
+        btnLocationHolz.Text = "Holzkirchen"
+        btnLocationHolz.UseVisualStyleBackColor = True
+        ' 
+        ' btnLocationDSC
+        ' 
+        btnLocationDSC.Location = New Point(3, 356)
+        btnLocationDSC.Name = "btnLocationDSC"
+        btnLocationDSC.Size = New Size(58, 23)
+        btnLocationDSC.TabIndex = 1
+        btnLocationDSC.Text = "DSC"
+        btnLocationDSC.UseVisualStyleBackColor = True
         ' 
         ' tbDetails
         ' 
@@ -135,7 +158,7 @@ Partial Class frmGetObject
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(178, 380)
+        tbDetails.Size = New Size(409, 347)
         tbDetails.TabIndex = 0
         tbDetails.WordWrap = False
         ' 
@@ -177,4 +200,6 @@ Partial Class frmGetObject
     Friend WithEvents scMain As SplitContainer
     Friend WithEvents tbDetails As TextBox
     Friend WithEvents tUpdateDetails As Timer
+    Friend WithEvents btnLocationHolz As Button
+    Friend WithEvents btnLocationDSC As Button
 End Class
