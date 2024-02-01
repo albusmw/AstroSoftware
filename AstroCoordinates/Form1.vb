@@ -84,8 +84,8 @@ Public Class MainForm
 
     Private Sub ZenithAndStopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ZenithAndStopToolStripMenuItem.Click
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(cPWI4.Goto_AltAz(90, 0))
         Response = Download.GetResponse(cPWI4.Tracking(False))
+        Response = Download.GetResponse(cPWI4.Goto_AltAz(90, 0))
     End Sub
 
 End Class
