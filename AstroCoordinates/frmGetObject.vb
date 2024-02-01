@@ -150,7 +150,7 @@ Public Class frmGetObject
             Dim CurrentLocation As New Ato.AstroCalc.sLatLong(MyLat, MyLong)
             Dim ObjectCoord As New Ato.AstroCalc.sRADec(SelectedRA, SelectedDec)
             Dim ObjectHourAngle As Double = Double.NaN
-            Dim Pos As Ato.AstroCalc.sAzAlt = Ato.AstroCalc.GetObjectPosition(CurrentUTC, CurrentLocation, ObjectCoord, ObjectHourAngle)
+            Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition(CurrentUTC, CurrentLocation, ObjectCoord)
             Dim Details As New List(Of String)
             Details.Add("Details:")
             Details.Add(" Object: " & Split(CStr(lbResults.SelectedItem), ColSep)(0).Trim)
@@ -180,5 +180,28 @@ Public Class frmGetObject
         MyLat = 47.878503874990805
         MyLong = 11.691537333035741
     End Sub
+
+    Private Function GetObjectPosition(ByVal Moment As DateTime, ByVal CurrentLocation As Ato.AstroCalc.sLatLong, ByVal ObjectCoord As Ato.AstroCalc.sRADec) As Ato.AstroCalc.sAzAlt
+
+        'Use dynamically ASCOM calls
+
+        Dim Util As New COMInterop.COMObj("ASCOM.Utilities.Util")
+        Dim Trans As New COMInterop.COMObj("ASCOM.Astrometry.Transform.Transform")
+
+        'Dim UTCDate As Object = Util.Get("UTCDate")
+        Dim Julian As Object = Util.Call("DateUTCToJulian", New Object() {Moment})
+
+        Trans.Set("JulianDateUTC", Julian)
+        Trans.Set("SiteLatitude", CurrentLocation.Latitude)
+        Trans.Set("SiteLongitude", CurrentLocation.Longitude)
+        Trans.Set("SiteElevation", CDbl(1700))
+        Trans.Call("SetApparent", New Object() {ObjectCoord.RA, ObjectCoord.DEC})
+
+        Dim RetVal As New Ato.AstroCalc.sAzAlt
+        RetVal.ALT = CDbl(Trans.Get("ElevationTopocentric"))
+        RetVal.AZ = CDbl(Trans.Get("AzimuthTopocentric"))
+        Return RetVal
+
+    End Function
 
 End Class

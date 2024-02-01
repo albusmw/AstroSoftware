@@ -10,14 +10,6 @@ Public Class MainForm
         Ato.AstroCalc.RunTestCase()
     End Sub
 
-    Private Sub btnParseRA_Click(sender As Object, e As EventArgs) Handles btnParseRA.Click
-        UpdateRA(AstroParser.ParseRA(InputBox("RA to parse: ", "RA to parse")))
-    End Sub
-
-    Private Sub btnParseDec_Click(sender As Object, e As EventArgs) Handles btnParseDec.Click
-        UpdateDec(AstroParser.ParseDeclination(InputBox("Dec to parse: ", "Dec to parse")))
-    End Sub
-
     Private Sub btnGetObject_Click(sender As Object, e As EventArgs) Handles btnGetObject.Click
         Dim NewForm As New frmGetObject
         If NewForm.ShowDialog() = DialogResult.OK Then
@@ -56,20 +48,44 @@ Public Class MainForm
         End With
     End Sub
 
-    Private Sub btnGoTo_Click(sender As Object, e As EventArgs) Handles btnGoTo.Click
-        Dim PWI_adr As String = "http://localhost:8220"
+    Private Sub GotoObject()
         Dim Response As String = String.Empty
-        Dim Epoche As String = CStr(IIf(cbJ2000.Checked = True, "j2000", "apparent"))
-        Response = Download.GetResponse(PWI_adr & "/mount/goto_ra_dec_" & Epoche & "?ra_hours=" & tbRAParsedDecimal.Text & "&dec_degs=" & tbDecParsedDecimal.Text)
-        Dim RAOffset As Double = tbRAOffset.Text.ValRegIndep
-        Dim DecOffset As Double = tbDecOffset.Text.ValRegIndep
-        If (RAOffset <> 0.0) Or (DecOffset <> 0) Then
-            Response = Download.GetResponse(PWI_adr & "/mount/offset?ra_add_arcsec=" & (RAOffset * 60).ValRegIndep & "&dec_add_arcsec=" & (DecOffset * 60).ValRegIndep)
-        End If
+        Response = Download.GetResponse(cPWI4.Goto_RaDec(cbJ2000.Checked, tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep))
+        Response = Download.GetResponse(cPWI4.Tracking(True))
     End Sub
 
-    Private Sub btnOpenMyFolder_Click(sender As Object, e As EventArgs) Handles btnOpenMyFolder.Click
+    '═════════════════════════════════════════════════════════════════════════════
+    ' Buttons
+    '═════════════════════════════════════════════════════════════════════════════
+
+    Private Sub btnGoTo_Click(sender As Object, e As EventArgs) Handles btnGoTo.Click
+        GotoObject()
+    End Sub
+
+    '═════════════════════════════════════════════════════════════════════════════
+    ' Menu
+    '═════════════════════════════════════════════════════════════════════════════
+
+    Private Sub tsmiFile_OpenEXE_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenEXE.Click
         Process.Start("explorer.exe", MyPath)
+    End Sub
+
+    Private Sub tsmiEnter_RA_Click(sender As Object, e As EventArgs) Handles tsmiEnter_RA.Click
+        UpdateDec(AstroParser.ParseDeclination(InputBox("Dec to parse: ", "Dec to parse")))
+    End Sub
+
+    Private Sub tsmiEnter_Dec_Click(sender As Object, e As EventArgs) Handles tsmiEnter_Dec.Click
+        UpdateRA(AstroParser.ParseRA(InputBox("RA to parse: ", "RA to parse")))
+    End Sub
+
+    Private Sub ObjectToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ObjectToolStripMenuItem.Click
+        GotoObject()
+    End Sub
+
+    Private Sub ZenithAndStopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ZenithAndStopToolStripMenuItem.Click
+        Dim Response As String = String.Empty
+        Response = Download.GetResponse(cPWI4.Goto_AltAz(90, 0))
+        Response = Download.GetResponse(cPWI4.Tracking(False))
     End Sub
 
 End Class
