@@ -7,7 +7,6 @@ Public Class MainForm
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.CenterToScreen()
-        Ato.AstroCalc.RunTestCase()
     End Sub
 
     Private Sub btnGetObject_Click(sender As Object, e As EventArgs) Handles btnGetObject.Click

@@ -1,0 +1,38 @@
+﻿ Private Sub Calculate_OLD()
+
+
+        'Some test calls to ensure COM can be loaded
+        Dim JdTt As Double = ASCOMDynamic.Util.JulianDate
+        Dim Y As Short = 0 : Dim M As Short = 0 : Dim D As Short = 0
+        Dim H As Double = Double.NaN
+        ASCOMDynamic.NOVAS31.CalDate(JdTt, Y, M, D, H)
+
+        'Still does not work; 
+
+        'Make OnSurface
+        Dim Position As New ASCOMDynamic.sOnSurface
+        ASCOMDynamic.NOVAS31.MakeOnSurface(1, 2, 3, 4, 5, Position)
+
+        'Make CatEntry3
+        Dim CatEntry3 As New ASCOMDynamic.sCatEntry3
+        ASCOMDynamic.NOVAS31.MakeCatEntry(String.Empty, String.Empty, 0, 0, 0, 0, 0, 0, 0, CatEntry3)
+
+        Dim sSBody As New ASCOMDynamic.sObject3
+        With sSBody
+            .Name = "Jupiter"
+            .Type = ASCOMDynamic.eObjectType.MajorPlanetSunOrMoon
+            .Number = ASCOMDynamic.eBody.Jupiter
+            .Star.Catalog = Space(3)
+            .Star.StarName = Space(50)
+        End With
+
+        Dim DeltaT As Double = 0.0
+
+        Dim Ra As Double = Double.NaN
+        Dim Dec As Double = Double.NaN
+        Dim Dis As Double = Double.NaN
+        ASCOMDynamic.NOVAS31_LocalPlanet(JdTt, sSBody, DeltaT, Position, ASCOMDynamic.eAccuracy.Full, Ra, Dec, Dis)
+
+        tbLog.Text = "Hello!"
+
+    End Sub

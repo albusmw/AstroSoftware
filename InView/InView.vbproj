@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows7.0</TargetFramework>
+    <StartupObject>InView.My.MyApplication</StartupObject>
+    <UseWindowsForms>true</UseWindowsForms>
+    <MyType>WindowsForms</MyType>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\MyLib\ASCOMDynamic.vb" Link="MyLib\ASCOMDynamic.vb" />
+    <Compile Include="..\..\MyLib\AstroDSP.vb" Link="MyLib\AstroDSP.vb" />
+    <Compile Include="..\..\MyLib\ClosedXML.vb" Link="MyLib\ClosedXML.vb" />
+    <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
+    <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
+    <Compile Include="..\..\MyLib\DSSFileParser.vb" Link="MyLib\DSSFileParser.vb" />
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
+    <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="atomics\AstroCalc.vb" />
+    <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="atomics\cAstroParser.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="My Project\Application.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="cio_ra.bin">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="JPLEPH">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MyLib\" />
+    <Folder Include="atomics\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ASCOM.Tools" Version="1.0.111" />
+    <PackageReference Include="ClosedXML" Version="0.102.2" />
+  </ItemGroup>
+
+</Project>

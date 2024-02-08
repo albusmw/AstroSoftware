@@ -1,0 +1,36 @@
+﻿Planetary position calculation:
+
+'Reference date generation: https://ssd.jpl.nasa.gov/horizons/app.html#/
+'Rererence test file:		C:\GIT\AstroSoftware\InView\horizons_results.txt
+'Batch data file:
+Batch Data File×CloseRefresh
+!$$SOF
+MAKE_EPHEM=YES
+COMMAND=599
+EPHEM_TYPE=OBSERVER
+CENTER='coord@399'
+COORD_TYPE=GEODETIC
+SITE_COORD='11.691738,47.878345,0.6910000000000001'
+START_TIME='2024-02-07'
+STOP_TIME='2024-03-08'
+STEP_SIZE='1 MINUTES'
+QUANTITIES='1,2,4,9,20,23,24,47,48'
+REF_SYSTEM='ICRF'
+CAL_FORMAT='BOTH'
+CAL_TYPE='M'
+TIME_DIGITS='FRACSEC'
+ANG_FORMAT='HMS'
+APPARENT='AIRLESS'
+RANGE_UNITS='AU'
+SUPPRESS_RANGE_RATE='NO'
+SKIP_DAYLT='NO'
+SOLAR_ELONG='0,180'
+EXTRA_PREC='NO'
+R_T_S_ONLY='NO'
+CSV_FORMAT='NO'
+OBJ_DATA='YES'
+
+*******************************************************************************************************************************************************************************************************************************************************
+ Date__(UT)__HR:MN:SC.fff Date_________JDUT     R.A._____(ICRF)_____DEC  R.A.__(a-apparent)__DEC  Azi____(a-app)___Elev    APmag   S-brt             delta      deldot     S-O-T /r     S-T-O  Sky_motion  Sky_mot_PA  RelVel-ANG  Lun_Sky_Brt  sky_SNR
+*******************************************************************************************************************************************************************************************************************************************************
+2024-Feb-07 10:37:00.000 2460347.942361111 *m  02 22 34.27 +13 06 54.5  02 23 52.20 +13 13 28.4   82.513444  11.117439   -2.305   5.371  5.07062939079833  27.1877712   79.8684 /T   11.2116   0.3013005   68.923469   55.812927         n.a.     n.a.
