@@ -24,6 +24,7 @@ Partial Class MainForm
     Private Sub InitializeComponent()
         btnCalculate = New Button()
         tbLog = New TextBox()
+        btnFromClipboard = New Button()
         SuspendLayout()
         ' 
         ' btnCalculate
@@ -38,7 +39,7 @@ Partial Class MainForm
         ' tbLog
         ' 
         tbLog.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        tbLog.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
+        tbLog.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
         tbLog.Location = New Point(12, 41)
         tbLog.Multiline = True
         tbLog.Name = "tbLog"
@@ -47,11 +48,21 @@ Partial Class MainForm
         tbLog.TabIndex = 1
         tbLog.WordWrap = False
         ' 
+        ' btnFromClipboard
+        ' 
+        btnFromClipboard.Location = New Point(93, 12)
+        btnFromClipboard.Name = "btnFromClipboard"
+        btnFromClipboard.Size = New Size(164, 23)
+        btnFromClipboard.TabIndex = 2
+        btnFromClipboard.Text = "Astrobin Clipboard"
+        btnFromClipboard.UseVisualStyleBackColor = True
+        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(800, 450)
+        Controls.Add(btnFromClipboard)
         Controls.Add(tbLog)
         Controls.Add(btnCalculate)
         Name = "MainForm"
@@ -62,5 +73,6 @@ Partial Class MainForm
 
     Friend WithEvents btnCalculate As Button
     Friend WithEvents tbLog As TextBox
+    Friend WithEvents btnFromClipboard As Button
 
 End Class

@@ -141,4 +141,23 @@ Public Class MainForm
 
     End Sub
 
+    Private Sub btnCalculate_Click(sender As Object, e As EventArgs) Handles btnCalculate.Click
+        Ato.AstroCalc.RunTestCase_SelfBuild()
+    End Sub
+
+    Private Sub btnFromClipboard_Click(sender As Object, e As EventArgs) Handles btnFromClipboard.Click
+        'Parse the data from the coordinates given on the AstroBin object page
+        Dim ClipContent As String() = Split(Clipboard.GetText, System.Environment.NewLine)
+        Dim RA As Double = Double.NaN
+        Dim Dec As Double = Double.NaN
+        For Each Line As String In ClipContent
+            If Line.Trim.StartsWith("RA center:") Then
+                RA = AstroParser.ParseRA(Line.Trim.Replace("RA center:", String.Empty).Trim)
+            End If
+            If Line.Trim.StartsWith("DEC center:") Then
+                Dec = AstroParser.ParseDeclination(Line.Trim.Replace("DEC center:", String.Empty))
+            End If
+        Next Line
+    End Sub
+
 End Class

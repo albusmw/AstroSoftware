@@ -20,7 +20,11 @@
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="atomics\AstroCalc.vb" />
+    <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="atomics\AstroStatistics.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="atomics\cAstroParser.vb" />
+    <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="atomics\cDLLDynCall.vb" />
+    <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="atomics\cIntelIPP.vb" />
+    <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="atomics\cStatMultiThread.vb" />
   </ItemGroup>
 
   <ItemGroup>
