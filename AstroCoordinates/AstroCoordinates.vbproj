@@ -8,6 +8,7 @@
     <MyType>WindowsForms</MyType>
     <Platforms>x64</Platforms>
     <ApplicationIcon>AstroCoordinates.ico</ApplicationIcon>
+	<SourceRevisionID>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionID>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
     <Compile Include="..\..\src\atomics\cHardwareState.vb" Link="common\cHardwareState.vb" />
     <Compile Include="..\..\src\atomics\cPWI4.vb" Link="common\cPWI4.vb" />
+    <Compile Include="..\..\src\atomics\GetBuildDateTime.vb" Link="common\GetBuildDateTime.vb" />
     <Compile Include="..\..\src\atomics\GZIP.vb" Link="common\GZIP.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
   </ItemGroup>

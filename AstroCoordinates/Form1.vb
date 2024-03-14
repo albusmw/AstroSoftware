@@ -6,15 +6,16 @@ Public Class MainForm
     Public Shared ReadOnly Property MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        Me.Text = (New cGetBuildDateTime).GetMainformTitle
         Me.CenterToScreen()
     End Sub
 
     Private Sub btnGetObject_Click(sender As Object, e As EventArgs) Handles btnGetObject.Click
-        Dim NewForm As New frmGetObject
-        If NewForm.ShowDialog() = DialogResult.OK Then
-            tbSelected.Text = NewForm.SelectedObject
-            UpdateRA(NewForm.SelectedRA)
-            UpdateDec(NewForm.SelectedDec)
+        Dim SelectionForm As New frmGetObject
+        If SelectionForm.ShowDialog() = DialogResult.OK Then
+            tbSelected.Text = SelectionForm.SelectedObject.VerboseName
+            UpdateRA(SelectionForm.SelectedObject.RA)
+            UpdateDec(SelectionForm.SelectedObject.Dec)
         End If
     End Sub
 
