@@ -23,15 +23,12 @@ Partial Class frmGetObject
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmGetObject))
         tbSearchString = New TextBox()
         Label1 = New Label()
         lbResults = New ListBox()
         ssMain = New StatusStrip()
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
-        tssbLoad = New ToolStripSplitButton()
-        tsmiLoadCat = New ToolStripMenuItem()
         scMain = New SplitContainer()
         btnLocationHolz = New Button()
         btnLocationDSC = New Button()
@@ -47,7 +44,7 @@ Partial Class frmGetObject
         ' tbSearchString
         ' 
         tbSearchString.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        tbSearchString.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbSearchString.Font = New Font("Courier New", 9F)
         tbSearchString.Location = New Point(93, 12)
         tbSearchString.Name = "tbSearchString"
         tbSearchString.Size = New Size(695, 21)
@@ -65,7 +62,7 @@ Partial Class frmGetObject
         ' lbResults
         ' 
         lbResults.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        lbResults.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        lbResults.Font = New Font("Courier New", 9F)
         lbResults.FormattingEnabled = True
         lbResults.HorizontalScrollbar = True
         lbResults.IntegralHeight = False
@@ -77,7 +74,7 @@ Partial Class frmGetObject
         ' 
         ' ssMain
         ' 
-        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength, tssbLoad})
+        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength})
         ssMain.Location = New Point(0, 428)
         ssMain.Name = "ssMain"
         ssMain.Size = New Size(800, 22)
@@ -95,22 +92,6 @@ Partial Class frmGetObject
         tsslSelectionLength.Name = "tsslSelectionLength"
         tsslSelectionLength.Size = New Size(22, 17)
         tsslSelectionLength.Text = "---"
-        ' 
-        ' tssbLoad
-        ' 
-        tssbLoad.DisplayStyle = ToolStripItemDisplayStyle.Text
-        tssbLoad.DropDownItems.AddRange(New ToolStripItem() {tsmiLoadCat})
-        tssbLoad.Image = CType(resources.GetObject("tssbLoad.Image"), Image)
-        tssbLoad.ImageTransparentColor = Color.Magenta
-        tssbLoad.Name = "tssbLoad"
-        tssbLoad.Size = New Size(61, 20)
-        tssbLoad.Text = "Load ..."
-        ' 
-        ' tsmiLoadCat
-        ' 
-        tsmiLoadCat.Name = "tsmiLoadCat"
-        tsmiLoadCat.Size = New Size(147, 22)
-        tsmiLoadCat.Text = "Load catalogs"
         ' 
         ' scMain
         ' 
@@ -153,7 +134,7 @@ Partial Class frmGetObject
         ' tbDetails
         ' 
         tbDetails.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        tbDetails.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbDetails.Font = New Font("Courier New", 9F)
         tbDetails.Location = New Point(3, 3)
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
@@ -195,8 +176,6 @@ Partial Class frmGetObject
     Friend WithEvents ssMain As StatusStrip
     Friend WithEvents tsslLoaded As ToolStripStatusLabel
     Friend WithEvents tsslSelectionLength As ToolStripStatusLabel
-    Friend WithEvents tssbLoad As ToolStripSplitButton
-    Friend WithEvents tsmiLoadCat As ToolStripMenuItem
     Friend WithEvents scMain As SplitContainer
     Friend WithEvents tbDetails As TextBox
     Friend WithEvents tUpdateDetails As Timer

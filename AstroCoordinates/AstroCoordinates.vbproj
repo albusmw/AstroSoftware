@@ -2,12 +2,13 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <StartupObject>AstroCoordinates.MainForm</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
     <Platforms>x64</Platforms>
     <ApplicationIcon>AstroCoordinates.ico</ApplicationIcon>
+    <ImportedNamespaces>System.Data=False,System.Drawing=False,system.formats.tar=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,AstroCoordinates=True</ImportedNamespaces>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,16 +21,15 @@
     <Compile Include="..\..\MyLib\ASCOMDynamic.vb" Link="MyLib\ASCOMDynamic.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
+    <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
-    <Compile Include="..\..\src\atomics\cAstroCats.vb" Link="common\cAstroCats.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
     <Compile Include="..\..\src\atomics\cHardwareState.vb" Link="common\cHardwareState.vb" />
     <Compile Include="..\..\src\atomics\cPWI4.vb" Link="common\cPWI4.vb" />
-    <Compile Include="..\..\src\atomics\GZIP.vb" Link="common\GZIP.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
   </ItemGroup>
 
@@ -52,6 +52,7 @@
   <ItemGroup>
     <Import Include="System.Data" />
     <Import Include="System.Drawing" />
+    <Import Include="system.formats.tar" />
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
 

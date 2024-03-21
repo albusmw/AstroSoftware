@@ -15,6 +15,7 @@
     <Compile Include="..\..\MyLib\ClosedXML.vb" Link="MyLib\ClosedXML.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
+    <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\DSSFileParser.vb" Link="MyLib\DSSFileParser.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />

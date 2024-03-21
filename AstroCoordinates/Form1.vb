@@ -87,4 +87,13 @@ Public Class MainForm
         Response = Download.GetResponse(cPWI4.Goto_AltAz(90, 0))
     End Sub
 
+    Private Sub tsmiFile_End_Click(sender As Object, e As EventArgs) Handles tsmiFile_End.Click
+        End
+    End Sub
+
+    Private Sub tsmiFile_LoadVizier_Click(sender As Object, e As EventArgs) Handles tsmiFile_LoadVizier.Click
+        Dim X As New cVizier
+        X.LoadCatalogs()
+    End Sub
+
 End Class

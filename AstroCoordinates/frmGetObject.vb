@@ -122,12 +122,6 @@ Public Class frmGetObject
         Return Join(Element, ColSep)
     End Function
 
-    Private Sub tsmiLoadCat_Click(sender As Object, e As EventArgs) Handles tsmiLoadCat.Click
-        'Load catalogs
-        Dim Loader As New cHenryDraper
-        Loader.DownloadData()
-    End Sub
-
     Private Sub lbResults_DoubleClick(sender As Object, e As EventArgs) Handles lbResults.DoubleClick
         ParseSelection()
         Me.DialogResult = DialogResult.OK

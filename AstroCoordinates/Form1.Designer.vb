@@ -42,12 +42,15 @@ Partial Class MainForm
         msMain = New MenuStrip()
         tsmiFile = New ToolStripMenuItem()
         tsmiFile_OpenEXE = New ToolStripMenuItem()
+        ToolStripMenuItem1 = New ToolStripSeparator()
+        tsmiFile_End = New ToolStripMenuItem()
         tsmiEnter = New ToolStripMenuItem()
         tsmiEnter_RA = New ToolStripMenuItem()
         tsmiEnter_Dec = New ToolStripMenuItem()
         GotoToolStripMenuItem = New ToolStripMenuItem()
         ObjectToolStripMenuItem = New ToolStripMenuItem()
         ZenithAndStopToolStripMenuItem = New ToolStripMenuItem()
+        tsmiFile_LoadVizier = New ToolStripMenuItem()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -205,7 +208,7 @@ Partial Class MainForm
         ' 
         ' tsmiFile
         ' 
-        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE})
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_LoadVizier, ToolStripMenuItem1, tsmiFile_End})
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
@@ -213,8 +216,19 @@ Partial Class MainForm
         ' tsmiFile_OpenEXE
         ' 
         tsmiFile_OpenEXE.Name = "tsmiFile_OpenEXE"
-        tsmiFile_OpenEXE.Size = New Size(159, 22)
+        tsmiFile_OpenEXE.Size = New Size(180, 22)
         tsmiFile_OpenEXE.Text = "Open EXE folder"
+        ' 
+        ' ToolStripMenuItem1
+        ' 
+        ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        ToolStripMenuItem1.Size = New Size(177, 6)
+        ' 
+        ' tsmiFile_End
+        ' 
+        tsmiFile_End.Name = "tsmiFile_End"
+        tsmiFile_End.Size = New Size(180, 22)
+        tsmiFile_End.Text = "Exit"
         ' 
         ' tsmiEnter
         ' 
@@ -245,14 +259,20 @@ Partial Class MainForm
         ' ObjectToolStripMenuItem
         ' 
         ObjectToolStripMenuItem.Name = "ObjectToolStripMenuItem"
-        ObjectToolStripMenuItem.Size = New Size(180, 22)
+        ObjectToolStripMenuItem.Size = New Size(161, 22)
         ObjectToolStripMenuItem.Text = "Object and track"
         ' 
         ' ZenithAndStopToolStripMenuItem
         ' 
         ZenithAndStopToolStripMenuItem.Name = "ZenithAndStopToolStripMenuItem"
-        ZenithAndStopToolStripMenuItem.Size = New Size(180, 22)
+        ZenithAndStopToolStripMenuItem.Size = New Size(161, 22)
         ZenithAndStopToolStripMenuItem.Text = "Zenith and stop"
+        ' 
+        ' tsmiFile_LoadVizier
+        ' 
+        tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
+        tsmiFile_LoadVizier.Size = New Size(180, 22)
+        tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
         ' 
         ' MainForm
         ' 
@@ -301,4 +321,7 @@ Partial Class MainForm
     Friend WithEvents GotoToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ObjectToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ZenithAndStopToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem1 As ToolStripSeparator
+    Friend WithEvents tsmiFile_End As ToolStripMenuItem
+    Friend WithEvents tsmiFile_LoadVizier As ToolStripMenuItem
 End Class
