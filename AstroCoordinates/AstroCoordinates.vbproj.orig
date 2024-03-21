@@ -8,7 +8,11 @@
     <MyType>WindowsForms</MyType>
     <Platforms>x64</Platforms>
     <ApplicationIcon>AstroCoordinates.ico</ApplicationIcon>
+<<<<<<< HEAD
+    <ImportedNamespaces>System.Data=False,System.Drawing=False,system.formats.tar=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,AstroCoordinates=True</ImportedNamespaces>
+=======
 	<SourceRevisionID>build$([System.DateTime]::UtcNow.ToString("yyyyMMddHHmmss"))</SourceRevisionID>
+>>>>>>> e7e31ba9434a9253ec190905f4a9042530a2343c
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,7 +34,11 @@
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
     <Compile Include="..\..\src\atomics\cHardwareState.vb" Link="common\cHardwareState.vb" />
     <Compile Include="..\..\src\atomics\cPWI4.vb" Link="common\cPWI4.vb" />
+<<<<<<< HEAD
+=======
     <Compile Include="..\..\src\atomics\GetBuildDateTime.vb" Link="common\GetBuildDateTime.vb" />
+    <Compile Include="..\..\src\atomics\GZIP.vb" Link="common\GZIP.vb" />
+>>>>>>> e7e31ba9434a9253ec190905f4a9042530a2343c
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
   </ItemGroup>
 

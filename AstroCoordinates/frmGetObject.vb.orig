@@ -169,6 +169,22 @@ Public Class frmGetObject
         tsslSelectionLength.Text = FoundEntries.Count.ToString.Trim & " entries filtered"
     End Sub
 
+<<<<<<< HEAD
+    Private Function FormatElement(ByVal Element As String()) As String
+        'Make a nice table
+        Element(0) = Element(0).Trim.PadRight(15)
+        Element(1) = Element(1).Trim.PadLeft(10)
+        Element(2) = Element(2).Trim.PadLeft(10)
+        Return Join(Element, ColSep)
+    End Function
+=======
+    Private Sub tsmiLoadCat_Click(sender As Object, e As EventArgs) Handles tsmiLoadCat.Click
+        'Download catalogs
+        Dim Loader As New cHenryDraper
+        Loader.DownloadData()
+    End Sub
+>>>>>>> e7e31ba9434a9253ec190905f4a9042530a2343c
+
     Private Sub lbResults_DoubleClick(sender As Object, e As EventArgs) Handles lbResults.DoubleClick
         SelectedObject = FoundEntries.Item(lbResults.SelectedIndex)
         Me.DialogResult = DialogResult.OK
