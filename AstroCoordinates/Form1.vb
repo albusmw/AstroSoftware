@@ -70,11 +70,11 @@ Public Class MainForm
         Process.Start("explorer.exe", MyPath)
     End Sub
 
-    Private Sub tsmiEnter_RA_Click(sender As Object, e As EventArgs) Handles tsmiEnter_RA.Click
+    Private Sub tsmiEnter_Dec_Click(sender As Object, e As EventArgs) Handles tsmiEnter_Dec.Click
         UpdateDec(AstroParser.ParseDeclination(InputBox("Dec to parse: ", "Dec to parse")))
     End Sub
 
-    Private Sub tsmiEnter_Dec_Click(sender As Object, e As EventArgs) Handles tsmiEnter_Dec.Click
+    Private Sub tsmiEnter_RA_Click(sender As Object, e As EventArgs) Handles tsmiEnter_RA.Click
         UpdateRA(AstroParser.ParseRA(InputBox("RA to parse: ", "RA to parse")))
     End Sub
 
