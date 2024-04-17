@@ -2,15 +2,16 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <RootNamespace>ZWOASITest</RootNamespace>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
-    <Platforms>x64</Platforms>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="AstroStatistics.vb" />
     <Compile Include="..\..\src\atomics\cColorMaps.vb" Link="cColorMaps.vb" />
     <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="cDLLDynCall.vb" />
@@ -22,7 +23,6 @@
     <Compile Include="..\..\src\atomics\cMIDIMonitor.vb" Link="Reference Files\cMIDIMonitor.vb" />
     <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="ComponentModelConverter.vb" />
     <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="cStatMultiThread.vb" />
-    <Compile Include="..\..\src\atomics\Extensions.vb" Link="Extensions.vb" />
     <Compile Include="..\..\src\atomics\ZedGraphService.vb" Link="ZedGraphService.vb" />
     <Compile Include="..\..\src\cAstroStatDisp.vb" Link="cAstroStatDisp.vb" />
     <Compile Include="..\..\src\cZWOASI.vb" Link="cZWOASI.vb" />
@@ -61,6 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="MyLib\" />
     <Folder Include="Reference Files\" />
   </ItemGroup>
 
