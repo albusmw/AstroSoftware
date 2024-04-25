@@ -1,11 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports System.IO
-Imports System.Net.Security
-Imports System.Reflection
-Imports System.Resources
-Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ListView
-Imports AstroCoordinates.cAstroCats
 
 Public Class frmGetObject
 
@@ -114,7 +108,7 @@ Public Class frmGetObject
     End Sub
 
     Private Function GetResourceLines(ByVal Name As String) As String()
-        Return Split((New StreamReader(Assembly.GetExecutingAssembly.GetManifestResourceStream(Name))).ReadToEnd, vbLf)
+        Return Split((New System.IO.StreamReader(System.Reflection.Assembly.GetExecutingAssembly.GetManifestResourceStream(Name))).ReadToEnd, vbLf)
     End Function
 
     '''<summary>Load the PixInsight catalog data (tab separated).</summary>

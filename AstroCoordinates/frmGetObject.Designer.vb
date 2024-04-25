@@ -47,7 +47,7 @@ Partial Class frmGetObject
         tbSearchString.Font = New Font("Courier New", 9F)
         tbSearchString.Location = New Point(93, 12)
         tbSearchString.Name = "tbSearchString"
-        tbSearchString.Size = New Size(695, 21)
+        tbSearchString.Size = New Size(712, 21)
         tbSearchString.TabIndex = 0
         ' 
         ' Label1
@@ -69,15 +69,15 @@ Partial Class frmGetObject
         lbResults.ItemHeight = 15
         lbResults.Location = New Point(3, 3)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(351, 380)
+        lbResults.Size = New Size(358, 533)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
         ' 
         ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength})
-        ssMain.Location = New Point(0, 428)
+        ssMain.Location = New Point(0, 581)
         ssMain.Name = "ssMain"
-        ssMain.Size = New Size(800, 22)
+        ssMain.Size = New Size(817, 22)
         ssMain.TabIndex = 3
         ssMain.Text = "StatusStrip1"
         ' 
@@ -108,14 +108,14 @@ Partial Class frmGetObject
         scMain.Panel2.Controls.Add(btnLocationHolz)
         scMain.Panel2.Controls.Add(btnLocationDSC)
         scMain.Panel2.Controls.Add(tbDetails)
-        scMain.Size = New Size(776, 386)
-        scMain.SplitterDistance = 357
+        scMain.Size = New Size(793, 539)
+        scMain.SplitterDistance = 364
         scMain.TabIndex = 4
         ' 
         ' btnLocationHolz
         ' 
-        btnLocationHolz.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnLocationHolz.Location = New Point(298, 356)
+        btnLocationHolz.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        btnLocationHolz.Location = New Point(308, 509)
         btnLocationHolz.Name = "btnLocationHolz"
         btnLocationHolz.Size = New Size(114, 23)
         btnLocationHolz.TabIndex = 2
@@ -124,7 +124,8 @@ Partial Class frmGetObject
         ' 
         ' btnLocationDSC
         ' 
-        btnLocationDSC.Location = New Point(3, 356)
+        btnLocationDSC.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
+        btnLocationDSC.Location = New Point(3, 509)
         btnLocationDSC.Name = "btnLocationDSC"
         btnLocationDSC.Size = New Size(58, 23)
         btnLocationDSC.TabIndex = 1
@@ -139,7 +140,7 @@ Partial Class frmGetObject
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(409, 347)
+        tbDetails.Size = New Size(419, 500)
         tbDetails.TabIndex = 0
         tbDetails.WordWrap = False
         ' 
@@ -152,7 +153,7 @@ Partial Class frmGetObject
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(800, 450)
+        ClientSize = New Size(817, 603)
         Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(Label1)

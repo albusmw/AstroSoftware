@@ -50,8 +50,8 @@ Public Class MainForm
 
     Private Sub GotoObject()
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(cPWI4.Goto_RaDec(cbJ2000.Checked, tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep))
-        Response = Download.GetResponse(cPWI4.Tracking(True))
+        Response = Download.GetResponse(cPWI4.Command.Goto_RaDec(cbJ2000.Checked, tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep))
+        Response = Download.GetResponse(cPWI4.Command.Tracking(True))
     End Sub
 
     '═════════════════════════════════════════════════════════════════════════════
@@ -84,8 +84,8 @@ Public Class MainForm
 
     Private Sub ZenithAndStopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ZenithAndStopToolStripMenuItem.Click
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(cPWI4.Tracking(False))
-        Response = Download.GetResponse(cPWI4.Goto_AltAz(90, 0))
+        Response = Download.GetResponse(cPWI4.Command.Tracking(False))
+        Response = Download.GetResponse(cPWI4.Command.Goto_AltAz(90, 0))
     End Sub
 
     Private Sub tsmiFile_End_Click(sender As Object, e As EventArgs) Handles tsmiFile_End.Click
