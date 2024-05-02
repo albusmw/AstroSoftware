@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Include="..\..\MyLib\ASCOMDynamic.vb" Link="MyLib\ASCOMDynamic.vb" />
     <Compile Include="..\..\MyLib\AstroDSP.vb" Link="MyLib\AstroDSP.vb" />
+    <Compile Include="..\..\MyLib\AstroObjectInfo.vb" Link="MyLib\AstroObjectInfo.vb" />
     <Compile Include="..\..\MyLib\ClosedXML.vb" Link="MyLib\ClosedXML.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
@@ -54,6 +55,9 @@
     <None Update="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Update="TestData\CCDGuide_ObjectTracker_NGC6523_DSC.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

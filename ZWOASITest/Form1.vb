@@ -1,5 +1,9 @@
 ﻿Option Explicit On
 Option Strict On
+Imports OpenMacroBoard.SDK
+Imports StreamDeckSharp
+
+
 
 'TODO: Join ASIGetControlCaps and ControlValues output
 
@@ -9,20 +13,81 @@ Public Class MyMainForm
     Private DoEventEveryms As Integer = 100
 
     Private zgcMain As New ZedGraph.ZedGraphControl
-    Private Plotter As cZEDGraphService
+    Private Plotter As cZEDGraph
 
     Private pbMain As PictureBoxEx
 
     '''<summary>Monitor for the MIDI events.</summary>
     Private WithEvents MIDI As cMIDIMonitor
 
-    '''<summary>SteamDeck.</summary>
-    Private WithEvents MyDeck As StreamDeckSharp.IStreamDeckBoard
+    '''<summary>StreamDeck tools.</summary>
+    Private WithEvents StreamDeck As cStreamDeck
+
+    '''<summary>StreamDeck.</summary>
+    Private WithEvents MyStreamDeck As OpenMacroBoard.SDK.IMacroBoard
 
     Private Class Flags
         Public Shared ResetStatHold As Boolean = False
         Public Shared StopNow As Boolean = False
     End Class
+
+    Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles Me.Load
+
+        'Load IPP
+        Dim IPPLoadError As String = String.Empty
+        Dim IPPPathToUse As String = cIntelIPP.SearchDLLToUse(cIntelIPP.PossiblePaths(M.DB.MyPath).ToArray, IPPLoadError)
+        If String.IsNullOrEmpty(IPPLoadError) = True Then
+            M.DB.IPP = New cIntelIPP(IPPPathToUse)
+            cFITSWriter.UseIPPForWriting = True
+        Else
+            cFITSWriter.UseIPPForWriting = False
+        End If
+        cFITSWriter.IPPPath = M.DB.IPP.IPPPath
+        M.DB.StatCalc = New AstroNET.Statistics(M.DB.IPP.IPPPath)
+
+        'Add ZEDGraph
+        scRight.Panel2.Controls.Add(zgcMain)
+        zgcMain.Dock = DockStyle.Fill
+        Plotter = New cZEDGraph(zgcMain)
+
+        'Load custom controls - main image (must be done due to 64-bit IDE limitation)
+        pbMain = New PictureBoxEx
+        scRight.Panel1.Controls.Add(pbMain)
+        pbMain.Dock = DockStyle.Fill
+        pbMain.InterpolationMode = M.DB.ImageOut_Interpolation
+        pbMain.SizeMode = PictureBoxSizeMode.Zoom
+        pbMain.BackColor = Color.Purple
+
+        'Configure GUI elements
+        UpdatePropGrid()
+
+        'MIDI monitor
+        MIDI = New cMIDIMonitor
+        If MIDI.MIDIDeviceCount > 0 Then MIDI.SelectMidiDevice(0)
+
+        'StreamDeck
+        'https://openmacroboard.github.io/
+        Dim FoundDecks As List(Of StreamDeckSharp.StreamDeckDeviceReference) = StreamDeckSharp.StreamDeck.EnumerateDevices.Cast(Of StreamDeckSharp.StreamDeckDeviceReference).ToList
+        If FoundDecks.Count > 0 Then
+            MyStreamDeck = StreamDeckSharp.StreamDeck.OpenDevice()
+            StreamDeck = New cStreamDeck(MyStreamDeck)
+            AddHandler MyStreamDeck.KeyStateChanged, AddressOf ReactOnKey
+            Dim FontToUse As New Font("Courier New", 20, FontStyle.Bold)
+
+            For Idx As Integer = 0 To 33
+                StreamDeck.SetKeyText(Idx, "---", FontToUse, Color.Black, Color.White)
+            Next Idx
+            StreamDeck.SetKeyText(0, "ColorKey" & System.Environment.NewLine & "None", FontToUse, Color.Black, Color.White)
+            StreamDeck.SetKeyText(1, "ColorKey" & System.Environment.NewLine & "Bone", FontToUse, Color.DarkGray, Color.Black)
+            StreamDeck.SetKeyText(2, "ColorKey" & System.Environment.NewLine & "False", FontToUse, Color.Red, Color.Green)
+            StreamDeck.SetKeyText(3, "ROI" & System.Environment.NewLine & "Focus", FontToUse)
+            StreamDeck.SetKeyText(4, "???" & System.Environment.NewLine & "!!!", FontToUse)
+            StreamDeck.SetKeyText(5, String.Empty, FontToUse)
+        End If
+
+    End Sub
+
+
 
     Private Sub btnRunTest_Click(sender As Object, e As EventArgs) Handles btnRunTest.Click
 
@@ -282,16 +347,16 @@ Public Class MyMainForm
             'Display statistics
             If M.DB.Flow_DisplayStatistics = True Then
                 Dim CurrentCurveWidth As Integer = 1
-                Plotter.PlotXvsY("Mono", M.DB.SingleStat.MonochromHistogram_Int, 1, New cZEDGraphService.sGraphStyle(System.Drawing.Color.Black, cZEDGraphService.eCurveMode.LinesAndPoints, CurrentCurveWidth))
-                Plotter.PlotXvsY("Mono Accumumulated", M.DB.LoopStat.MonochromHistogram_Int, M.DB.LoopStat.Count, New cZEDGraphService.sGraphStyle(System.Drawing.Color.Orange, cZEDGraphService.eCurveMode.Dots, CurrentCurveWidth))
+                Plotter.PlotXvsY("Mono", M.DB.SingleStat.MonochromHistogram_Int, 1, New cZEDGraph.sGraphStyle(System.Drawing.Color.Black, cZEDGraph.eCurveMode.LinesAndPoints, CurrentCurveWidth))
+                Plotter.PlotXvsY("Mono Accumumulated", M.DB.LoopStat.MonochromHistogram_Int, M.DB.LoopStat.Count, New cZEDGraph.sGraphStyle(System.Drawing.Color.Orange, cZEDGraph.eCurveMode.Dots, CurrentCurveWidth))
                 Plotter.GridOnOff(True, True)
                 Select Case M.DB.GraphOut_AutoAlways
-                    Case cZEDGraphService.eScalingMode.LeaveAsIs
+                    Case cZEDGraph.eScalingMode.LeaveAsIs
                         'Do nothing
-                    Case cZEDGraphService.eScalingMode.Automatic
-                        Plotter.ManuallyScaleXAxis(0, M.DB.SingleStat.MonoStatistics_Int.Max.Key)
-                    Case cZEDGraphService.eScalingMode.FullRange
-                        Plotter.ManuallyScaleXAxis(0, 65536)
+                    Case cZEDGraph.eScalingMode.Automatic
+                        Plotter.ManuallyScaleXAxisLin(0, M.DB.SingleStat.MonoStatistics_Int.Max.Key)
+                    Case cZEDGraph.eScalingMode.FullRange
+                        Plotter.ManuallyScaleXAxisLin(0, 65536)
                 End Select
                 Plotter.AutoScaleYAxisLog()
             End If
@@ -453,63 +518,7 @@ Public Class MyMainForm
         DisplayLog()
     End Sub
 
-    Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles Me.Load
 
-        'Load IPP
-        Dim IPPLoadError As String = String.Empty
-        Dim IPPPathToUse As String = cIntelIPP.SearchDLLToUse(cIntelIPP.PossiblePaths(M.DB.MyPath).ToArray, IPPLoadError)
-        If String.IsNullOrEmpty(IPPLoadError) = True Then
-            M.DB.IPP = New cIntelIPP(IPPPathToUse)
-            cFITSWriter.UseIPPForWriting = True
-        Else
-            cFITSWriter.UseIPPForWriting = False
-        End If
-        cFITSWriter.IPPPath = M.DB.IPP.IPPPath
-        M.DB.StatCalc = New AstroNET.Statistics(M.DB.IPP.IPPPath)
-
-        'Add ZEDGraph
-        scRight.Panel2.Controls.Add(zgcMain)
-        zgcMain.Dock = DockStyle.Fill
-        Plotter = New cZEDGraphService(zgcMain)
-
-        'Load custom controls - main image (must be done due to 64-bit IDE limitation)
-        pbMain = New PictureBoxEx
-        scRight.Panel1.Controls.Add(pbMain)
-        pbMain.Dock = DockStyle.Fill
-        pbMain.InterpolationMode = M.DB.ImageOut_Interpolation
-        pbMain.SizeMode = PictureBoxSizeMode.Zoom
-        pbMain.BackColor = Color.Purple
-
-        'Configure GUI elements
-        UpdatePropGrid()
-
-        'MIDI monitor
-        MIDI = New cMIDIMonitor
-        If MIDI.MIDIDeviceCount > 0 Then MIDI.SelectMidiDevice(0)
-
-        'StreamDeck
-        MyDeck = StreamDeckSharp.StreamDeck.OpenDevice()
-        For Idx As Integer = 0 To 33
-            Dim MyImage As New Bitmap(144, 144)
-            Dim newGraphics As Graphics = Graphics.FromImage(MyImage)
-            newGraphics.DrawString(Chr(Idx + 65).ToString.Trim, New Font("Courier New", 54), New SolidBrush(Color.Blue), New PointF(40, 40))
-            newGraphics.DrawRectangle((New Pen(Color.Orange, 2)), New Rectangle(2, 2, 140, 140))
-            SetKeyBitmap(Idx, MyImage)
-        Next Idx
-
-    End Sub
-
-    Private Sub SetKeyBitmap(ByVal KeyId As Integer, ByVal FileName As String)
-        Dim X As OpenMacroBoard.SDK.IKeyBitmapFactory = OpenMacroBoard.SDK.KeyBitmap.Create
-        Dim KeyToLoad As OpenMacroBoard.SDK.KeyBitmap = OpenMacroBoard.SDK.KeyBitmapDrawingExtensions.FromFile(X, FileName)
-        MyDeck.SetKeyBitmap(KeyId, KeyToLoad)
-    End Sub
-
-    Private Sub SetKeyBitmap(ByVal KeyId As Integer, ByVal ImageToLoad As Bitmap)
-        Dim X As OpenMacroBoard.SDK.IKeyBitmapFactory = OpenMacroBoard.SDK.KeyBitmap.Create
-        Dim KeyToLoad As OpenMacroBoard.SDK.KeyBitmap = OpenMacroBoard.SDK.KeyBitmapDrawingExtensions.FromBitmap(X, ImageToLoad)
-        MyDeck.SetKeyBitmap(KeyId, KeyToLoad)
-    End Sub
 
     Private Sub UpdatePropGrid()
         pgConfig.SelectedObject = M.DB
@@ -579,7 +588,7 @@ Public Class MyMainForm
                 ChangeGain(Value)
             Case 3
                 ChangeGamma_Display(Value)
-            Case 8
+            Case 4
                 ChangeGamma_Capture(Value)
         End Select
     End Sub
@@ -592,13 +601,13 @@ Public Class MyMainForm
                 M.DB.Capture_Gain = 20
             Case 3
                 M.DB.ImageFromData.Gamma = 1.0
-            Case 8
+            Case 4
                 M.DB.Capture_Gamma = 50
         End Select
         UpdatePropGrid()
     End Sub
 
-    Private Sub MyDeck_KeyStateChanged(sender As Object, e As OpenMacroBoard.SDK.KeyEventArgs) Handles MyDeck.KeyStateChanged
+    Private Sub ReactOnKey(sender As Object, e As OpenMacroBoard.SDK.KeyEventArgs)
         Select Case e.Key
             Case 0
                 M.DB.ImageFromData.ColorMap = cColorMaps.eMaps.None
@@ -607,7 +616,7 @@ Public Class MyMainForm
             Case 2
                 M.DB.ImageFromData.ColorMap = cColorMaps.eMaps.FalseColor
             Case 3
-                M.DB.ROISet = New Rectangle(M.DB.ROISet.X - 50, M.DB.ROISet.Y, M.DB.ROISet.Width, M.DB.ROISet.Height)
+                M.DB.ROISet = New Rectangle(M.DB.ROISet.X, M.DB.ROISet.Y, M.DB.ROISet.Width, M.DB.ROISet.Height)
         End Select
     End Sub
 

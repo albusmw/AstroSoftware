@@ -16,8 +16,6 @@ Public Class cDB
         Video
     End Enum
 
-
-
     Const Cat_CaptureControl As String = "1. Capture control"
     Const Cat_FlowControl As String = "2. Flow control"
     Const Cat_ValueStepping As String = "3. Value adjustment"
@@ -124,8 +122,8 @@ Public Class cDB
     <ComponentModel.Category(Cat_GraphOut)>
     <ComponentModel.DisplayName("a) X axis scaling")>
     <ComponentModel.TypeConverter(GetType(ComponentModelEx.EnumDesciptionConverter))>
-    <ComponentModel.DefaultValue(GetType(cZEDGraphService.eScalingMode), "Automatic")>
-    Public Property GraphOut_AutoAlways As cZEDGraphService.eScalingMode = cZEDGraphService.eScalingMode.Automatic
+    <ComponentModel.DefaultValue(GetType(cZEDGraph.eScalingMode), "Automatic")>
+    Public Property GraphOut_AutoAlways As cZEDGraph.eScalingMode = cZEDGraph.eScalingMode.Automatic
 
     '===============================================================================================================
 

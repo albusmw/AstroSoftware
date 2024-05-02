@@ -5,81 +5,10 @@ Public Class frmGetObject
 
     Public SelectedObject As sObjectInfo
 
-    Public Enum eCatMode
-        M
-        NGC
-        Stars
-        Custom
-    End Enum
-
     'Local coordinates
     Private MyLocation As String = "LOCATION UNKNOWN"
     Private MyLat As Double = Double.NaN
     Private MyLong As Double = Double.NaN
-
-    Public Structure sObjectInfo
-        Public Catalog As String
-        Public Name As String
-        Public RA As Double
-        Public Dec As Double
-        Public Diameter As Double
-        Public Mag As Double
-        Public HD As UInt32
-        Public HIP As UInt32
-        Public AliasName As String
-        Public Sub Init()
-            Catalog = String.Empty
-            Name = String.Empty
-            RA = Double.NaN
-            Dec = Double.NaN
-            Diameter = Double.NaN
-            Mag = Double.NaN
-            HD = 0
-            HIP = 0
-            AliasName = String.Empty
-        End Sub
-        Public Sub New(ByVal Mode As eCatMode, ByVal Content As String())
-            Init()
-            'These parameters are always the same ...
-            Name = Content(0).Trim
-            RA = AstroParser.ParseRA(Content(1))
-            Dec = AstroParser.ParseDeclination(Content(2))
-            'Depending on the catalog there are additional parameters
-            Select Case Mode
-                Case eCatMode.M
-                    'Messier
-                    Catalog = "Messier"
-                    Diameter = Content(3).ValRegIndep
-                    Mag = Content(4).ValRegIndep
-                    If Content.GetUpperBound(0) >= 5 Then AliasName = Content(Content.GetUpperBound(0)).Trim
-                Case eCatMode.NGC
-                    'NGC
-                    Catalog = "NGC2000"
-                    Diameter = Content(3).ValRegIndep
-                    Mag = Content(4).ValRegIndep
-                    If Content.GetUpperBound(0) >= 5 Then AliasName = Content(Content.GetUpperBound(0)).Trim
-                Case eCatMode.Stars
-                    'Stars
-                    Catalog = "Stars"
-                    Diameter = Content(3).ValRegIndep
-                    Mag = Content(4).ValRegIndep
-                    If Content.GetUpperBound(0) >= 5 Then UInt32.TryParse(Content(5).Trim, HD)
-                    If Content.GetUpperBound(0) >= 6 Then UInt32.TryParse(Content(6).Trim, HIP)
-                    If Content.GetUpperBound(0) >= 7 Then AliasName = Content(Content.GetUpperBound(0)).Trim
-                Case eCatMode.Custom
-                    'Custom catalog
-                    Catalog = "Custom"
-                    If Content.GetUpperBound(0) >= 3 Then AliasName = Content(Content.GetUpperBound(0)).Trim
-            End Select
-        End Sub
-        Public ReadOnly Property VerboseName() As String
-            Get
-                Dim RetVal As String = Name
-                If String.IsNullOrEmpty(AliasName) = False Then RetVal &= " (" & AliasName & ")"
-                Return RetVal
-            End Get
-        End Property
-    End Structure
 
     Dim MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
     Dim Objects As New List(Of sObjectInfo)
@@ -182,7 +111,7 @@ Public Class frmGetObject
             Dim CurrentLocation As New Ato.AstroCalc.sLatLong(MyLat, MyLong)
             Dim ObjectCoord As New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec)
             Dim ObjectHourAngle As Double = Double.NaN
-            Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition(CurrentUTC, CurrentLocation, ObjectCoord)
+            Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, ObjectCoord)
             Dim Details As New List(Of String)
             Details.Add(SelectedObject.VerboseName & " - Catalog: " & SelectedObject.Catalog)
             Details.Add("═══════════════════════════════════════════════════════")
@@ -210,17 +139,17 @@ Public Class frmGetObject
 
     Private Sub btnLocationDSC_Click(sender As Object, e As EventArgs) Handles btnLocationDSC.Click
         MyLocation = "Deep Sky Chile"
-        MyLat = -(30 + (31 / 60) + (34.7 / 3600))       'according to Overview.md
-        MyLong = -(70 + (51 / 60) + (11.8 / 3600))      'according to Overview.md
+        MyLat = Ato.AstroCalc.KnownLocations.DSC.Latitude
+        MyLong = Ato.AstroCalc.KnownLocations.DSC.Longitude
     End Sub
 
     Private Sub btnLocationHolz_Click(sender As Object, e As EventArgs) Handles btnLocationHolz.Click
         MyLocation = "Holzkirchen"
-        MyLat = 47.878503874990805
-        MyLong = 11.691537333035741
+        MyLat = Ato.AstroCalc.KnownLocations.Holzkirchen.Latitude
+        MyLong = Ato.AstroCalc.KnownLocations.Holzkirchen.Longitude
     End Sub
 
-    Private Function GetObjectPosition(ByVal Moment As DateTime, ByVal CurrentLocation As Ato.AstroCalc.sLatLong, ByVal ObjectCoord As Ato.AstroCalc.sRADec) As Ato.AstroCalc.sAzAlt
+    Private Function GetObjectPosition_ASCOM(ByVal Moment As DateTime, ByVal CurrentLocation As Ato.AstroCalc.sLatLong, ByVal ObjectCoord As Ato.AstroCalc.sRADec) As Ato.AstroCalc.sAzAlt
 
         'Use dynamically ASCOM calls
 

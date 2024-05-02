@@ -1,6 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports ASCOM.Tools.Novas31
 
 Public Class MainForm
 
@@ -90,7 +89,7 @@ Public Class MainForm
             Dim rc3 As Short = ASCOM.Tools.Novas31.Novas.Place(CurrentJdt, ObjectToProcess, Obs, deltaT, ASCOM.Tools.Novas31.CoordSys.EquinoxOfDate, Acc, Place)
 
 
-            ASCOM.Tools.Novas31.Novas.Equ2Hor(CurrentJdt, deltaT, Acc, 0.0, 0.0, OnSurfaceObserver, PosApparent.Ra, PosApparent.Dec, RefractionOption.NoRefraction, zenithDistance, azimuth, refractedRa, refractedDeclination)
+            ASCOM.Tools.Novas31.Novas.Equ2Hor(CurrentJdt, deltaT, Acc, 0.0, 0.0, OnSurfaceObserver, PosApparent.Ra, PosApparent.Dec, ASCOM.Tools.Novas31.RefractionOption.NoRefraction, zenithDistance, azimuth, refractedRa, refractedDeclination)
             zenithDistanceList.Add(zenithDistance)
 
         Next CurrentJdt
@@ -128,23 +127,6 @@ Public Class MainForm
 
     End Sub
 
-    Private Sub ClearLog()
-        tbLog.Text = String.Empty
-    End Sub
-
-    Private Sub AddToLog(ByVal Text As String)
-        If tbLog.Text.Length > 0 Then
-            tbLog.Text &= System.Environment.NewLine & Text
-        Else
-            tbLog.Text &= Text
-        End If
-
-    End Sub
-
-    Private Sub btnCalculate_Click(sender As Object, e As EventArgs) Handles btnCalculate.Click
-        Ato.AstroCalc.RunTestCase_SelfBuild()
-    End Sub
-
     Private Sub btnFromClipboard_Click(sender As Object, e As EventArgs) Handles btnFromClipboard.Click
         'Parse the data from the coordinates given on the AstroBin object page
         Dim ClipContent As String() = Split(Clipboard.GetText, System.Environment.NewLine)
@@ -158,6 +140,70 @@ Public Class MainForm
                 Dec = AstroParser.ParseDeclination(Line.Trim.Replace("DEC center:", String.Empty))
             End If
         Next Line
+    End Sub
+
+    Private Sub tsmiFile_Exit_Click(sender As Object, e As EventArgs) Handles tsmiFile_Exit.Click
+        End
+    End Sub
+
+    Private Sub ObjectVisibilityToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles tsmiCalc_Visibility.Click
+
+        Dim LeftWidth As Integer = 20
+        Dim SelectedObject As New sObjectInfo
+        Dim Result As New List(Of String)
+
+        Try
+            'Display selected object information
+
+            Dim CurrentUTC As DateTime = DateTime.UtcNow
+            Dim CurrentLocation As Ato.AstroCalc.sLatLong = Ato.AstroCalc.KnownLocations.DSC
+            Dim ObjectCoord As New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec)
+            Dim ObjectHourAngle As Double = Double.NaN
+            Dim Pos As Ato.AstroCalc.sAzAlt '= GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, ObjectCoord)
+            Dim Details As New List(Of String)
+            Details.Add(SelectedObject.VerboseName & " - Catalog: " & SelectedObject.Catalog)
+            Details.Add("═══════════════════════════════════════════════════════")
+            Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
+            If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
+            If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
+            If SelectedObject.HD > 0 Then Details.Add(" HD".PadLeft(LeftWidth) & ": " & SelectedObject.HD.ToString.Trim)
+            Details.Add("   RA".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.FormatHMS(SelectedObject.RA))
+            Details.Add("   Dec".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.Format360Degree(SelectedObject.Dec))
+            Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Ato.AstroCalc.Format360Degree(Pos.ALT))
+            Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Ato.AstroCalc.Format360Degree(Pos.AZ))
+            Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & Ato.AstroCalc.FormatHMS(ObjectHourAngle * (24 / 360)))
+            Details.Add("═══════════════════════════════════════════════════════")
+            Details.Add(" UTC time".PadLeft(LeftWidth) & ": " & Format(CurrentUTC, "HH:mm:ss zzz"))
+            Details.Add(" Location".PadLeft(LeftWidth) & ": " & CurrentLocation.ToString)
+            Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LST(CurrentUTC, CurrentLocation.Longitude).ValRegIndep)
+            Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, CurrentLocation.Longitude))
+            Details.Add(" Location latitude".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.Format360Degree(CurrentLocation.Latitude))
+            Details.Add(" Location longitude".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.Format360Degree(CurrentLocation.Longitude))
+            Result.AddRange(Details)
+        Catch ex As Exception
+            Result.Add("ERROR: <" & ex.Message & ">")
+        End Try
+
+    End Sub
+
+    Private Sub tsmiCalc_TC1_Click(sender As Object, e As EventArgs) Handles tsmiCalc_TC1.Click
+        tbLog.Text = Join(Ato.AstroCalc.RunTestCase_SelfBuild.ToArray, System.Environment.NewLine)
+    End Sub
+
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    ' Log output
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    Private Sub ClearLog()
+        tbLog.Text = String.Empty
+    End Sub
+
+    Private Sub AddToLog(ByVal Text As String)
+        If tbLog.Text.Length > 0 Then
+            tbLog.Text &= System.Environment.NewLine & Text
+        Else
+            tbLog.Text &= Text
+        End If
     End Sub
 
 End Class
