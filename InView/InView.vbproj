@@ -11,13 +11,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="TestData\CCDGuide_ObjectTracker_NGC6523_DSC.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\..\MyLib\ASCOMDynamic.vb" Link="MyLib\ASCOMDynamic.vb" />
     <Compile Include="..\..\MyLib\AstroDSP.vb" Link="MyLib\AstroDSP.vb" />
     <Compile Include="..\..\MyLib\AstroObjectInfo.vb" Link="MyLib\AstroObjectInfo.vb" />
+    <Compile Include="..\..\MyLib\cCCDGuide.vb" Link="MyLib\cCCDGuide.vb" />
     <Compile Include="..\..\MyLib\ClosedXML.vb" Link="MyLib\ClosedXML.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
     <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
+    <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\DSSFileParser.vb" Link="MyLib\DSSFileParser.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
@@ -28,6 +34,7 @@
     <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="atomics\cDLLDynCall.vb" />
     <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="atomics\cIntelIPP.vb" />
     <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="atomics\cStatMultiThread.vb" />
+    <Compile Include="..\..\src\atomics\Sun.vb" Link="atomics\Sun.vb" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,9 +63,6 @@
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
-    <None Update="TestData\CCDGuide_ObjectTracker_NGC6523_DSC.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -69,6 +73,13 @@
   <ItemGroup>
     <PackageReference Include="ASCOM.Tools" Version="1.0.111" />
     <PackageReference Include="ClosedXML" Version="0.102.2" />
+    <PackageReference Include="ZedGraph6" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="TestData\CCDGuide_ObjectTracker_NGC6523_DSC.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>
