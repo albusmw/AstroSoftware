@@ -1,7 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports DocumentFormat.OpenXml.Office.Word
-Imports InView.AstroCalc.NET
 
 Public Class MainForm
 
@@ -19,11 +17,13 @@ Public Class MainForm
         Plotter = New cZEDGraph(zgcMain)
         Dim X As New ASCOM.Tools.RiseSetTimes
 
-        Calculate()
+        DB.Properties.Latitude = Ato.AstroCalc.KnownLocations.DSC.Latitude.ToDegMinSec
+        DB.Properties.Longitude = Ato.AstroCalc.KnownLocations.DSC.Longitude.ToDegMinSec
+        pgMain.SelectedObject = DB.Properties
 
     End Sub
 
-    Private Sub Calculate()
+    Private Sub ASCOMCalculate()
 
         '═════════════════════════════════════════════════════════════════════════════
         'Definitions
@@ -59,7 +59,6 @@ Public Class MainForm
         End With
 
         'Set observer parameters
-        DB.Properties.SetToHolzkirchen()
         OnSurfaceObserver = DB.Properties.GetObserver
 
         'Set on-surface observer parameters
@@ -115,17 +114,17 @@ Public Class MainForm
         AddToLog("Date and time                       " & DateToCalculate.ValRegIndep)
         AddToLog("Julian Date                         " & JdTt.ValRegIndep)
         AddToLog("DeltaT                              " & deltaT.ValRegIndep)
-        AddToLog("Site   : Latitude                   " & Ato.AstroCalc.Format360Degree(OnSurfaceObserver.Latitude).PadLeft(15) & " = " & OnSurfaceObserver.Latitude.ValRegIndep.PadLeft(15))
-        AddToLog("         Longitude                  " & Ato.AstroCalc.Format360Degree(OnSurfaceObserver.Longitude).PadLeft(15) & " = " & OnSurfaceObserver.Longitude.ValRegIndep.PadLeft(15))
+        AddToLog("Site   : Latitude                   " & OnSurfaceObserver.Latitude.ToDegMinSec.PadLeft(15) & " = " & OnSurfaceObserver.Latitude.ValRegIndep.PadLeft(15))
+        AddToLog("         Longitude                  " & OnSurfaceObserver.Longitude.ToDegMinSec.PadLeft(15) & " = " & OnSurfaceObserver.Longitude.ValRegIndep.PadLeft(15))
         AddToLog("         Height [m]                 " & OnSurfaceObserver.Height.ValRegIndep.PadLeft(15))
-        AddToLog("Jupiter: Apparent Right Ascension   " & Ato.AstroCalc.FormatHMS(PosApparent.Ra).PadLeft(15) & " = " & PosApparent.Ra.ValRegIndep.PadLeft(15))
-        AddToLog("                  Declination       " & Ato.AstroCalc.Format360Degree(PosApparent.Dec).PadLeft(15) & " = " & PosApparent.Dec.ValRegIndep.PadLeft(15))
-        AddToLog("Jupiter: ?????    Right Ascension   " & Ato.AstroCalc.FormatHMS(PosLocal.Ra).PadLeft(15) & " = " & PosLocal.Ra.ValRegIndep.PadLeft(15))
-        AddToLog("                  Declination       " & Ato.AstroCalc.Format360Degree(PosLocal.Dec).PadLeft(15) & " = " & PosLocal.Dec.ValRegIndep.PadLeft(15))
-        AddToLog("         Elevation (from Transform) " & Ato.AstroCalc.Format360Degree(Transformer.ElevationTopocentric).PadLeft(15) & " = " & Transformer.ElevationTopocentric.ValRegIndep.PadLeft(15))
-        AddToLog("         Elevation (from Equ2Hor)   " & Ato.AstroCalc.Format360Degree(90 - zenithDistance).PadLeft(15) & " = " & (90 - zenithDistance).ValRegIndep.PadLeft(15))
-        AddToLog("         Azimuth (from Transform)   " & Ato.AstroCalc.Format360Degree(Transformer.AzimuthTopocentric).PadLeft(15) & " = " & Transformer.AzimuthTopocentric.ValRegIndep.PadLeft(15))
-        AddToLog("         Azimuth (from Equ2Hor)     " & Ato.AstroCalc.Format360Degree(azimuth).PadLeft(15) & " = " & azimuth.ValRegIndep.PadLeft(15))
+        AddToLog("Jupiter: Apparent Right Ascension   " & PosApparent.Ra.ToHMS.PadLeft(15) & " = " & PosApparent.Ra.ValRegIndep.PadLeft(15))
+        AddToLog("                  Declination       " & PosApparent.Dec.ToDegMinSec.PadLeft(15) & " = " & PosApparent.Dec.ValRegIndep.PadLeft(15))
+        AddToLog("Jupiter: ?????    Right Ascension   " & PosLocal.Ra.ToHMS.PadLeft(15) & " = " & PosLocal.Ra.ValRegIndep.PadLeft(15))
+        AddToLog("                  Declination       " & PosLocal.Dec.ToDegMinSec.PadLeft(15) & " = " & PosLocal.Dec.ValRegIndep.PadLeft(15))
+        AddToLog("         Elevation (from Transform) " & Transformer.ElevationTopocentric.ToDegMinSec.PadLeft(15) & " = " & Transformer.ElevationTopocentric.ValRegIndep.PadLeft(15))
+        AddToLog("         Elevation (from Equ2Hor)   " & (90 - zenithDistance).ToDegMinSec.PadLeft(15) & " = " & (90 - zenithDistance).ValRegIndep.PadLeft(15))
+        AddToLog("         Azimuth (from Transform)   " & Transformer.AzimuthTopocentric.ToDegMinSec.PadLeft(15) & " = " & Transformer.AzimuthTopocentric.ValRegIndep.PadLeft(15))
+        AddToLog("         Azimuth (from Equ2Hor)     " & azimuth.ToDegMinSec.PadLeft(15) & " = " & azimuth.ValRegIndep.PadLeft(15))
         AddToLog("Duration                            " & Stopper.ElapsedMilliseconds.ValRegIndep & " ms")
 
     End Sub
@@ -155,22 +154,24 @@ Public Class MainForm
             If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
             If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
             If SelectedObject.HD > 0 Then Details.Add(" HD".PadLeft(LeftWidth) & ": " & SelectedObject.HD.ToString.Trim)
-            Details.Add("   RA".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.FormatHMS(SelectedObject.RA))
-            Details.Add("   Dec".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.Format360Degree(SelectedObject.Dec))
-            Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Ato.AstroCalc.Format360Degree(Pos.Alt))
-            Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Ato.AstroCalc.Format360Degree(Pos.AZ))
-            Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & Ato.AstroCalc.FormatHMS(ObjectHourAngle * (24 / 360)))
+            Details.Add("   RA".PadLeft(LeftWidth) & ": " & SelectedObject.RA.ToHMS)
+            Details.Add("   Dec".PadLeft(LeftWidth) & ": " & SelectedObject.Dec.ToDegMinSec)
+            Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Pos.Alt.ToDegMinSec)
+            Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
+            Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
             Details.Add("═══════════════════════════════════════════════════════")
             Details.Add(" UTC time".PadLeft(LeftWidth) & ": " & Format(CurrentUTC, "HH:mm:ss zzz"))
             Details.Add(" Location".PadLeft(LeftWidth) & ": " & CurrentLocation.ToString)
             Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LST(CurrentUTC, CurrentLocation.Longitude).ValRegIndep)
             Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, CurrentLocation.Longitude))
-            Details.Add(" Location latitude".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.Format360Degree(CurrentLocation.Latitude))
-            Details.Add(" Location longitude".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.Format360Degree(CurrentLocation.Longitude))
+            Details.Add(" Location latitude".PadLeft(LeftWidth) & ": " & CurrentLocation.Latitude.ToDegMinSec)
+            Details.Add(" Location longitude".PadLeft(LeftWidth) & ": " & CurrentLocation.Longitude.ToDegMinSec)
             Result.AddRange(Details)
         Catch ex As Exception
             Result.Add("ERROR: <" & ex.Message & ">")
         End Try
+
+        AddToLog(Result)
 
     End Sub
 
@@ -207,10 +208,10 @@ Public Class MainForm
 
         'Plot some header data to the log
         ClearLog()
-        AddToLog(" Location Lat  : " & Ato.AstroCalc.Format360Degree(CurrentLocation.Latitude_deg))
-        AddToLog(" Location Long : " & Ato.AstroCalc.Format360Degree(CurrentLocation.Longitude_deg))
-        AddToLog(" Object RA     : " & Ato.AstroCalc.FormatHMS(J2000.RA))
-        AddToLog(" Object Dec    : " & Ato.AstroCalc.Format360Degree(J2000.DEC))
+        AddToLog(" Location Lat  : " & CurrentLocation.Latitude_deg.ToDegMinSec)
+        AddToLog(" Location Long : " & CurrentLocation.Longitude_deg.ToDegMinSec)
+        AddToLog(" Object RA     : " & J2000.RA.ToHMS)
+        AddToLog(" Object Dec    : " & J2000.DEC.ToDegMinSec)
         AddToLog("Date      |Time      |DateTime           | AZ CCD   |ALT CCD   |  AZ      |ALT       | LST")
 
         Dim Alt_CCD As New List(Of Double)
@@ -280,6 +281,12 @@ Public Class MainForm
         tbLog.Text = String.Empty
     End Sub
 
+    Private Sub AddToLog(ByVal Text As List(Of String))
+        For Each Entry As String In Text
+            AddToLog(Entry)
+        Next Entry
+    End Sub
+
     Private Sub AddToLog(ByVal Text As String)
         If tbLog.Text.Length > 0 Then
             tbLog.Text &= System.Environment.NewLine & Text
@@ -295,39 +302,31 @@ Public Class MainForm
         Dim Dec As Double = Double.NaN
         For Each Line As String In ClipContent
             If Line.Trim.StartsWith("RA center:") Then
-                RA = AstroParser.ParseRA(Line.Trim.Replace("RA center:", String.Empty).Trim)
+                RA = Line.Trim.Replace("RA center:", String.Empty).ParseRA
             End If
             If Line.Trim.StartsWith("DEC center:") Then
-                Dec = AstroParser.ParseDeclination(Line.Trim.Replace("DEC center:", String.Empty))
+                Dec = Line.Trim.Replace("DEC center:", String.Empty).ParseDegree
             End If
         Next Line
     End Sub
 
-    Private Sub EntryUpdate(sender As Object, e As EventArgs) Handles tbObjectRA.TextChanged, tbObjectDec.TextChanged
-        CalcAll()
-    End Sub
-
     Private Sub CalcAll()
 
-        Dim UTC_Start As DateTime = Now.ToUniversalTime
-        Dim UTC_Stop As DateTime = UTC_Start.AddDays(7)
-        Dim UTC_Delta As New TimeSpan(0, 1, 0)
+        Dim UTC_Stop As DateTime = DB.Properties.UTC_Start.Add(DB.Properties.UTC_Range)
 
         'Form timeline
-        Dim MomentUTC As DateTime = UTC_Start
+        Dim MomentUTC As DateTime = DB.Properties.UTC_Start
         Dim TimeLine As New List(Of DateTime)
         Do
             TimeLine.Add(MomentUTC)
-            MomentUTC = MomentUTC.Add(UTC_Delta)
+            MomentUTC = MomentUTC.Add(DB.Properties.UTC_Stepping)
             If MomentUTC >= UTC_Stop Then Exit Do
         Loop Until 1 = 0
 
         'Calculate all positions
-        Dim CurrentLocation As Ato.AstroCalc.sLatLong = Ato.AstroCalc.KnownLocations.DSC
-        Dim J2000 As New Ato.AstroCalc.sRADec(tbObjectRA.Text, tbObjectDec.Text)
-        Dim Stopper As New Stopwatch : Stopper.Reset() :
+        Dim Stopper As New Stopwatch : Stopper.Reset()
         Stopper.Start()
-        Dim Positions As Ato.AstroCalc.sAzAlt() = Ato.AstroCalc.GetObjectPosition(TimeLine.ToArray, CurrentLocation, J2000, Nothing)
+        Dim Positions As Ato.AstroCalc.sAzAlt() = Ato.AstroCalc.GetObjectPosition(TimeLine.ToArray, DB.Properties.GetLocation, DB.Properties.GetJ2000, Nothing)
         Stopper.Stop()
         ClearLog()
         AddToLog("Calculation took " & Stopper.ElapsedMilliseconds & " ms")
@@ -340,12 +339,12 @@ Public Class MainForm
         For Idx As Integer = 0 To Positions.GetUpperBound(0)
             Dim SunAz As Double = Double.NaN
             Dim SunHeight As Double = Double.NaN
-            Sun.SunPos(TimeLine(Idx), CurrentLocation.Longitude_deg, CurrentLocation.Latitude_deg, SunAz, SunHeight)
+            AstroCalc.NET.Sun.SunPos(TimeLine(Idx), DB.Properties.GetLocation.Longitude_deg, DB.Properties.GetLocation.Latitude_deg, SunAz, SunHeight)
             SunHeights.Add(SunHeight)
             Object_Azimuth.Add(Positions(Idx).AZ_deg)
             Object_Altitude.Add(Positions(Idx).ALT_deg)
             'Observable
-            If (SunHeight <= -6) And (Positions(Idx).ALT_deg >= 10) Then
+            If (SunHeight <= DB.Properties.Limit_MaxSunHeigth) And (Positions(Idx).ALT_deg >= DB.Properties.Limit_MinHeigth) Then
                 Object_AltitudeOK.Add(Positions(Idx).ALT_deg)
             Else
                 Object_AltitudeOK.Add(Double.NaN)
@@ -364,16 +363,40 @@ Public Class MainForm
 
     End Sub
 
-    Private Sub tbObjectDec_MouseWheel(sender As Object, e As MouseEventArgs) Handles tbObjectDec.MouseWheel
-        Dim CurrentValue As Double = AstroParser.ParseDeclination(tbObjectDec.Text)
-        CurrentValue += (10 / 60) * Math.Sign(e.Delta)
-        tbObjectDec.Text = Ato.AstroCalc.Format360Degree(CurrentValue)
+    Private Sub pgMain_MouseWheel(sender As Object, e As MouseEventArgs) Handles pgMain.MouseWheel
+        Dim OneHour As Integer = 1
+        Select Case pgMain.SelectedGridItem.PropertyDescriptor.Name
+            Case "Declination"
+                Dim CurrentValue As Double = DB.Properties.Declination.ParseDegree
+                CurrentValue += 10 / 60 * Math.Sign(e.Delta)
+                DB.Properties.Declination = CurrentValue.ToDegMinSec
+            Case "RightAscension"
+                Dim CurrentValue As Double = DB.Properties.RightAscension.ParseRA
+                CurrentValue += 10 / (24 * 60) * Math.Sign(e.Delta)
+                DB.Properties.RightAscension = CurrentValue.ToHMS
+            Case "Latitude"
+                Dim CurrentValue As Double = DB.Properties.Latitude.ParseDegree
+                CurrentValue += 10 / 60 * Math.Sign(e.Delta)
+                DB.Properties.Latitude = CurrentValue.ToDegMinSec
+            Case "Longitude"
+                Dim CurrentValue As Double = DB.Properties.Longitude.ParseDegree
+                CurrentValue += 10 / 60 * Math.Sign(e.Delta)
+                DB.Properties.Longitude = CurrentValue.ToDegMinSec
+            Case "UTC_Start"
+                DB.Properties.UTC_Start = DB.Properties.UTC_Start.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
+            Case "UTC_Range"
+                DB.Properties.UTC_Range = DB.Properties.UTC_Range.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
+            Case "Limit_MinHeigth"
+                DB.Properties.Limit_MinHeigth = DB.Properties.Limit_MinHeigth + (1 * Math.Sign(e.Delta))
+            Case "Limit_MaxSunHeigth"
+                DB.Properties.Limit_MaxSunHeigth = DB.Properties.Limit_MaxSunHeigth + (1 * Math.Sign(e.Delta))
+        End Select
+        pgMain.SelectedObject = DB.Properties
+        CalcAll()
     End Sub
 
-    Private Sub tbObjectRA_MouseWheel(sender As Object, e As MouseEventArgs) Handles tbObjectRA.MouseWheel
-        Dim CurrentValue As Double = AstroParser.ParseRA(tbObjectRA.Text)
-        CurrentValue += (10 / (24 * 60)) * Math.Sign(e.Delta)
-        tbObjectRA.Text = Ato.AstroCalc.FormatHMS(CurrentValue)
+    Private Sub pgMain_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgMain.PropertyValueChanged
+        CalcAll()
     End Sub
 
 End Class

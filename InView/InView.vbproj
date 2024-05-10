@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\MyLib\ASCOMDynamic.vb" Link="MyLib\ASCOMDynamic.vb" />
+    <Compile Include="..\..\MyLib\Astro.vb" Link="MyLib\Astro.vb" />
     <Compile Include="..\..\MyLib\AstroDSP.vb" Link="MyLib\AstroDSP.vb" />
     <Compile Include="..\..\MyLib\AstroObjectInfo.vb" Link="MyLib\AstroObjectInfo.vb" />
     <Compile Include="..\..\MyLib\cCCDGuide.vb" Link="MyLib\cCCDGuide.vb" />
