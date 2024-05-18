@@ -11,6 +11,22 @@
 
   <ItemGroup>
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="atomics\AstroStatistics.vb" />
+    <Compile Include="..\..\src\atomics\cColorMaps.vb" Link="atomics\cColorMaps.vb" />
+    <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="atomics\cDLLDynCall.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="atomics\cFITSHeaderChanger.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="atomics\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="atomics\cFITSHeaderParser.vb" />
+    <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="atomics\cFITSReader.vb" />
+    <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="atomics\cFITSWriter.vb" />
+    <Compile Include="..\..\src\atomics\cImageFromData.vb" Link="atomics\cImageFromData.vb" />
+    <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="atomics\cIntelIPP.vb" />
+    <Compile Include="..\..\src\atomics\cLockBitmap.vb" Link="MyLib\cLockBitmap.vb" />
+    <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="atomics\ComponentModelConverter.vb" />
+    <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="MyLib\cStatMultiThread.vb" />
+    <Compile Include="..\..\src\atomics\DragDrop.vb" Link="atomics\DragDrop.vb" />
     <Compile Include="..\..\src\atomics\GetBuildDateTime.vb" Link="atomics\GetBuildDateTime.vb" />
   </ItemGroup>
 
@@ -23,6 +39,7 @@
   <ItemGroup>
     <PackageReference Include="DockPanelSuite" Version="3.1.0" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0" />
+    <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,14 +3,41 @@ Imports WeifenLuo.WinFormsUI.Docking
 
 Public Class MDIParent
 
+    '''<summary>Drag-and-drop handler.</summary>
+    Private WithEvents DD As Ato.DragDrop
+
+    Private Sub MDIParent_Load(sender As Object, e As EventArgs) Handles Me.Load
+
+        Me.Text = (New cGetBuildDateTime).GetMainformTitle
+        dpMain.Theme = New WeifenLuo.WinFormsUI.Docking.VS2015LightTheme
+        DB.Init()
+
+        'Init drap-and-drop
+        DD = New Ato.DragDrop(dpMain)
+
+    End Sub
+
+    Private Sub DD_DropOccured(Files() As String) Handles DD.DropOccured
+        'Handle drag-and-drop for the first dropped FIT(s) file
+        Dim AllFiles As New List(Of String)
+        For Each File As String In Files
+            If System.IO.Path.GetExtension(File).ToUpper.StartsWith(".FIT") Then
+                OpenFile(File)
+                Exit Sub
+            End If
+        Next File
+    End Sub
+
     Private Sub OpenFile(ByVal sender As Object, ByVal e As EventArgs) Handles OpenToolStripMenuItem.Click
-        Dim OpenFileDialog As New OpenFileDialog
-        OpenFileDialog.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
-        OpenFileDialog.Filter = "Text Files (*.txt)|*.txt|All Files (*.*)|*.*"
-        If OpenFileDialog.ShowDialog(Me) = System.Windows.Forms.DialogResult.OK Then
-            Dim FileName = OpenFileDialog.FileName
-            ' TODO: Add code here to open the file.
-        End If
+        Using OpenFileDialog As New OpenFileDialog
+            OpenFileDialog.InitialDirectory = My.Computer.FileSystem.SpecialDirectories.MyDocuments
+            OpenFileDialog.Filter = "FITS files (*.fit*)|*.fit*"
+            OpenFileDialog.Multiselect = False
+            If OpenFileDialog.ShowDialog(Me) = System.Windows.Forms.DialogResult.OK Then
+                'Load file
+                OpenFile(OpenFileDialog.FileName)
+            End If
+        End Using
     End Sub
 
     Private Sub SaveAsToolStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles SaveAsToolStripMenuItem.Click
@@ -46,14 +73,35 @@ Public Class MDIParent
         X.Show(dpMain, DockState.Float)
     End Sub
 
-    Private Sub MDIParent_Load(sender As Object, e As EventArgs) Handles Me.Load
-        Me.Text = (New cGetBuildDateTime).GetMainformTitle
-        dpMain.Theme = New WeifenLuo.WinFormsUI.Docking.VS2015LightTheme
-    End Sub
-
     Private Sub ImageParameterEditorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ImageParameterEditorToolStripMenuItem.Click
         Dim X As New frmImgParameter
         X.Show(dpMain, DockState.Float)
+    End Sub
+
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    ' Load a file
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    Private Sub OpenFile(ByVal FileName As String)
+
+        If System.IO.File.Exists(FileName) = False Then Exit Sub
+
+        'Dispplay image
+        Dim ImageForm As New frmImage
+        ImageForm.LoadImage(FileName)
+        ImageForm.Show(dpMain, DockState.Float)
+
+        'Display histo
+        Dim StatForm As New frmGraph
+        StatForm.PlotStatistics(FileName, ImageForm.ImgStat)
+        StatForm.Show(dpMain, DockState.Float)
+
+        'Display image properties
+        Dim ImgPropForm As New frmImageModifier
+        ImgPropForm.FormToModify = ImageForm
+        ImgPropForm.Show(dpMain, DockState.Float)
+
+
     End Sub
 
 End Class

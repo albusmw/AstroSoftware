@@ -31,15 +31,33 @@ Partial Class frmImage
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        pbMain = New PictureBox()
+        CType(pbMain, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
+        ' 
+        ' pbMain
+        ' 
+        pbMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        pbMain.BackColor = Color.Gray
+        pbMain.Location = New Point(10, 9)
+        pbMain.Margin = New Padding(3, 2, 3, 2)
+        pbMain.Name = "pbMain"
+        pbMain.Size = New Size(890, 545)
+        pbMain.SizeMode = PictureBoxSizeMode.Zoom
+        pbMain.TabIndex = 0
+        pbMain.TabStop = False
         ' 
         ' frmImage
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(800, 450)
+        ClientSize = New Size(911, 563)
+        Controls.Add(pbMain)
         Name = "frmImage"
         Text = "Image display"
+        CType(pbMain, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
     End Sub
+
+    Friend WithEvents pbMain As PictureBox
 End Class
