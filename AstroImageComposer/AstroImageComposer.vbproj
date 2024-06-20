@@ -11,8 +11,10 @@
 
   <ItemGroup>
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\cRTFGen.vb" Link="MyLib\cRTFGen.vb" />
     <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
     <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="atomics\AstroStatistics.vb" />
     <Compile Include="..\..\src\atomics\cColorMaps.vb" Link="atomics\cColorMaps.vb" />
     <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="atomics\cDLLDynCall.vb" />
@@ -39,6 +41,7 @@
   <ItemGroup>
     <PackageReference Include="DockPanelSuite" Version="3.1.0" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0" />
+    <PackageReference Include="RTFExporter" Version="1.1.4" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
 

@@ -31,15 +31,29 @@ Partial Class frmImgParameter
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        rtbMain = New RichTextBox()
         SuspendLayout()
+        ' 
+        ' rtbMain
+        ' 
+        rtbMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        rtbMain.Location = New Point(12, 12)
+        rtbMain.Name = "rtbMain"
+        rtbMain.Size = New Size(852, 510)
+        rtbMain.TabIndex = 0
+        rtbMain.Text = ""
+        rtbMain.WordWrap = False
         ' 
         ' frmImgParameter
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(800, 450)
+        ClientSize = New Size(876, 534)
+        Controls.Add(rtbMain)
         Name = "frmImgParameter"
         Text = "Image parameter"
         ResumeLayout(False)
     End Sub
+
+    Friend WithEvents rtbMain As RichTextBox
 End Class

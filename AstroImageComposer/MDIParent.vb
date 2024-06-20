@@ -86,21 +86,33 @@ Public Class MDIParent
 
         If System.IO.File.Exists(FileName) = False Then Exit Sub
 
-        'Dispplay image
+        'Build all form
         Dim ImageForm As New frmImage
         ImageForm.LoadImage(FileName)
-        ImageForm.Show(dpMain, DockState.Float)
-
-        'Display histo
-        Dim StatForm As New frmGraph
-        StatForm.PlotStatistics(FileName, ImageForm.ImgStat)
-        StatForm.Show(dpMain, DockState.Float)
-
-        'Display image properties
         Dim ImgPropForm As New frmImageModifier
         ImgPropForm.FormToModify = ImageForm
-        ImgPropForm.Show(dpMain, DockState.Float)
+        Dim HistoForm As New frmGraph
+        HistoForm.PlotStatistics(FileName, ImageForm.ImgStat)
+        Dim ImgParameter As New frmImgParameter
+        ImgParameter.FormToModify = ImageForm
+        ImgParameter.DisplayRTF
 
+        'Dock all
+        With ImageForm
+            .Show(dpMain, DockState.Float)
+            .DockTo(dpMain, DockStyle.Fill)
+        End With
+        With ImgPropForm
+            .Show(dpMain, DockState.Float)
+            .DockTo(dpMain, DockStyle.Left)
+        End With
+        With HistoForm
+            .Show(dpMain, DockState.Float)
+            .DockTo(dpMain, DockStyle.Left)
+        End With
+        With ImgParameter
+            .Show(dpMain, DockState.Float)
+        End With
 
     End Sub
 
