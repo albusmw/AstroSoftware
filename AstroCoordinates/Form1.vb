@@ -5,6 +5,8 @@ Public Class MainForm
 
     Public Shared ReadOnly Property MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
 
+    Private PWI4 As New cPWI4("http://localhost:8220")
+
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = (New cGetBuildDateTime).GetMainformTitle
         Me.CenterToScreen()
@@ -20,14 +22,14 @@ Public Class MainForm
     End Sub
 
     Private Sub UpdateRA(ByVal RA As Double)
-        tbRAParsed.Text = Ato.AstroCalc.FormatHMS(RA, "h ", "m ", "s")
-        tbRAParsedShort.Text = Ato.AstroCalc.FormatHMS(RA)
+        tbRAParsed.Text = RA.ToHMS("h ", "m ", "s")
+        tbRAParsedShort.Text = RA.ToHMS
         tbRAParsedDecimal.Text = Format(RA, "00.000000").Replace(",", ".")
     End Sub
 
     Private Sub UpdateDec(ByVal Dec As Double)
-        tbDecParsed.Text = Ato.AstroCalc.Format360Degree(Dec)
-        tbDecParsedShort.Text = Ato.AstroCalc.Format360Degree(Dec, ":", ":", "", 2)
+        tbDecParsed.Text = Dec.ToDegMinSec
+        tbDecParsedShort.Text = Dec.ToDegMinSec(":", ":", "", 2)
         tbDecParsedDecimal.Text = Format(Dec, "00.000000").Replace(",", ".")
     End Sub
 
@@ -50,8 +52,8 @@ Public Class MainForm
 
     Private Sub GotoObject()
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(cPWI4.Command.Goto_RaDec(cbJ2000.Checked, tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep))
-        Response = Download.GetResponse(cPWI4.Command.Tracking(True))
+        Response = Download.GetResponse(PWI4.Command.Goto_RaDec(cbJ2000.Checked, tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep))
+        Response = Download.GetResponse(PWI4.Command.Tracking(True))
     End Sub
 
     '═════════════════════════════════════════════════════════════════════════════
@@ -71,21 +73,39 @@ Public Class MainForm
     End Sub
 
     Private Sub tsmiEnter_Dec_Click(sender As Object, e As EventArgs) Handles tsmiEnter_Dec.Click
-        UpdateDec(AstroParser.ParseDeclination(InputBox("Dec to parse: ", "Dec to parse")))
+        Dim TextInput As String = InputBox("Dec to parse [°]: ", "Dec to parse")
+        UpdateDec(TextInput.ParseDegree)
     End Sub
 
     Private Sub tsmiEnter_RA_Click(sender As Object, e As EventArgs) Handles tsmiEnter_RA.Click
-        UpdateRA(AstroParser.ParseRA(InputBox("RA to parse: ", "RA to parse")))
+        Dim TextInput As String = InputBox("RA to parse [hms format]: ", "RA to parse")
+        UpdateRA(TextInput.ParseRA)
     End Sub
 
-    Private Sub ObjectToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ObjectToolStripMenuItem.Click
+    Private Sub tsmiGoTo_Object_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_Object.Click
         GotoObject()
     End Sub
 
-    Private Sub ZenithAndStopToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ZenithAndStopToolStripMenuItem.Click
+    Private Sub tsmiGoTo_ZenithAndStop_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_ZenithAndStop.Click
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(cPWI4.Command.Tracking(False))
-        Response = Download.GetResponse(cPWI4.Command.Goto_AltAz(90, 0))
+        Response = Download.GetResponse(PWI4.Command.Tracking(False))
+        Response = Download.GetResponse(PWI4.Command.Goto_AltAz(90, 0))
+    End Sub
+
+    Private Sub tsmiGoTo_SunOpposition_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_SunOpposition.Click
+        Dim Response As String = String.Empty
+        Dim SunPos As AstroCalc.NET.Sun.sSunPos = AstroCalc.NET.Sun.SunPos(Now.ToUniversalTime, Ato.AstroCalc.KnownLocations.DSC.Longitude, Ato.AstroCalc.KnownLocations.DSC.Latitude)
+        Dim UseAltAz As Boolean = False
+        If UseAltAz Then
+            Dim Sun_Oppo_Alt As Double = -SunPos.Altitude
+            Dim Sun_Oppo_Az As Double = SunPos.Azimuth - 180 : If SunPos.Azimuth < 0 Then SunPos.Azimuth += 360
+            Response = Download.GetResponse(PWI4.Command.Goto_AltAz(Sun_Oppo_Alt, Sun_Oppo_Az))
+        Else
+            Dim Sun_Oppo_Ra As Double = SunPos.RightAscension - 180 : If Sun_Oppo_Ra < 0 Then Sun_Oppo_Ra += 360
+            Dim Sun_Oppo_Dec As Double = -SunPos.Declination
+            Response = Download.GetResponse(PWI4.Command.Goto_RaDec(cbJ2000.Checked, Sun_Oppo_Ra * (24 / 360), Sun_Oppo_Dec))
+        End If
+        Response = Download.GetResponse(PWI4.Command.Tracking(True))
     End Sub
 
     Private Sub tsmiFile_End_Click(sender As Object, e As EventArgs) Handles tsmiFile_End.Click
@@ -96,5 +116,7 @@ Public Class MainForm
         Dim X As New cVizier
         X.LoadCatalogs()
     End Sub
+
+
 
 End Class

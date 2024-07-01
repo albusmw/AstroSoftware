@@ -42,15 +42,16 @@ Partial Class MainForm
         msMain = New MenuStrip()
         tsmiFile = New ToolStripMenuItem()
         tsmiFile_OpenEXE = New ToolStripMenuItem()
+        tsmiFile_LoadVizier = New ToolStripMenuItem()
         ToolStripMenuItem1 = New ToolStripSeparator()
         tsmiFile_End = New ToolStripMenuItem()
         tsmiEnter = New ToolStripMenuItem()
         tsmiEnter_RA = New ToolStripMenuItem()
         tsmiEnter_Dec = New ToolStripMenuItem()
-        GotoToolStripMenuItem = New ToolStripMenuItem()
-        ObjectToolStripMenuItem = New ToolStripMenuItem()
-        ZenithAndStopToolStripMenuItem = New ToolStripMenuItem()
-        tsmiFile_LoadVizier = New ToolStripMenuItem()
+        tsmiGoTo = New ToolStripMenuItem()
+        tsmiGoTo_Object = New ToolStripMenuItem()
+        tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
+        tsmiGoTo_SunOpposition = New ToolStripMenuItem()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -78,7 +79,7 @@ Partial Class MainForm
         ' tbRAParsed
         ' 
         tbRAParsed.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        tbRAParsed.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbRAParsed.Font = New Font("Courier New", 9F)
         tbRAParsed.Location = New Point(130, 11)
         tbRAParsed.Name = "tbRAParsed"
         tbRAParsed.Size = New Size(166, 21)
@@ -87,7 +88,7 @@ Partial Class MainForm
         ' tbRAParsedShort
         ' 
         tbRAParsedShort.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        tbRAParsedShort.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbRAParsedShort.Font = New Font("Courier New", 9F)
         tbRAParsedShort.Location = New Point(302, 11)
         tbRAParsedShort.Name = "tbRAParsedShort"
         tbRAParsedShort.Size = New Size(166, 21)
@@ -96,7 +97,7 @@ Partial Class MainForm
         ' tbRAParsedDecimal
         ' 
         tbRAParsedDecimal.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        tbRAParsedDecimal.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbRAParsedDecimal.Font = New Font("Courier New", 9F)
         tbRAParsedDecimal.Location = New Point(474, 11)
         tbRAParsedDecimal.Name = "tbRAParsedDecimal"
         tbRAParsedDecimal.Size = New Size(167, 21)
@@ -105,7 +106,7 @@ Partial Class MainForm
         ' tbDecParsed
         ' 
         tbDecParsed.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        tbDecParsed.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbDecParsed.Font = New Font("Courier New", 9F)
         tbDecParsed.Location = New Point(130, 54)
         tbDecParsed.Name = "tbDecParsed"
         tbDecParsed.Size = New Size(166, 21)
@@ -114,7 +115,7 @@ Partial Class MainForm
         ' tbDecParsedShort
         ' 
         tbDecParsedShort.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        tbDecParsedShort.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbDecParsedShort.Font = New Font("Courier New", 9F)
         tbDecParsedShort.Location = New Point(302, 54)
         tbDecParsedShort.Name = "tbDecParsedShort"
         tbDecParsedShort.Size = New Size(166, 21)
@@ -123,7 +124,7 @@ Partial Class MainForm
         ' tbDecParsedDecimal
         ' 
         tbDecParsedDecimal.Anchor = AnchorStyles.Left Or AnchorStyles.Right
-        tbDecParsedDecimal.Font = New Font("Courier New", 9F, FontStyle.Regular, GraphicsUnit.Point)
+        tbDecParsedDecimal.Font = New Font("Courier New", 9F)
         tbDecParsedDecimal.Location = New Point(474, 54)
         tbDecParsedDecimal.Name = "tbDecParsedDecimal"
         tbDecParsedDecimal.Size = New Size(167, 21)
@@ -167,7 +168,7 @@ Partial Class MainForm
         ' tbSelected
         ' 
         tbSelected.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        tbSelected.Font = New Font("Courier New", 9F, FontStyle.Bold, GraphicsUnit.Point)
+        tbSelected.Font = New Font("Courier New", 9F, FontStyle.Bold)
         tbSelected.Location = New Point(89, 122)
         tbSelected.Name = "tbSelected"
         tbSelected.ReadOnly = True
@@ -199,7 +200,7 @@ Partial Class MainForm
         ' 
         ' msMain
         ' 
-        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, GotoToolStripMenuItem})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
         msMain.Size = New Size(656, 24)
@@ -216,18 +217,24 @@ Partial Class MainForm
         ' tsmiFile_OpenEXE
         ' 
         tsmiFile_OpenEXE.Name = "tsmiFile_OpenEXE"
-        tsmiFile_OpenEXE.Size = New Size(180, 22)
+        tsmiFile_OpenEXE.Size = New Size(178, 22)
         tsmiFile_OpenEXE.Text = "Open EXE folder"
+        ' 
+        ' tsmiFile_LoadVizier
+        ' 
+        tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
+        tsmiFile_LoadVizier.Size = New Size(178, 22)
+        tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(177, 6)
+        ToolStripMenuItem1.Size = New Size(175, 6)
         ' 
         ' tsmiFile_End
         ' 
         tsmiFile_End.Name = "tsmiFile_End"
-        tsmiFile_End.Size = New Size(180, 22)
+        tsmiFile_End.Size = New Size(178, 22)
         tsmiFile_End.Text = "Exit"
         ' 
         ' tsmiEnter
@@ -249,30 +256,30 @@ Partial Class MainForm
         tsmiEnter_Dec.Size = New Size(183, 22)
         tsmiEnter_Dec.Text = "DEC (Declination)"
         ' 
-        ' GotoToolStripMenuItem
+        ' tsmiGoTo
         ' 
-        GotoToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {ObjectToolStripMenuItem, ZenithAndStopToolStripMenuItem})
-        GotoToolStripMenuItem.Name = "GotoToolStripMenuItem"
-        GotoToolStripMenuItem.Size = New Size(45, 20)
-        GotoToolStripMenuItem.Text = "Goto"
+        tsmiGoTo.DropDownItems.AddRange(New ToolStripItem() {tsmiGoTo_Object, tsmiGoTo_ZenithAndStop, tsmiGoTo_SunOpposition})
+        tsmiGoTo.Name = "tsmiGoTo"
+        tsmiGoTo.Size = New Size(45, 20)
+        tsmiGoTo.Text = "Goto"
         ' 
-        ' ObjectToolStripMenuItem
+        ' tsmiGoTo_Object
         ' 
-        ObjectToolStripMenuItem.Name = "ObjectToolStripMenuItem"
-        ObjectToolStripMenuItem.Size = New Size(161, 22)
-        ObjectToolStripMenuItem.Text = "Object and track"
+        tsmiGoTo_Object.Name = "tsmiGoTo_Object"
+        tsmiGoTo_Object.Size = New Size(206, 22)
+        tsmiGoTo_Object.Text = "Object and track"
         ' 
-        ' ZenithAndStopToolStripMenuItem
+        ' tsmiGoTo_ZenithAndStop
         ' 
-        ZenithAndStopToolStripMenuItem.Name = "ZenithAndStopToolStripMenuItem"
-        ZenithAndStopToolStripMenuItem.Size = New Size(161, 22)
-        ZenithAndStopToolStripMenuItem.Text = "Zenith and stop"
+        tsmiGoTo_ZenithAndStop.Name = "tsmiGoTo_ZenithAndStop"
+        tsmiGoTo_ZenithAndStop.Size = New Size(206, 22)
+        tsmiGoTo_ZenithAndStop.Text = "Zenith and stop"
         ' 
-        ' tsmiFile_LoadVizier
+        ' tsmiGoTo_SunOpposition
         ' 
-        tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
-        tsmiFile_LoadVizier.Size = New Size(180, 22)
-        tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
+        tsmiGoTo_SunOpposition.Name = "tsmiGoTo_SunOpposition"
+        tsmiGoTo_SunOpposition.Size = New Size(206, 22)
+        tsmiGoTo_SunOpposition.Text = "Sun opposition and track"
         ' 
         ' MainForm
         ' 
@@ -318,10 +325,11 @@ Partial Class MainForm
     Friend WithEvents tsmiEnter As ToolStripMenuItem
     Friend WithEvents tsmiEnter_RA As ToolStripMenuItem
     Friend WithEvents tsmiEnter_Dec As ToolStripMenuItem
-    Friend WithEvents GotoToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ObjectToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents ZenithAndStopToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents tsmiGoTo As ToolStripMenuItem
+    Friend WithEvents tsmiGoTo_Object As ToolStripMenuItem
+    Friend WithEvents tsmiGoTo_ZenithAndStop As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem1 As ToolStripSeparator
     Friend WithEvents tsmiFile_End As ToolStripMenuItem
     Friend WithEvents tsmiFile_LoadVizier As ToolStripMenuItem
+    Friend WithEvents tsmiGoTo_SunOpposition As ToolStripMenuItem
 End Class
