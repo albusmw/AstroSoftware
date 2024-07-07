@@ -26,6 +26,8 @@
     <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
+    <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
     <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
@@ -41,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="MyLib\frmLogDisplay.resx" />
     <EmbeddedResource Include="catalogs\messier.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -76,7 +79,6 @@
 
   <ItemGroup>
     <Folder Include="common\" />
-    <Folder Include="MyLib\" />
   </ItemGroup>
 
 </Project>

@@ -93,19 +93,35 @@ Public Class MainForm
     End Sub
 
     Private Sub tsmiGoTo_SunOpposition_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_SunOpposition.Click
+        'Go to the sun opposition
+        Dim CalcLog As New List(Of String)
         Dim Response As String = String.Empty
+        CalcLog.Add("Sun opposition calculation")
+        CalcLog.Add("  UTC         : " & (Now.ToUniversalTime.ToString))
+        CalcLog.Add("  Longitude   : " & (Ato.AstroCalc.KnownLocations.DSC.Longitude.ToDegMinSec))
+        CalcLog.Add("  Latitude    : " & (Ato.AstroCalc.KnownLocations.DSC.Latitude.ToDegMinSec))
         Dim SunPos As AstroCalc.NET.Sun.sSunPos = AstroCalc.NET.Sun.SunPos(Now.ToUniversalTime, Ato.AstroCalc.KnownLocations.DSC.Longitude, Ato.AstroCalc.KnownLocations.DSC.Latitude)
+        CalcLog.Add("  Sun Altitude: " & (SunPos.Altitude.ToDegMinSec))
+        CalcLog.Add("  Sun Azimuth : " & (SunPos.Azimuth.ToDegMinSec))
+        CalcLog.Add("  Sun RA      : " & (SunPos.RightAscension.ToDegMinSec))
+        CalcLog.Add("  Sun Dec     : " & (SunPos.Declination.ToDegMinSec))
+        CalcLog.Add("Sun opposition:")
         Dim UseAltAz As Boolean = False
         If UseAltAz Then
             Dim Sun_Oppo_Alt As Double = -SunPos.Altitude
             Dim Sun_Oppo_Az As Double = SunPos.Azimuth - 180 : If SunPos.Azimuth < 0 Then SunPos.Azimuth += 360
+            CalcLog.Add("  Sun Altitude: " & (Sun_Oppo_Alt.ToDegMinSec))
+            CalcLog.Add("  Sun Azimuth : " & (Sun_Oppo_Az.ToDegMinSec))
             Response = Download.GetResponse(PWI4.Command.Goto_AltAz(Sun_Oppo_Alt, Sun_Oppo_Az))
         Else
             Dim Sun_Oppo_Ra As Double = SunPos.RightAscension - 180 : If Sun_Oppo_Ra < 0 Then Sun_Oppo_Ra += 360
             Dim Sun_Oppo_Dec As Double = -SunPos.Declination
-            Response = Download.GetResponse(PWI4.Command.Goto_RaDec(cbJ2000.Checked, Sun_Oppo_Ra * (24 / 360), Sun_Oppo_Dec))
+            CalcLog.Add("  Sun RA      : " & (Sun_Oppo_Ra.ToDegMinSec))
+            CalcLog.Add("  Sun Dec     : " & (Sun_Oppo_Dec.ToDegMinSec))
+            Response = Download.GetResponse(PWI4.Command.Goto_RaDec(cbJ2000.Checked, Sun_Oppo_Ra, Sun_Oppo_Dec))
         End If
         Response = Download.GetResponse(PWI4.Command.Tracking(True))
+        Dim X As New frmLogDisplay : X.Show(CalcLog)
     End Sub
 
     Private Sub tsmiFile_End_Click(sender As Object, e As EventArgs) Handles tsmiFile_End.Click
