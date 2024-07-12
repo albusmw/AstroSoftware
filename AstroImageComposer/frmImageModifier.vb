@@ -1,8 +1,24 @@
 ﻿Option Explicit On
 Option Strict On
 
+'''<summary>Windows containinf the image modifier parameters.</summary>
 Public Class frmImageModifier
 
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    '''<summary>GUID of the linked image form.</summary>
+    Public ReadOnly Property LinkedGUID As String
+        Get
+            Return MyLinkedGUID
+        End Get
+    End Property
+    Private MyLinkedGUID As String = String.Empty
+
+    Public Sub SetLinkedGUID(ByVal GUIDToUse As String)
+        MyLinkedGUID = GUIDToUse
+    End Sub
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    '''<summary>The form this modifier is attached to.</summary>
     Public FormToModify As frmImage
 
     Private Sub frmImageModifier_Shown(sender As Object, e As EventArgs) Handles Me.Shown
@@ -38,7 +54,7 @@ Public Class frmImageModifier
         ReactOnChangedProperty()
     End Sub
 
-    Private Sub ReactOnChangedProperty()
+    Public Sub ReactOnChangedProperty()
         'Update the property and display the (recalculated) image
         DisplayCurrentProps()
         FormToModify.DisplayImageData()

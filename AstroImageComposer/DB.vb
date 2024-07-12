@@ -31,4 +31,30 @@ Public Class DB
 
     End Sub
 
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    ' Form linking code
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    Public Shared Function GetMyModifierForm(ByVal GUID As String) As frmImageModifier
+        For Each SingleForm As System.Windows.Forms.Form In System.Windows.Forms.Application.OpenForms
+            Try
+                If CType(SingleForm, frmImageModifier).LinkedGUID = GUID Then Return CType(SingleForm, frmImageModifier)
+            Catch ex As Exception
+                'Do nothing ....
+            End Try
+        Next SingleForm
+        Return Nothing
+    End Function
+
+    Public Shared Function GetMyHistoForm(ByVal GUID As String) As frmGraph
+        For Each SingleForm As System.Windows.Forms.Form In System.Windows.Forms.Application.OpenForms
+            Try
+                If CType(SingleForm, frmGraph).LinkedGUID = GUID Then Return CType(SingleForm, frmGraph)
+            Catch ex As Exception
+                'Do nothing ....
+            End Try
+        Next SingleForm
+        Return Nothing
+    End Function
+
 End Class

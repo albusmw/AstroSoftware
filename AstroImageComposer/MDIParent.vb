@@ -8,7 +8,7 @@ Public Class MDIParent
 
     Private Sub MDIParent_Load(sender As Object, e As EventArgs) Handles Me.Load
 
-        Me.Text = (New cGetBuildDateTime).GetMainformTitle
+        Me.Text = GetBuildDateTime.GetMainformTitle
         dpMain.Theme = New WeifenLuo.WinFormsUI.Docking.VS2015LightTheme
         DB.Init()
 
@@ -50,7 +50,6 @@ Public Class MDIParent
             ' TODO: Add code here to save the current contents of the form to a file.
         End If
     End Sub
-
 
     Private Sub ExitToolsStripMenuItem_Click(ByVal sender As Object, ByVal e As EventArgs) Handles ExitToolStripMenuItem.Click
         Me.Close()
@@ -105,13 +104,16 @@ Public Class MDIParent
         With ImgPropForm
             .Show(dpMain, DockState.Float)
             .DockTo(dpMain, DockStyle.Left)
+            .SetLinkedGUID(ImageForm.GUID)
         End With
         With HistoForm
             .Show(dpMain, DockState.Float)
             .DockTo(dpMain, DockStyle.Left)
+            .SetLinkedGUID(ImageForm.GUID)
         End With
         With ImgParameter
             .Show(dpMain, DockState.Float)
+            .SetLinkedGUID(ImageForm.GUID)
         End With
 
     End Sub

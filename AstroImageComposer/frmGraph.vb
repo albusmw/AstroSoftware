@@ -4,16 +4,30 @@ Option Strict On
 '''<summary>Display graphical data.</summary>
 Public Class frmGraph
 
-    Private Disp As cZEDGraph
+    Public MyZEDGraph As cZEDGraph
 
     Private PlotStyle As cZEDGraph.eCurveMode = cZEDGraph.eCurveMode.LinesAndPoints
+
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    '''<summary>GUID of the linked image form.</summary>
+    Public ReadOnly Property LinkedGUID As String
+        Get
+            Return MyLinkedGUID
+        End Get
+    End Property
+    Private MyLinkedGUID As String = String.Empty
+
+    Public Sub SetLinkedGUID(ByVal GUIDToUse As String)
+        MyLinkedGUID = GUIDToUse
+    End Sub
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
     '''<summary>Open a simple form with a ZEDGraph on it and plots the statistical data.</summary>
     '''<param name="FileName">Filename that is plotted (indicated in the header).</param>
     '''<param name="Stats">Statistics data to plot.</param>
     Public Sub PlotStatistics(ByVal FileName As String, ByRef Stats As AstroNET.Statistics.sStatistics)
-        Disp = New cZEDGraph(zgcMain)
-        With Disp
+        MyZEDGraph = New cZEDGraph(zgcMain)
+        With MyZEDGraph
             'AddHandler .PointValueHandler, AddressOf PointValueHandler
             Dim XAxisMargin As Integer = 128                                    'axis margin to see the most outer values
             Select Case Stats.DataMode
