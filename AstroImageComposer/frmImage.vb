@@ -50,6 +50,7 @@ Public Class frmImage
 
     '''<summary>Moving the mouse changed the point to zoom in.</summary>
     Private Sub pbMain_MouseMove(sender As Object, e As MouseEventArgs) Handles pbMain.MouseMove
+        If IsNothing(ImgData) Then Exit Sub
         FloatCenter = pbMain.ScreenCoordinatesToImageCoordinates
         Dim DataValue As Double = ImgData.GetDataValue(FloatCenter)
         tssl_Coord.Text = "Coord: <" & FloatCenter.X.ValRegIndep("0") & ":" & FloatCenter.Y.ValRegIndep("0") & ">: " & DataValue.ValRegIndep
@@ -128,8 +129,10 @@ Public Class frmImage
     End Sub
 
     Private Sub SetDefaultsForNewImage()
-        ImageFromData.ColorMap_LowerEnd = ImgStat.MonoStatistics_Int.Min.Key
-        ImageFromData.ColorMap_UpperEnd = ImgStat.MonoStatistics_Int.Max.Key
+        If IsNothing(ImgStat.MonoStatistics_Int) Then Exit Sub
+        ImageFromData.ColorMap_LowerEnd = ImgStat.MonoStatistics_Int.GetPercentile(1)
+        ImageFromData.ColorMap_UpperEnd = ImgStat.MonoStatistics_Int.GetPercentile(99)
+        ImageFromData.ColorMap_Gamma = 0.5
     End Sub
 
     Private Sub tsmi_ThisLOWEnd_Click(sender As Object, e As EventArgs) Handles tsmi_ThisLOWEnd.Click

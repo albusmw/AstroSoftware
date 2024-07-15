@@ -1,4 +1,5 @@
-﻿Imports System.Windows.Forms
+﻿Imports System.Drawing.Imaging
+Imports System.Windows.Forms
 Imports WeifenLuo.WinFormsUI.Docking
 
 Public Class MDIParent
@@ -114,6 +115,19 @@ Public Class MDIParent
         With ImgParameter
             .Show(dpMain, DockState.Float)
             .SetLinkedGUID(ImageForm.GUID)
+        End With
+
+    End Sub
+
+    Private Sub tsmiNew_Browser_Click(sender As Object, e As EventArgs) Handles tsmiNew_Browser.Click
+
+        Dim X As New frmBrowser
+        X.Show(dpMain, DockState.Float)
+
+        X.ImageForm = New frmImage
+        With X.ImageForm
+            .Show(dpMain, DockState.Float)
+            .DockTo(dpMain, DockStyle.Fill)
         End With
 
     End Sub
