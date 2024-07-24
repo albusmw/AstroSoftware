@@ -18,16 +18,18 @@ Public Class frmImgParameter
         MyLinkedGUID = GUIDToUse
     End Sub
 
-    Public Sub DisplayRTF()
+    Public Sub DisplayStatisticsReport()
+        DisplayRTF(FormToModify.ImgStat.StatisticsReport(True, True))
+    End Sub
+
+    Public Sub DisplayRTF(ByVal Text As IEnumerable(Of String))
         'Init
         If RTFGen.RTFControlAttached = False Then
             RTFGen.AttachToControl(rtbMain)
             RTFGen.RTFInit(10)
         End If
-        'Compose the report
-        Dim StatReport As List(Of String) = FormToModify.ImgStat.StatisticsReport(True, True)
         RTFGen.Clear()
-        For Each Line As String In StatReport
+        For Each Line As String In Text
             RTFGen.AddEntry(Line)
         Next Line
     End Sub

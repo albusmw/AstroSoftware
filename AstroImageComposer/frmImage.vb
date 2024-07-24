@@ -118,8 +118,11 @@ Public Class frmImage
 
     Public Sub DisplayImageData()
 
+        'Entering conditions
+        If IsNothing(ImgData) Then Exit Sub
+
         'Generate display image
-        ImageFromData.GenerateDisplayImage(ImgData.DataProcessor_UInt16.ImageData(0).Data, DB.IPP)
+        ImageFromData.GenerateDisplayImage(ImgData, ImgStat, DB.IPP)
 
         'Display image
         ImageFromData.OutputImage.UnlockBits()
@@ -128,20 +131,13 @@ Public Class frmImage
 
     End Sub
 
-    Private Sub SetDefaultsForNewImage()
-        If IsNothing(ImgStat.MonoStatistics_Int) Then Exit Sub
-        ImageFromData.ColorMap_LowerEnd = ImgStat.MonoStatistics_Int.GetPercentile(1)
-        ImageFromData.ColorMap_UpperEnd = ImgStat.MonoStatistics_Int.GetPercentile(99)
-        ImageFromData.ColorMap_Gamma = 0.5
-    End Sub
-
     Private Sub tsmi_ThisLOWEnd_Click(sender As Object, e As EventArgs) Handles tsmi_ThisLOWEnd.Click
-        ImageFromData.ColorMap_LowerEnd = ImgData.GetDataValue(FloatCenter)
+        ImageFromData.ColorMap_LowerEnd_Absolute = ImgData.GetDataValue(FloatCenter)
         DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
     End Sub
 
     Private Sub tsmi_ThisUPPEREnd_Click(sender As Object, e As EventArgs) Handles tsmi_ThisUPPEREnd.Click
-        ImageFromData.ColorMap_UpperEnd = ImgData.GetDataValue(FloatCenter)
+        ImageFromData.ColorMap_UpperEnd_Absolute = ImgData.GetDataValue(FloatCenter)
         DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
     End Sub
 
@@ -149,9 +145,31 @@ Public Class frmImage
         Dim HistoForm As frmGraph = DB.GetMyHistoForm(GUID)
         If IsNothing(HistoForm) Then Exit Sub
         Dim GP As ZedGraph.GraphPane = HistoForm.MyZEDGraph.MainGraph.GraphPane
-        ImageFromData.ColorMap_LowerEnd = GP.XAxis.Scale.Min
-        ImageFromData.ColorMap_UpperEnd = GP.XAxis.Scale.Max
+        ImageFromData.ColorMap_LowerEnd_Absolute = GP.XAxis.Scale.Min
+        ImageFromData.ColorMap_UpperEnd_Absolute = GP.XAxis.Scale.Max
         DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
+    End Sub
+
+    Private Sub tsmi_FullEnd_Click(sender As Object, e As EventArgs) Handles tsmi_FullEnd.Click
+        ImageFromData.ColorMap_LowerEnd_Absolute = ImgStat.MonoStatistics_Int.Min.Key
+        ImageFromData.ColorMap_UpperEnd_Absolute = ImgStat.MonoStatistics_Int.Max.Key
+        DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
+    End Sub
+
+    '''<summary>Default value for new image.</summary>
+    Private Sub SetDefaultsForNewImage()
+        If IsNothing(ImgStat.MonoStatistics_Int) Then Exit Sub
+        SetPercentilRange(1, 99)
+        ImageFromData.ColorMap_Gamma = 0.5
+    End Sub
+
+    '''<summary>Set the plot range to the given percentil range.</summary>
+    '''<param name="Lower">Lower limit.</param>
+    '''<param name="Upper">Upper limit.</param>
+    Private Sub SetPercentilRange(ByVal Lower As Integer, ByVal Upper As Integer)
+        If IsNothing(ImgStat.MonoStatistics_Int) Then Exit Sub
+        ImageFromData.ColorMap_LowerEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Lower)
+        ImageFromData.ColorMap_UpperEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Upper)
     End Sub
 
 End Class

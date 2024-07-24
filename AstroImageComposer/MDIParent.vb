@@ -1,6 +1,5 @@
-﻿Imports System.Drawing.Imaging
-Imports System.Windows.Forms
-Imports WeifenLuo.WinFormsUI.Docking
+﻿Option Explicit On
+Option Strict On
 
 Public Class MDIParent
 
@@ -14,7 +13,7 @@ Public Class MDIParent
         DB.Init()
 
         'Init drap-and-drop
-        DD = New Ato.DragDrop(dpMain)
+        DD = New Ato.DragDrop(CType(dpMain, Control))
 
     End Sub
 
@@ -68,14 +67,14 @@ Public Class MDIParent
         'Use My.Computer.Clipboard.GetText() or My.Computer.Clipboard.GetData to retrieve information from the clipboard.
     End Sub
 
-    Private Sub tsmiNewImageWindow_Click(sender As Object, e As EventArgs) Handles tsmiNewImageWindow.Click
+    Private Sub tsmiNew_ImageWindow_Click(sender As Object, e As EventArgs) Handles tsmiNew_ImageWindow.Click
         Dim X As New frmImage
-        X.Show(dpMain, DockState.Float)
+        X.Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
     End Sub
 
-    Private Sub ImageParameterEditorToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles ImageParameterEditorToolStripMenuItem.Click
+    Private Sub tsmiNew_ImageParameter_Click(sender As Object, e As EventArgs) Handles tsmiNew_ImageParameter.Click
         Dim X As New frmImgParameter
-        X.Show(dpMain, DockState.Float)
+        X.Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
     End Sub
 
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -86,34 +85,43 @@ Public Class MDIParent
 
         If System.IO.File.Exists(FileName) = False Then Exit Sub
 
-        'Build all form
+        'Build all form - image form
         Dim ImageForm As New frmImage
         ImageForm.LoadImage(FileName)
+
+        'Build all form - image properties form
         Dim ImgPropForm As New frmImageModifier
         ImgPropForm.FormToModify = ImageForm
+
+        'Build all form - image histogram form
         Dim HistoForm As New frmGraph
         HistoForm.PlotStatistics(FileName, ImageForm.ImgStat)
+
+        'Build all form - image parameter display form
         Dim ImgParameter As New frmImgParameter
         ImgParameter.FormToModify = ImageForm
-        ImgParameter.DisplayRTF
+        ImgParameter.DisplayStatisticsReport()
 
-        'Dock all
+        'Dock all and link to image form GUID
         With ImageForm
-            .Show(dpMain, DockState.Float)
+            .Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
             .DockTo(dpMain, DockStyle.Fill)
         End With
+
         With ImgPropForm
-            .Show(dpMain, DockState.Float)
+            .Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
             .DockTo(dpMain, DockStyle.Left)
             .SetLinkedGUID(ImageForm.GUID)
         End With
+
         With HistoForm
-            .Show(dpMain, DockState.Float)
+            .Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
             .DockTo(dpMain, DockStyle.Left)
             .SetLinkedGUID(ImageForm.GUID)
         End With
+
         With ImgParameter
-            .Show(dpMain, DockState.Float)
+            .Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
             .SetLinkedGUID(ImageForm.GUID)
         End With
 
@@ -121,13 +129,26 @@ Public Class MDIParent
 
     Private Sub tsmiNew_Browser_Click(sender As Object, e As EventArgs) Handles tsmiNew_Browser.Click
 
-        Dim X As New frmBrowser
-        X.Show(dpMain, DockState.Float)
+        'Create a new browser window
+        Dim Browser As New frmBrowser
+        Browser.Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
 
-        X.ImageForm = New frmImage
-        With X.ImageForm
-            .Show(dpMain, DockState.Float)
+        'Create a new image window for this browser window
+        Browser.ImageForm = New frmImage
+
+        'Build all form - image properties form
+        Dim ImgPropForm As New frmImageModifier
+        ImgPropForm.FormToModify = Browser.ImageForm
+
+        With Browser.ImageForm
+            .Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
             .DockTo(dpMain, DockStyle.Fill)
+        End With
+
+        With ImgPropForm
+            .Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
+            .DockTo(dpMain, DockStyle.Left)
+            .SetLinkedGUID(Browser.ImageForm.GUID)
         End With
 
     End Sub

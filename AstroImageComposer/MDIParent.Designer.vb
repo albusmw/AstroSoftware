@@ -55,14 +55,14 @@ Partial Class MDIParent
         ToolStripSeparator8 = New ToolStripSeparator()
         AboutToolStripMenuItem = New ToolStripMenuItem()
         NewToolStripMenuItem1 = New ToolStripMenuItem()
-        tsmiNewImageWindow = New ToolStripMenuItem()
-        ImageParameterEditorToolStripMenuItem = New ToolStripMenuItem()
+        tsmiNew_ImageWindow = New ToolStripMenuItem()
+        tsmiNew_ImageParameter = New ToolStripMenuItem()
+        tsmiNew_Browser = New ToolStripMenuItem()
         ssMain = New StatusStrip()
         ToolStripStatusLabel = New ToolStripStatusLabel()
         ToolTip = New ToolTip(components)
         dpMain = New WeifenLuo.WinFormsUI.Docking.DockPanel()
         VS2015DarkTheme1 = New WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme()
-        tsmiNew_Browser = New ToolStripMenuItem()
         msMain.SuspendLayout()
         ssMain.SuspendLayout()
         SuspendLayout()
@@ -92,13 +92,13 @@ Partial Class MDIParent
         OpenToolStripMenuItem.ImageTransparentColor = Color.Black
         OpenToolStripMenuItem.Name = "OpenToolStripMenuItem"
         OpenToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.O
-        OpenToolStripMenuItem.Size = New Size(184, 26)
+        OpenToolStripMenuItem.Size = New Size(148, 22)
         OpenToolStripMenuItem.Text = "&Open"
         ' 
         ' ToolStripSeparator3
         ' 
         ToolStripSeparator3.Name = "ToolStripSeparator3"
-        ToolStripSeparator3.Size = New Size(181, 6)
+        ToolStripSeparator3.Size = New Size(145, 6)
         ' 
         ' SaveToolStripMenuItem
         ' 
@@ -106,19 +106,19 @@ Partial Class MDIParent
         SaveToolStripMenuItem.ImageTransparentColor = Color.Black
         SaveToolStripMenuItem.Name = "SaveToolStripMenuItem"
         SaveToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.S
-        SaveToolStripMenuItem.Size = New Size(184, 26)
+        SaveToolStripMenuItem.Size = New Size(148, 22)
         SaveToolStripMenuItem.Text = "&Save"
         ' 
         ' SaveAsToolStripMenuItem
         ' 
         SaveAsToolStripMenuItem.Name = "SaveAsToolStripMenuItem"
-        SaveAsToolStripMenuItem.Size = New Size(184, 26)
+        SaveAsToolStripMenuItem.Size = New Size(148, 22)
         SaveAsToolStripMenuItem.Text = "Save &As"
         ' 
         ' ToolStripSeparator4
         ' 
         ToolStripSeparator4.Name = "ToolStripSeparator4"
-        ToolStripSeparator4.Size = New Size(181, 6)
+        ToolStripSeparator4.Size = New Size(145, 6)
         ' 
         ' PrintToolStripMenuItem
         ' 
@@ -126,7 +126,7 @@ Partial Class MDIParent
         PrintToolStripMenuItem.ImageTransparentColor = Color.Black
         PrintToolStripMenuItem.Name = "PrintToolStripMenuItem"
         PrintToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.P
-        PrintToolStripMenuItem.Size = New Size(184, 26)
+        PrintToolStripMenuItem.Size = New Size(148, 22)
         PrintToolStripMenuItem.Text = "&Print"
         ' 
         ' PrintPreviewToolStripMenuItem
@@ -134,24 +134,24 @@ Partial Class MDIParent
         PrintPreviewToolStripMenuItem.Image = CType(resources.GetObject("PrintPreviewToolStripMenuItem.Image"), Image)
         PrintPreviewToolStripMenuItem.ImageTransparentColor = Color.Black
         PrintPreviewToolStripMenuItem.Name = "PrintPreviewToolStripMenuItem"
-        PrintPreviewToolStripMenuItem.Size = New Size(184, 26)
+        PrintPreviewToolStripMenuItem.Size = New Size(148, 22)
         PrintPreviewToolStripMenuItem.Text = "Print Pre&view"
         ' 
         ' PrintSetupToolStripMenuItem
         ' 
         PrintSetupToolStripMenuItem.Name = "PrintSetupToolStripMenuItem"
-        PrintSetupToolStripMenuItem.Size = New Size(184, 26)
+        PrintSetupToolStripMenuItem.Size = New Size(148, 22)
         PrintSetupToolStripMenuItem.Text = "Print Setup"
         ' 
         ' ToolStripSeparator5
         ' 
         ToolStripSeparator5.Name = "ToolStripSeparator5"
-        ToolStripSeparator5.Size = New Size(181, 6)
+        ToolStripSeparator5.Size = New Size(145, 6)
         ' 
         ' ExitToolStripMenuItem
         ' 
         ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        ExitToolStripMenuItem.Size = New Size(184, 26)
+        ExitToolStripMenuItem.Size = New Size(148, 22)
         ExitToolStripMenuItem.Text = "E&xit"
         ' 
         ' EditMenu
@@ -167,7 +167,7 @@ Partial Class MDIParent
         UndoToolStripMenuItem.ImageTransparentColor = Color.Black
         UndoToolStripMenuItem.Name = "UndoToolStripMenuItem"
         UndoToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Z
-        UndoToolStripMenuItem.Size = New Size(184, 26)
+        UndoToolStripMenuItem.Size = New Size(166, 22)
         UndoToolStripMenuItem.Text = "&Undo"
         ' 
         ' RedoToolStripMenuItem
@@ -176,13 +176,13 @@ Partial Class MDIParent
         RedoToolStripMenuItem.ImageTransparentColor = Color.Black
         RedoToolStripMenuItem.Name = "RedoToolStripMenuItem"
         RedoToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.Y
-        RedoToolStripMenuItem.Size = New Size(184, 26)
+        RedoToolStripMenuItem.Size = New Size(166, 22)
         RedoToolStripMenuItem.Text = "&Redo"
         ' 
         ' ToolStripSeparator6
         ' 
         ToolStripSeparator6.Name = "ToolStripSeparator6"
-        ToolStripSeparator6.Size = New Size(181, 6)
+        ToolStripSeparator6.Size = New Size(163, 6)
         ' 
         ' CutToolStripMenuItem
         ' 
@@ -190,7 +190,7 @@ Partial Class MDIParent
         CutToolStripMenuItem.ImageTransparentColor = Color.Black
         CutToolStripMenuItem.Name = "CutToolStripMenuItem"
         CutToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.X
-        CutToolStripMenuItem.Size = New Size(184, 26)
+        CutToolStripMenuItem.Size = New Size(166, 22)
         CutToolStripMenuItem.Text = "Cu&t"
         ' 
         ' CopyToolStripMenuItem
@@ -199,7 +199,7 @@ Partial Class MDIParent
         CopyToolStripMenuItem.ImageTransparentColor = Color.Black
         CopyToolStripMenuItem.Name = "CopyToolStripMenuItem"
         CopyToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.C
-        CopyToolStripMenuItem.Size = New Size(184, 26)
+        CopyToolStripMenuItem.Size = New Size(166, 22)
         CopyToolStripMenuItem.Text = "&Copy"
         ' 
         ' PasteToolStripMenuItem
@@ -208,19 +208,19 @@ Partial Class MDIParent
         PasteToolStripMenuItem.ImageTransparentColor = Color.Black
         PasteToolStripMenuItem.Name = "PasteToolStripMenuItem"
         PasteToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.V
-        PasteToolStripMenuItem.Size = New Size(184, 26)
+        PasteToolStripMenuItem.Size = New Size(166, 22)
         PasteToolStripMenuItem.Text = "&Paste"
         ' 
         ' ToolStripSeparator7
         ' 
         ToolStripSeparator7.Name = "ToolStripSeparator7"
-        ToolStripSeparator7.Size = New Size(181, 6)
+        ToolStripSeparator7.Size = New Size(163, 6)
         ' 
         ' SelectAllToolStripMenuItem
         ' 
         SelectAllToolStripMenuItem.Name = "SelectAllToolStripMenuItem"
         SelectAllToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.A
-        SelectAllToolStripMenuItem.Size = New Size(184, 26)
+        SelectAllToolStripMenuItem.Size = New Size(166, 22)
         SelectAllToolStripMenuItem.Text = "Select &All"
         ' 
         ' ToolsMenu
@@ -233,7 +233,7 @@ Partial Class MDIParent
         ' OptionsToolStripMenuItem
         ' 
         OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
-        OptionsToolStripMenuItem.Size = New Size(180, 22)
+        OptionsToolStripMenuItem.Size = New Size(116, 22)
         OptionsToolStripMenuItem.Text = "&Options"
         ' 
         ' HelpMenu
@@ -247,7 +247,7 @@ Partial Class MDIParent
         ' 
         ContentsToolStripMenuItem.Name = "ContentsToolStripMenuItem"
         ContentsToolStripMenuItem.ShortcutKeys = Keys.Control Or Keys.F1
-        ContentsToolStripMenuItem.Size = New Size(184, 26)
+        ContentsToolStripMenuItem.Size = New Size(170, 22)
         ContentsToolStripMenuItem.Text = "&Contents"
         ' 
         ' IndexToolStripMenuItem
@@ -255,7 +255,7 @@ Partial Class MDIParent
         IndexToolStripMenuItem.Image = CType(resources.GetObject("IndexToolStripMenuItem.Image"), Image)
         IndexToolStripMenuItem.ImageTransparentColor = Color.Black
         IndexToolStripMenuItem.Name = "IndexToolStripMenuItem"
-        IndexToolStripMenuItem.Size = New Size(184, 26)
+        IndexToolStripMenuItem.Size = New Size(170, 22)
         IndexToolStripMenuItem.Text = "&Index"
         ' 
         ' SearchToolStripMenuItem
@@ -263,38 +263,44 @@ Partial Class MDIParent
         SearchToolStripMenuItem.Image = CType(resources.GetObject("SearchToolStripMenuItem.Image"), Image)
         SearchToolStripMenuItem.ImageTransparentColor = Color.Black
         SearchToolStripMenuItem.Name = "SearchToolStripMenuItem"
-        SearchToolStripMenuItem.Size = New Size(184, 26)
+        SearchToolStripMenuItem.Size = New Size(170, 22)
         SearchToolStripMenuItem.Text = "&Search"
         ' 
         ' ToolStripSeparator8
         ' 
         ToolStripSeparator8.Name = "ToolStripSeparator8"
-        ToolStripSeparator8.Size = New Size(181, 6)
+        ToolStripSeparator8.Size = New Size(167, 6)
         ' 
         ' AboutToolStripMenuItem
         ' 
         AboutToolStripMenuItem.Name = "AboutToolStripMenuItem"
-        AboutToolStripMenuItem.Size = New Size(184, 26)
+        AboutToolStripMenuItem.Size = New Size(170, 22)
         AboutToolStripMenuItem.Text = "&About ..."
         ' 
         ' NewToolStripMenuItem1
         ' 
-        NewToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {tsmiNewImageWindow, ImageParameterEditorToolStripMenuItem, tsmiNew_Browser})
+        NewToolStripMenuItem1.DropDownItems.AddRange(New ToolStripItem() {tsmiNew_ImageWindow, tsmiNew_ImageParameter, tsmiNew_Browser})
         NewToolStripMenuItem1.Name = "NewToolStripMenuItem1"
         NewToolStripMenuItem1.Size = New Size(55, 20)
         NewToolStripMenuItem1.Text = "New ..."
         ' 
-        ' tsmiNewImageWindow
+        ' tsmiNew_ImageWindow
         ' 
-        tsmiNewImageWindow.Name = "tsmiNewImageWindow"
-        tsmiNewImageWindow.Size = New Size(198, 22)
-        tsmiNewImageWindow.Text = "Image window"
+        tsmiNew_ImageWindow.Name = "tsmiNew_ImageWindow"
+        tsmiNew_ImageWindow.Size = New Size(198, 22)
+        tsmiNew_ImageWindow.Text = "Image window"
         ' 
-        ' ImageParameterEditorToolStripMenuItem
+        ' tsmiNew_ImageParameter
         ' 
-        ImageParameterEditorToolStripMenuItem.Name = "ImageParameterEditorToolStripMenuItem"
-        ImageParameterEditorToolStripMenuItem.Size = New Size(198, 22)
-        ImageParameterEditorToolStripMenuItem.Text = "Image parameter editor"
+        tsmiNew_ImageParameter.Name = "tsmiNew_ImageParameter"
+        tsmiNew_ImageParameter.Size = New Size(198, 22)
+        tsmiNew_ImageParameter.Text = "Image parameter editor"
+        ' 
+        ' tsmiNew_Browser
+        ' 
+        tsmiNew_Browser.Name = "tsmiNew_Browser"
+        tsmiNew_Browser.Size = New Size(198, 22)
+        tsmiNew_Browser.Text = "Browser windows"
         ' 
         ' ssMain
         ' 
@@ -321,12 +327,6 @@ Partial Class MDIParent
         dpMain.Name = "dpMain"
         dpMain.Size = New Size(1281, 869)
         dpMain.TabIndex = 9
-        ' 
-        ' tsmiNew_Browser
-        ' 
-        tsmiNew_Browser.Name = "tsmiNew_Browser"
-        tsmiNew_Browser.Size = New Size(198, 22)
-        tsmiNew_Browser.Text = "Browser windows"
         ' 
         ' MDIParent
         ' 
@@ -383,9 +383,9 @@ Partial Class MDIParent
     Friend WithEvents ToolsMenu As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents dpMain As WeifenLuo.WinFormsUI.Docking.DockPanel
     Friend WithEvents NewToolStripMenuItem1 As ToolStripMenuItem
-    Friend WithEvents tsmiNewImageWindow As ToolStripMenuItem
+    Friend WithEvents tsmiNew_ImageWindow As ToolStripMenuItem
     Friend WithEvents VS2015DarkTheme1 As WeifenLuo.WinFormsUI.Docking.VS2015DarkTheme
-    Friend WithEvents ImageParameterEditorToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents tsmiNew_ImageParameter As ToolStripMenuItem
     Friend WithEvents tsmiNew_Browser As ToolStripMenuItem
 
 End Class

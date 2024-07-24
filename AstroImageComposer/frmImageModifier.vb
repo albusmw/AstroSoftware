@@ -29,16 +29,18 @@ Public Class frmImageModifier
         Select Case pgMain.SelectedGridItem.PropertyDescriptor.Name
             Case "ColorMap_Gamma"
                 FormToModify.ImageFromData.ColorMap_Gamma += FormToModify.ImageFromData.PctStepSize * Math.Sign(e.Delta)
-            Case "ColorMap_LowerEnd"
+            Case "ColorMap_LowerEnd_Absolute"
                 'Take next filled bin
                 Dim Smaller As Boolean = CBool(IIf(e.Delta < 0, True, False))
-                Dim NewValue As Double = FindNextElement(FormToModify.ImgStat.MonochromHistogram_Int.Keys, FormToModify.ImageFromData.ColorMap_LowerEnd, Smaller)
-                FormToModify.ImageFromData.ColorMap_LowerEnd = NewValue
-            Case "ColorMap_UpperEnd"
+                Dim NewValue As Double = FindNextElement(FormToModify.ImgStat.MonochromHistogram_Int.Keys, FormToModify.ImageFromData.ColorMap_LowerEnd_Absolute, Smaller)
+                FormToModify.ImageFromData.ColorMap_LowerEnd_Definition = cImageFromData_Properties.eLimitDefintion.Absolute
+                FormToModify.ImageFromData.ColorMap_LowerEnd_Absolute = NewValue
+            Case "ColorMap_UpperEnd_Absolute"
                 'Take next filled bin
                 Dim Smaller As Boolean = CBool(IIf(e.Delta < 0, True, False))
-                Dim NewValue As Double = FindNextElement(FormToModify.ImgStat.MonochromHistogram_Int.Keys, FormToModify.ImageFromData.ColorMap_UpperEnd, Smaller)
-                FormToModify.ImageFromData.ColorMap_UpperEnd = NewValue
+                Dim NewValue As Double = FindNextElement(FormToModify.ImgStat.MonochromHistogram_Int.Keys, FormToModify.ImageFromData.ColorMap_UpperEnd_Absolute, Smaller)
+                FormToModify.ImageFromData.ColorMap_UpperEnd_Definition = cImageFromData_Properties.eLimitDefintion.Absolute
+                FormToModify.ImageFromData.ColorMap_UpperEnd_Absolute = NewValue
         End Select
         ReactOnChangedProperty()
     End Sub

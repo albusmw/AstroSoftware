@@ -22,14 +22,19 @@ Partial Class frmBrowser
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        components = New ComponentModel.Container()
         tvDirTree = New TreeView()
         scMain = New SplitContainer()
+        tbFilter = New TextBox()
+        tbSelectedPath = New TextBox()
         lvFiles = New ListView()
         ch_Name = New ColumnHeader()
         ch_Type = New ColumnHeader()
         ch_Date = New ColumnHeader()
+        ilIcons = New ImageList(components)
         ssMain = New StatusStrip()
         tssl_Path = New ToolStripStatusLabel()
+        ch_ExpTime = New ColumnHeader()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
         scMain.Panel2.SuspendLayout()
@@ -57,18 +62,42 @@ Partial Class frmBrowser
         ' 
         ' scMain.Panel2
         ' 
+        scMain.Panel2.Controls.Add(tbFilter)
+        scMain.Panel2.Controls.Add(tbSelectedPath)
         scMain.Panel2.Controls.Add(lvFiles)
         scMain.Size = New Size(805, 653)
         scMain.SplitterDistance = 268
         scMain.TabIndex = 2
         ' 
+        ' tbFilter
+        ' 
+        tbFilter.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        tbFilter.Location = New Point(456, 8)
+        tbFilter.Name = "tbFilter"
+        tbFilter.Size = New Size(74, 23)
+        tbFilter.TabIndex = 2
+        tbFilter.Text = "*.fit?"
+        ' 
+        ' tbSelectedPath
+        ' 
+        tbSelectedPath.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        tbSelectedPath.Location = New Point(3, 8)
+        tbSelectedPath.Name = "tbSelectedPath"
+        tbSelectedPath.ReadOnly = True
+        tbSelectedPath.Size = New Size(447, 23)
+        tbSelectedPath.TabIndex = 1
+        ' 
         ' lvFiles
         ' 
         lvFiles.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        lvFiles.Columns.AddRange(New ColumnHeader() {ch_Name, ch_Type, ch_Date})
-        lvFiles.Location = New Point(3, 3)
+        lvFiles.Columns.AddRange(New ColumnHeader() {ch_Name, ch_Type, ch_Date, ch_ExpTime})
+        lvFiles.GridLines = True
+        lvFiles.GroupImageList = ilIcons
+        lvFiles.LargeImageList = ilIcons
+        lvFiles.Location = New Point(3, 37)
         lvFiles.Name = "lvFiles"
-        lvFiles.Size = New Size(527, 647)
+        lvFiles.Size = New Size(527, 613)
+        lvFiles.SmallImageList = ilIcons
         lvFiles.TabIndex = 0
         lvFiles.UseCompatibleStateImageBehavior = False
         lvFiles.View = View.Details
@@ -83,7 +112,13 @@ Partial Class frmBrowser
         ' 
         ' ch_Date
         ' 
-        ch_Date.Text = "Last modified"
+        ch_Date.Text = "Date and time"
+        ' 
+        ' ilIcons
+        ' 
+        ilIcons.ColorDepth = ColorDepth.Depth32Bit
+        ilIcons.ImageSize = New Size(16, 16)
+        ilIcons.TransparentColor = Color.Transparent
         ' 
         ' ssMain
         ' 
@@ -100,6 +135,10 @@ Partial Class frmBrowser
         tssl_Path.Size = New Size(122, 17)
         tssl_Path.Text = "--- no file selected ---"
         ' 
+        ' ch_ExpTime
+        ' 
+        ch_ExpTime.Text = "Exposure time"
+        ' 
         ' frmBrowser
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -111,6 +150,7 @@ Partial Class frmBrowser
         Text = "File browser"
         scMain.Panel1.ResumeLayout(False)
         scMain.Panel2.ResumeLayout(False)
+        scMain.Panel2.PerformLayout()
         CType(scMain, ComponentModel.ISupportInitialize).EndInit()
         scMain.ResumeLayout(False)
         ssMain.ResumeLayout(False)
@@ -127,4 +167,8 @@ Partial Class frmBrowser
     Friend WithEvents ch_Date As ColumnHeader
     Friend WithEvents ssMain As StatusStrip
     Friend WithEvents tssl_Path As ToolStripStatusLabel
+    Friend WithEvents ilIcons As ImageList
+    Friend WithEvents tbSelectedPath As TextBox
+    Friend WithEvents tbFilter As TextBox
+    Friend WithEvents ch_ExpTime As ColumnHeader
 End Class
