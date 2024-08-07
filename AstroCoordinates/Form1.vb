@@ -8,7 +8,7 @@ Public Class MainForm
     Private PWI4 As New cPWI4("http://localhost:8220")
 
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        Me.Text = (New cGetBuildDateTime).GetMainformTitle
+        Me.Text = GetBuildDateTime.GetMainformTitle
         Me.CenterToScreen()
     End Sub
 

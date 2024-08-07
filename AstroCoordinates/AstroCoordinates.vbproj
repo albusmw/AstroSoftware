@@ -28,13 +28,13 @@
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
+    <Compile Include="..\..\MyLib\GetBuildDateTime.vb" Link="MyLib\GetBuildDateTime.vb" />
     <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
     <Compile Include="..\..\src\atomics\cHardwareState.vb" Link="common\cHardwareState.vb" />
     <Compile Include="..\..\src\atomics\cPWI4.vb" Link="common\cPWI4.vb" />
-    <Compile Include="..\..\src\atomics\GetBuildDateTime.vb" Link="common\GetBuildDateTime.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
   </ItemGroup>
 
