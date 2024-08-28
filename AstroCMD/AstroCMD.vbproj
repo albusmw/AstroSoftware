@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>AstroCMD</RootNamespace>
+    <TargetFramework>net8.0-windows</TargetFramework>
+	<UseWindowsForms>true</UseWindowsForms>
+    <ImportedNamespaces>System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,AstroCMD=True</ImportedNamespaces>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\MyLib\cShanFano.vb" Link="MyLib\cShanFano.vb" />
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="MyLib\AstroStatistics.vb" />
+    <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="MyLib\cFITSHeaderChanger.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="MyLib\cFITSHeaderParser.vb" />
+    <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="MyLib\cFITSReader.vb" />
+    <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="MyLib\cIntelIPP.vb" />
+    <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="MyLib\cStatMultiThread.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MyLib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+</Project>
