@@ -39,6 +39,9 @@ Partial Class frmImage
         tsmi_ThisUPPEREnd = New ToolStripMenuItem()
         tsmi_FromHisto = New ToolStripMenuItem()
         tsmi_FullEnd = New ToolStripMenuItem()
+        tsmi_Percentil = New ToolStripMenuItem()
+        tsmi_SetCut = New ToolStripMenuItem()
+        tsmi_ResetCut = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         cmsMain.SuspendLayout()
         SuspendLayout()
@@ -47,56 +50,74 @@ Partial Class frmImage
         ' 
         ssMain.ImageScalingSize = New Size(20, 20)
         ssMain.Items.AddRange(New ToolStripItem() {tssl_Coord})
-        ssMain.Location = New Point(0, 541)
+        ssMain.Location = New Point(0, 725)
         ssMain.Name = "ssMain"
-        ssMain.Padding = New Padding(1, 0, 12, 0)
-        ssMain.Size = New Size(911, 22)
+        ssMain.Size = New Size(1041, 26)
         ssMain.TabIndex = 1
         ssMain.Text = "StatusStrip1"
         ' 
         ' tssl_Coord
         ' 
         tssl_Coord.Name = "tssl_Coord"
-        tssl_Coord.Size = New Size(56, 17)
+        tssl_Coord.Size = New Size(71, 20)
         tssl_Coord.Text = "Coord: ??"
         ' 
         ' cmsMain
         ' 
         cmsMain.ImageScalingSize = New Size(20, 20)
-        cmsMain.Items.AddRange(New ToolStripItem() {tsmi_ThisLOWEnd, tsmi_ThisUPPEREnd, tsmi_FromHisto, tsmi_FullEnd})
+        cmsMain.Items.AddRange(New ToolStripItem() {tsmi_ThisLOWEnd, tsmi_ThisUPPEREnd, tsmi_FromHisto, tsmi_FullEnd, tsmi_Percentil, tsmi_SetCut, tsmi_ResetCut})
         cmsMain.Name = "cmsMain"
-        cmsMain.Size = New Size(230, 114)
+        cmsMain.Size = New Size(274, 200)
         ' 
         ' tsmi_ThisLOWEnd
         ' 
         tsmi_ThisLOWEnd.Name = "tsmi_ThisLOWEnd"
-        tsmi_ThisLOWEnd.Size = New Size(229, 22)
+        tsmi_ThisLOWEnd.Size = New Size(273, 24)
         tsmi_ThisLOWEnd.Text = "Value as LUT lower end"
         ' 
         ' tsmi_ThisUPPEREnd
         ' 
         tsmi_ThisUPPEREnd.Name = "tsmi_ThisUPPEREnd"
-        tsmi_ThisUPPEREnd.Size = New Size(229, 22)
+        tsmi_ThisUPPEREnd.Size = New Size(273, 24)
         tsmi_ThisUPPEREnd.Text = "Value as LUT upper end"
         ' 
         ' tsmi_FromHisto
         ' 
         tsmi_FromHisto.Name = "tsmi_FromHisto"
-        tsmi_FromHisto.Size = New Size(229, 22)
+        tsmi_FromHisto.Size = New Size(273, 24)
         tsmi_FromHisto.Text = "Value from histo axis as limits"
         ' 
         ' tsmi_FullEnd
         ' 
         tsmi_FullEnd.Name = "tsmi_FullEnd"
-        tsmi_FullEnd.Size = New Size(229, 22)
+        tsmi_FullEnd.Size = New Size(273, 24)
         tsmi_FullEnd.Text = "Full-range ends as used"
+        ' 
+        ' tsmi_Percentil
+        ' 
+        tsmi_Percentil.Name = "tsmi_Percentil"
+        tsmi_Percentil.Size = New Size(273, 24)
+        tsmi_Percentil.Text = "Percentil scale"
+        ' 
+        ' tsmi_SetCut
+        ' 
+        tsmi_SetCut.Name = "tsmi_SetCut"
+        tsmi_SetCut.Size = New Size(273, 24)
+        tsmi_SetCut.Text = "Set cut-around"
+        ' 
+        ' tsmi_ResetCut
+        ' 
+        tsmi_ResetCut.Name = "tsmi_ResetCut"
+        tsmi_ResetCut.Size = New Size(273, 24)
+        tsmi_ResetCut.Text = "Reset cut-around"
         ' 
         ' frmImage
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(8F, 20F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(911, 563)
+        ClientSize = New Size(1041, 751)
         Controls.Add(ssMain)
+        Margin = New Padding(3, 4, 3, 4)
         Name = "frmImage"
         Text = "Image display"
         ssMain.ResumeLayout(False)
@@ -113,4 +134,7 @@ Partial Class frmImage
     Friend WithEvents tsmi_ThisUPPEREnd As ToolStripMenuItem
     Friend WithEvents tsmi_FromHisto As ToolStripMenuItem
     Friend WithEvents tsmi_FullEnd As ToolStripMenuItem
+    Friend WithEvents tsmi_Percentil As ToolStripMenuItem
+    Friend WithEvents tsmi_SetCut As ToolStripMenuItem
+    Friend WithEvents tsmi_ResetCut As ToolStripMenuItem
 End Class

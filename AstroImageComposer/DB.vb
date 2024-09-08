@@ -27,7 +27,7 @@ Public Class DB
             cFITSWriter.UseIPPForWriting = False
         End If
         cFITSWriter.IPPPath = IPP.IPPPath
-        cFITSReader.IPPPath = IPP.IPPPath
+        'cFITSReader.IPPPath = IPP.IPPPath
 
     End Sub
 

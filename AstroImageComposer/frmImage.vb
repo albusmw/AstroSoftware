@@ -1,5 +1,6 @@
 ﻿Option Explicit On
 Option Strict On
+Imports Microsoft.VisualBasic.ApplicationServices
 
 '''<summary>Image display form holding image data, the image itself and the statistics.</summary>
 Public Class frmImage
@@ -28,7 +29,9 @@ Public Class frmImage
     Public DataStartPos As Integer = 0
 
     '''<summary>Floating-point coordinated of the mouse within the picture.</summary>
-    Private FloatCenter As Drawing.PointF
+    Private PictureCoord As Drawing.PointF
+    '''<summary>Fixed-point data point (respecting cut) of the mouse within the picture.</summary>
+    Private DataCoord As Drawing.Point
 
     '''<summary>Use Intel IPP for reading.</summary>
     Public Property UseIPP As Boolean = False
@@ -51,9 +54,10 @@ Public Class frmImage
     '''<summary>Moving the mouse changed the point to zoom in.</summary>
     Private Sub pbMain_MouseMove(sender As Object, e As MouseEventArgs) Handles pbMain.MouseMove
         If IsNothing(ImgData) Then Exit Sub
-        FloatCenter = pbMain.ScreenCoordinatesToImageCoordinates
-        Dim DataValue As Double = ImgData.GetDataValue(FloatCenter)
-        tssl_Coord.Text = "Coord: <" & FloatCenter.X.ValRegIndep("0") & ":" & FloatCenter.Y.ValRegIndep("0") & ">: " & DataValue.ValRegIndep
+        PictureCoord = pbMain.ScreenCoordinatesToImageCoordinates
+        DataCoord = New Point(CInt(PictureCoord.X + ImageFromData.Cut_Left), CInt(PictureCoord.Y + ImageFromData.Cut_Top))
+        Dim DataValue As Double = ImgData.GetDataValue(DataCoord.X, DataCoord.Y)
+        tssl_Coord.Text = "Coord: <" & DataCoord.X.ValRegIndep("0") & ":" & DataCoord.Y.ValRegIndep("0") & ">: " & DataValue.ValRegIndep
         'CalculateZoomParameters()
         'ShowDetails()
     End Sub
@@ -68,7 +72,7 @@ Public Class frmImage
         ImgData.ResetAllProcessors()
 
         'FITS reader
-        Dim FITSReader As New cFITSReader
+        Dim FITSReader As New cFITSReader(DB.IPPPath)
         FITSHeader = New cFITSHeaderParser(cFITSHeaderChanger.ParseHeader(FileName, DataStartPos))
 
         Select Case FITSHeader.BitPix
@@ -121,23 +125,31 @@ Public Class frmImage
         'Entering conditions
         If IsNothing(ImgData) Then Exit Sub
 
+        'Calculate ROI to pass
+        Dim ROI As New Rectangle(0, 0, 0, 0)
+        If (ImageFromData.Cut_Left > 0) Or (ImageFromData.Cut_Right > 0) Or (ImageFromData.Cut_Top > 0) Or (ImageFromData.Cut_Bottom > 0) Then
+            Dim NewWidth As Integer = ImgData.NAXIS1 - ImageFromData.Cut_Left - ImageFromData.Cut_Right
+            Dim NewHeigth As Integer = ImgData.NAXIS2 - ImageFromData.Cut_Top - ImageFromData.Cut_Bottom
+            ROI = New Rectangle(ImageFromData.Cut_Left, ImageFromData.Cut_Top, NewWidth, NewHeigth)
+        End If
+
         'Generate display image
-        ImageFromData.GenerateDisplayImage(ImgData, ImgStat, DB.IPP)
+        ImageFromData.GenerateDisplayImage(ImgData, ROI, ImgStat, DB.IPP)
 
         'Display image
         ImageFromData.OutputImage.UnlockBits()
-        pbMain.BackColor = ImageFromData.ColorMap_BackColor
+        pbMain.BackColor = ImageFromData.CM_BackColor
         pbMain.Image = ImageFromData.OutputImage.BitmapToProcess
 
     End Sub
 
     Private Sub tsmi_ThisLOWEnd_Click(sender As Object, e As EventArgs) Handles tsmi_ThisLOWEnd.Click
-        ImageFromData.ColorMap_LowerEnd_Absolute = ImgData.GetDataValue(FloatCenter)
+        ImageFromData.CM_LowerEnd_Absolute = ImgData.GetDataValue(PictureCoord)
         DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
     End Sub
 
     Private Sub tsmi_ThisUPPEREnd_Click(sender As Object, e As EventArgs) Handles tsmi_ThisUPPEREnd.Click
-        ImageFromData.ColorMap_UpperEnd_Absolute = ImgData.GetDataValue(FloatCenter)
+        ImageFromData.CM_UpperEnd_Absolute = ImgData.GetDataValue(PictureCoord)
         DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
     End Sub
 
@@ -145,14 +157,14 @@ Public Class frmImage
         Dim HistoForm As frmGraph = DB.GetMyHistoForm(GUID)
         If IsNothing(HistoForm) Then Exit Sub
         Dim GP As ZedGraph.GraphPane = HistoForm.MyZEDGraph.MainGraph.GraphPane
-        ImageFromData.ColorMap_LowerEnd_Absolute = GP.XAxis.Scale.Min
-        ImageFromData.ColorMap_UpperEnd_Absolute = GP.XAxis.Scale.Max
+        ImageFromData.CM_LowerEnd_Absolute = GP.XAxis.Scale.Min
+        ImageFromData.CM_UpperEnd_Absolute = GP.XAxis.Scale.Max
         DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
     End Sub
 
     Private Sub tsmi_FullEnd_Click(sender As Object, e As EventArgs) Handles tsmi_FullEnd.Click
-        ImageFromData.ColorMap_LowerEnd_Absolute = ImgStat.MonoStatistics_Int.Min.Key
-        ImageFromData.ColorMap_UpperEnd_Absolute = ImgStat.MonoStatistics_Int.Max.Key
+        ImageFromData.CM_LowerEnd_Absolute = ImgStat.MonoStatistics_Int.Min.Key
+        ImageFromData.CM_UpperEnd_Absolute = ImgStat.MonoStatistics_Int.Max.Key
         DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
     End Sub
 
@@ -160,7 +172,7 @@ Public Class frmImage
     Private Sub SetDefaultsForNewImage()
         If IsNothing(ImgStat.MonoStatistics_Int) Then Exit Sub
         SetPercentilRange(1, 99)
-        ImageFromData.ColorMap_Gamma = 0.5
+        ImageFromData.CM_Gamma = 0.5
     End Sub
 
     '''<summary>Set the plot range to the given percentil range.</summary>
@@ -168,8 +180,35 @@ Public Class frmImage
     '''<param name="Upper">Upper limit.</param>
     Private Sub SetPercentilRange(ByVal Lower As Integer, ByVal Upper As Integer)
         If IsNothing(ImgStat.MonoStatistics_Int) Then Exit Sub
-        ImageFromData.ColorMap_LowerEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Lower)
-        ImageFromData.ColorMap_UpperEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Upper)
+        ImageFromData.CM_LowerEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Lower)
+        ImageFromData.CM_UpperEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Upper)
+    End Sub
+
+    Private Sub tsmi_Percentil_Click(sender As Object, e As EventArgs) Handles tsmi_Percentil.Click
+        Dim Lower As String = InputBox("Lower end", "Lower end", "10")
+        Dim Upper As String = InputBox("Upper end", "Upper end", "90")
+        ImageFromData.CM_LowerEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Lower.ValRegIndepInteger)
+        ImageFromData.CM_UpperEnd_Absolute = ImgStat.MonoStatistics_Int.GetPercentile(Upper.ValRegIndepInteger)
+        DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
+    End Sub
+
+    Private Sub tsmi_SetCut_Click(sender As Object, e As EventArgs) Handles tsmi_SetCut.Click
+        'Set a new cut around the current pixel
+        Dim W As String = InputBox("Width", "Width", "100")
+        Dim H As String = InputBox("Heigth", "Heigth", "100")
+        ImageFromData.Cut_Left = DataCoord.X - (W.ValRegIndepInteger \ 2)
+        ImageFromData.Cut_Top = DataCoord.Y - (H.ValRegIndepInteger \ 2)
+        ImageFromData.Cut_Right = ImgData.NAXIS1 - (DataCoord.X + W.ValRegIndepInteger)
+        ImageFromData.Cut_Bottom = ImgData.NAXIS2 - (DataCoord.Y + H.ValRegIndepInteger)
+        DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
+    End Sub
+
+    Private Sub tsmi_ResetCut_Click(sender As Object, e As EventArgs) Handles tsmi_ResetCut.Click
+        ImageFromData.Cut_Left = 0
+        ImageFromData.Cut_Top = 0
+        ImageFromData.Cut_Right = 0
+        ImageFromData.Cut_Bottom = 0
+        DB.GetMyModifierForm(GUID).ReactOnChangedProperty()
     End Sub
 
 End Class
