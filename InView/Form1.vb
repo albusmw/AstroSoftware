@@ -9,18 +9,8 @@ Public Class MainForm
         Public Distance As Double
     End Structure
 
-    Private DB As New cDB
-    Private Plotter As cZEDGraph
-
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
-        Plotter = New cZEDGraph(zgcMain)
         Dim X As New ASCOM.Tools.RiseSetTimes
-
-        DB.Properties.Latitude = Ato.AstroCalc.KnownLocations.DSC.Latitude.ToDegMinSec
-        DB.Properties.Longitude = Ato.AstroCalc.KnownLocations.DSC.Longitude.ToDegMinSec
-        pgMain.SelectedObject = DB.Properties
-
     End Sub
 
     Private Sub ASCOMCalculate()
@@ -59,7 +49,12 @@ Public Class MainForm
         End With
 
         'Set observer parameters
-        OnSurfaceObserver = DB.Properties.GetObserver
+        OnSurfaceObserver = New ASCOM.Tools.Novas31.OnSurface
+        With OnSurfaceObserver
+            .Latitude = 5
+            .Longitude = 7
+        End With
+
 
         'Set on-surface observer parameters
         Obs.Where = ASCOM.Tools.Novas31.ObserverLocation.EarthSurface
@@ -129,52 +124,6 @@ Public Class MainForm
 
     End Sub
 
-    Private Sub tsmiFile_Exit_Click(sender As Object, e As EventArgs) Handles tsmiFile_Exit.Click
-        End
-    End Sub
-
-    Private Sub ObjectVisibilityToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles tsmiCalc_Visibility.Click
-
-        Dim LeftWidth As Integer = 20
-        Dim SelectedObject As New sObjectInfo
-        Dim Result As New List(Of String)
-
-        Try
-            'Display selected object information
-
-            Dim CurrentUTC As DateTime = DateTime.UtcNow
-            Dim CurrentLocation As Ato.AstroCalc.sLatLong = Ato.AstroCalc.KnownLocations.DSC
-            Dim ObjectCoord As New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec)
-            Dim ObjectHourAngle As Double = Double.NaN
-            Dim Pos As Ato.AstroCalc.sAzAlt '= GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, ObjectCoord)
-            Dim Details As New List(Of String)
-            Details.Add(SelectedObject.VerboseName & " - Catalog: " & SelectedObject.Catalog)
-            Details.Add("═══════════════════════════════════════════════════════")
-            Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
-            If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
-            If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
-            If SelectedObject.HD > 0 Then Details.Add(" HD".PadLeft(LeftWidth) & ": " & SelectedObject.HD.ToString.Trim)
-            Details.Add("   RA".PadLeft(LeftWidth) & ": " & SelectedObject.RA.ToHMS)
-            Details.Add("   Dec".PadLeft(LeftWidth) & ": " & SelectedObject.Dec.ToDegMinSec)
-            Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Pos.Alt.ToDegMinSec)
-            Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
-            Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
-            Details.Add("═══════════════════════════════════════════════════════")
-            Details.Add(" UTC time".PadLeft(LeftWidth) & ": " & Format(CurrentUTC, "HH:mm:ss zzz"))
-            Details.Add(" Location".PadLeft(LeftWidth) & ": " & CurrentLocation.ToString)
-            Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LST(CurrentUTC, CurrentLocation.Longitude).ValRegIndep)
-            Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, CurrentLocation.Longitude))
-            Details.Add(" Location latitude".PadLeft(LeftWidth) & ": " & CurrentLocation.Latitude.ToDegMinSec)
-            Details.Add(" Location longitude".PadLeft(LeftWidth) & ": " & CurrentLocation.Longitude.ToDegMinSec)
-            Result.AddRange(Details)
-        Catch ex As Exception
-            Result.Add("ERROR: <" & ex.Message & ">")
-        End Try
-
-        AddToLog(Result)
-
-    End Sub
-
     Private Sub tsmiCalc_TC1_Click(sender As Object, e As EventArgs) Handles tsmiCalc_TC1.Click
         tbLog.Text = Join(Ato.AstroCalc.RunTestCase_SelfBuild.ToArray, System.Environment.NewLine)
     End Sub
@@ -212,7 +161,8 @@ Public Class MainForm
         AddToLog(" Location Long : " & CurrentLocation.Longitude_deg.ToDegMinSec)
         AddToLog(" Object RA     : " & J2000.RA.ToHMS)
         AddToLog(" Object Dec    : " & J2000.DEC.ToDegMinSec)
-        AddToLog("Date      |Time      |DateTime           | AZ CCD   |ALT CCD   |  AZ      |ALT       | LST")
+        AddToLog("    Date  |   Time   |     DateTime      |     CCD Guide        |  Own calculation    | LST")
+        AddToLog("          |          |                   | Azimuth  | Altitude  |  Azimuth | Altitude | LST")
 
         Dim Alt_CCD As New List(Of Double)
         Dim Azi_CCD As New List(Of Double)
@@ -237,16 +187,16 @@ Public Class MainForm
             Alt_Own.Add(MyAltAz.Alt)
             Azi_Own.Add(MyAltAz.AZ)
             'Output data to the log
-            Dim LogLine As New List(Of String)
-            LogLine.Add(SingleLine(0).PadLeft(10, " "c))                            'Date
-            LogLine.Add(SingleLine(1).PadLeft(10, " "c))                            'Time
-            LogLine.Add(MomentLocal.ValRegIndep)                                    'Moment [parsed]
-            LogLine.Add(SingleLine(2).PadLeft(10, " "c))                            'Azimuth [CCDGuide]
-            LogLine.Add(SingleLine(3).PadLeft(10, " "c))                            'Altitude [CCDGuide]
-            LogLine.Add(MyAltAz.AZ.ValRegIndep("000.000").PadLeft(10, " "c))        'Azimuth [self calculated]
-            LogLine.Add(MyAltAz.Alt.ValRegIndep("##0.000").PadLeft(10, " "c))       'Altitude [self calculated]
-            LogLine.Add(LocalStarTime.PadLeft(10, " "c))                            'LocalStartTime [self calculated]
-            AddToLog(Join(LogLine.ToArray, "|"))
+            Dim LogContent As New List(Of String)
+            LogContent.Add(SingleLine(0).PadLeft(10, " "c))                            'Date
+            LogContent.Add(SingleLine(1).PadLeft(10, " "c))                            'Time
+            LogContent.Add(MomentLocal.ValRegIndep)                                    'Moment [parsed]
+            LogContent.Add(SingleLine(2).PadLeft(10, " "c))                            'Azimuth [CCDGuide]
+            LogContent.Add(SingleLine(3).PadLeft(10, " "c))                            'Altitude [CCDGuide]
+            LogContent.Add(MyAltAz.AZ.ValRegIndep("000.000").PadLeft(10, " "c))        'Azimuth [self calculated]
+            LogContent.Add(MyAltAz.Alt.ValRegIndep("##0.000").PadLeft(10, " "c))       'Altitude [self calculated]
+            LogContent.Add(LocalStarTime.PadLeft(10, " "c))                            'LocalStartTime [self calculated]
+            AddToLog(Join(LogContent.ToArray, "|"))
         Next Idx
 
         'Current status: - Altitude is correct (only small calculation errors).
@@ -254,12 +204,12 @@ Public Class MainForm
 
         'Plotter.PlotXvsY("CCDGuide", Azi_CCD.ToArray, Alt_CCD.ToArray, New cZEDGraph.sGraphStyle(Color.Green, cZEDGraph.eCurveMode.Dots))
         'Plotter.PlotXvsY("My own", Azi_Own.ToArray, Alt_Own.ToArray, New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Dots))
-        Plotter.SetCaptions("Object trace", "Azimuth", "Altitude")
-        Plotter.PlotData("CCDGuide", Azi_CCD.ToArray, New cZEDGraph.sGraphStyle(Color.Green, cZEDGraph.eCurveMode.Lines))
-        Plotter.PlotData("My own", Azi_Own.ToArray, New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Dots))
-        Plotter.SetCaptions("Object trace", "Calculation index", "Azimuth")
-        Plotter.ManuallyScaleYAxisLin(0, 360)
-        Plotter.ForceUpdate()
+        'Plotter.SetCaptions("Object trace", "Azimuth", "Altitude")
+        'Plotter.PlotData("CCDGuide", Azi_CCD.ToArray, New cZEDGraph.sGraphStyle(Color.Green, cZEDGraph.eCurveMode.Lines))
+        'Plotter.PlotData("My own", Azi_Own.ToArray, New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Dots))
+        'Plotter.SetCaptions("Object trace", "Calculation index", "Azimuth")
+        'Plotter.ManuallyScaleYAxisLin(0, 360)
+        'Plotter.ForceUpdate()
 
     End Sub
 
@@ -295,108 +245,8 @@ Public Class MainForm
         End If
     End Sub
 
-    Private Sub tsmiCalc_ClipAstrobin_Click(sender As Object, e As EventArgs) Handles tsmiCalc_ClipAstrobin.Click
-        'Parse the data from the coordinates given on the AstroBin object page
-        Dim ClipContent As String() = Split(Clipboard.GetText, System.Environment.NewLine)
-        Dim RA As Double = Double.NaN
-        Dim Dec As Double = Double.NaN
-        For Each Line As String In ClipContent
-            If Line.Trim.StartsWith("RA center:") Then
-                RA = Line.Trim.Replace("RA center:", String.Empty).ParseRA
-            End If
-            If Line.Trim.StartsWith("DEC center:") Then
-                Dec = Line.Trim.Replace("DEC center:", String.Empty).ParseDegree
-            End If
-        Next Line
-    End Sub
-
-    Private Sub CalcAll()
-
-        Dim UTC_Stop As DateTime = DB.Properties.UTC_Start.Add(DB.Properties.UTC_Range)
-
-        'Form timeline
-        Dim MomentUTC As DateTime = DB.Properties.UTC_Start
-        Dim TimeLine As New List(Of DateTime)
-        Do
-            TimeLine.Add(MomentUTC)
-            MomentUTC = MomentUTC.Add(DB.Properties.UTC_Stepping)
-            If MomentUTC >= UTC_Stop Then Exit Do
-        Loop Until 1 = 0
-
-        'Calculate all positions
-        Dim Stopper As New Stopwatch : Stopper.Reset()
-        Stopper.Start()
-        Dim Positions As Ato.AstroCalc.sAzAlt() = Ato.AstroCalc.GetObjectPosition(TimeLine.ToArray, DB.Properties.GetLocation, DB.Properties.GetJ2000, Nothing)
-        Stopper.Stop()
-        ClearLog()
-        AddToLog("Calculation took " & Stopper.ElapsedMilliseconds & " ms")
-
-        'Plot
-        Dim SunHeights As New List(Of Double)
-        Dim Object_Azimuth As New List(Of Double)
-        Dim Object_Altitude As New List(Of Double)
-        Dim Object_AltitudeOK As New List(Of Double)
-        For Idx As Integer = 0 To Positions.GetUpperBound(0)
-            Dim SunAz As Double = Double.NaN
-            Dim SunHeight As Double = Double.NaN
-            AstroCalc.NET.Sun.SunPos(TimeLine(Idx), DB.Properties.GetLocation.Longitude_deg, DB.Properties.GetLocation.Latitude_deg, SunAz, SunHeight)
-            SunHeights.Add(SunHeight)
-            Object_Azimuth.Add(Positions(Idx).AZ_deg)
-            Object_Altitude.Add(Positions(Idx).ALT_deg)
-            'Observable
-            If (SunHeight <= DB.Properties.Limit_MaxSunHeigth) And (Positions(Idx).ALT_deg >= DB.Properties.Limit_MinHeigth) Then
-                Object_AltitudeOK.Add(Positions(Idx).ALT_deg)
-            Else
-                Object_AltitudeOK.Add(Double.NaN)
-            End If
-        Next Idx
-        If IsNothing(Plotter) = True Then Exit Sub
-
-        'Plot
-        Plotter.Clear()
-        Plotter.SetCaptions("Object trace", "Time", "Altitude")
-        Plotter.PlotXvsT("Trace", TimeLine.ToArray, Object_AltitudeOK.ToArray, New cZEDGraph.sGraphStyle(Color.Green, cZEDGraph.eCurveMode.Dots), False)
-        zgcMain.GraphPane.XAxis.Type = ZedGraph.AxisType.Date
-        'Plotter.ManuallyScaleXAxisLin(TimeLine.First.ToOADate, TimeLine.Last.ToOADate)
-        Plotter.ManuallyScaleYAxisLin(0, 90)
-        Plotter.ForceUpdate()
-
-    End Sub
-
-    Private Sub pgMain_MouseWheel(sender As Object, e As MouseEventArgs) Handles pgMain.MouseWheel
-        Dim OneHour As Integer = 1
-        Select Case pgMain.SelectedGridItem.PropertyDescriptor.Name
-            Case "Declination"
-                Dim CurrentValue As Double = DB.Properties.Declination.ParseDegree
-                CurrentValue += 10 / 60 * Math.Sign(e.Delta)
-                DB.Properties.Declination = CurrentValue.ToDegMinSec
-            Case "RightAscension"
-                Dim CurrentValue As Double = DB.Properties.RightAscension.ParseRA
-                CurrentValue += 10 / (24 * 60) * Math.Sign(e.Delta)
-                DB.Properties.RightAscension = CurrentValue.ToHMS
-            Case "Latitude"
-                Dim CurrentValue As Double = DB.Properties.Latitude.ParseDegree
-                CurrentValue += 10 / 60 * Math.Sign(e.Delta)
-                DB.Properties.Latitude = CurrentValue.ToDegMinSec
-            Case "Longitude"
-                Dim CurrentValue As Double = DB.Properties.Longitude.ParseDegree
-                CurrentValue += 10 / 60 * Math.Sign(e.Delta)
-                DB.Properties.Longitude = CurrentValue.ToDegMinSec
-            Case "UTC_Start"
-                DB.Properties.UTC_Start = DB.Properties.UTC_Start.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
-            Case "UTC_Range"
-                DB.Properties.UTC_Range = DB.Properties.UTC_Range.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
-            Case "Limit_MinHeigth"
-                DB.Properties.Limit_MinHeigth = DB.Properties.Limit_MinHeigth + (1 * Math.Sign(e.Delta))
-            Case "Limit_MaxSunHeigth"
-                DB.Properties.Limit_MaxSunHeigth = DB.Properties.Limit_MaxSunHeigth + (1 * Math.Sign(e.Delta))
-        End Select
-        pgMain.SelectedObject = DB.Properties
-        CalcAll()
-    End Sub
-
-    Private Sub pgMain_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgMain.PropertyValueChanged
-        CalcAll()
+    Private Sub tsmiCalc_TC3_Click(sender As Object, e As EventArgs) Handles tsmiCalc_TC3.Click
+        ASCOMCalculate()
     End Sub
 
 End Class

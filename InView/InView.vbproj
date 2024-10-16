@@ -28,6 +28,7 @@
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\DSSFileParser.vb" Link="MyLib\DSSFileParser.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\MyLib\TimeZoneCalc.vb" Link="MyLib\TimeZoneCalc.vb" />
     <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="atomics\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="atomics\AstroStatistics.vb" />
