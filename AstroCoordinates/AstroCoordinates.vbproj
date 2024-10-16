@@ -24,18 +24,24 @@
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
     <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
+    <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
     <Compile Include="..\..\MyLib\GetBuildDateTime.vb" Link="MyLib\GetBuildDateTime.vb" />
+    <Compile Include="..\..\MyLib\TimeZoneCalc.vb" Link="MyLib\TimeZoneCalc.vb" />
     <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
     <Compile Include="..\..\src\atomics\cHardwareState.vb" Link="common\cHardwareState.vb" />
+    <Compile Include="..\..\src\atomics\cLockBitmap.vb" Link="common\cLockBitmap.vb" />
+    <Compile Include="..\..\src\atomics\cLogging.vb" Link="common\cLogging.vb" />
+    <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="common\ComponentModelConverter.vb" />
     <Compile Include="..\..\src\atomics\cPWI4.vb" Link="common\cPWI4.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
+    <Compile Include="..\..\src\atomics\Utils.vb" Link="common\Utils.vb" />
   </ItemGroup>
 
   <ItemGroup>
@@ -79,6 +85,11 @@
 
   <ItemGroup>
     <Folder Include="common\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.1" />
+    <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
 
 </Project>

@@ -38,7 +38,7 @@ Partial Class MainForm
         btnGoTo = New Button()
         cbJ2000 = New CheckBox()
         ttMain = New ToolTip(components)
-        BackgroundWorker1 = New ComponentModel.BackgroundWorker()
+        bgMain = New ComponentModel.BackgroundWorker()
         msMain = New MenuStrip()
         tsmiFile = New ToolStripMenuItem()
         tsmiFile_OpenEXE = New ToolStripMenuItem()
@@ -198,6 +198,9 @@ Partial Class MainForm
         cbJ2000.Text = "J2000"
         cbJ2000.UseVisualStyleBackColor = True
         ' 
+        ' bgMain
+        ' 
+        ' 
         ' msMain
         ' 
         msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo})
@@ -318,7 +321,7 @@ Partial Class MainForm
     Friend WithEvents btnGoTo As Button
     Friend WithEvents cbJ2000 As CheckBox
     Friend WithEvents ttMain As ToolTip
-    Friend WithEvents BackgroundWorker1 As System.ComponentModel.BackgroundWorker
+    Friend WithEvents bgMain As System.ComponentModel.BackgroundWorker
     Friend WithEvents msMain As MenuStrip
     Friend WithEvents tsmiFile As ToolStripMenuItem
     Friend WithEvents tsmiFile_OpenEXE As ToolStripMenuItem

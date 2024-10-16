@@ -130,9 +130,8 @@ Public Class MainForm
 
     Private Sub tsmiFile_LoadVizier_Click(sender As Object, e As EventArgs) Handles tsmiFile_LoadVizier.Click
         Dim X As New cVizier
-        X.LoadCatalogs()
+        X.DownloadCatalogs()
+        X.UncompressCatalogs()
     End Sub
-
-
 
 End Class

@@ -3,16 +3,38 @@ Option Strict On
 
 Public Class frmGetObject
 
-    Public SelectedObject As sObjectInfo
+    Public SelectedObject As sObjectInfo = Nothing
+    Public CurrentLocation As Ato.AstroCalc.sLatLong = Nothing
+    Public ObjectCoord As Ato.AstroCalc.sRADec = Nothing
+
+    Public InView As frmInView
 
     'Local coordinates
     Private MyLocation As String = "LOCATION UNKNOWN"
     Private MyLat As Double = Double.NaN
     Private MyLong As Double = Double.NaN
+    Private MyUTCOffset As Integer = 0
 
-    Dim MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+    Private TimeCalc As cTimeZoneCalc
+
+    '''<summary>All present objects loaded from catalogs.</summary>
     Dim Objects As New List(Of sObjectInfo)
+
     Dim FoundEntries As New List(Of sObjectInfo)
+
+    Private ReadOnly MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+
+    Public ReadOnly Property CurrentUTC() As DateTime
+        Get
+            Return DateTime.UtcNow
+        End Get
+    End Property
+
+    Public ReadOnly Property LocationTime() As DateTimeOffset
+        Get
+            Return New DateTimeOffset(CurrentUTC.Year, CurrentUTC.Month, CurrentUTC.Day, CurrentUTC.Hour, CurrentUTC.Minute, CurrentUTC.Second, New TimeSpan(CInt(MyUTCOffset), 0, 0))
+        End Get
+    End Property
 
     Private Sub frmGetObject_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -87,7 +109,7 @@ Public Class frmGetObject
         lbResults.Items.AddRange(NewlbResultsContent.ToArray)
         If lbResults.Items.Count = 1 Then
             lbResults.SelectedIndex = 0
-            DisplaySelectedObject()
+            NewObjectOrLocationSelected()
         End If
         tsslSelectionLength.Text = FoundEntries.Count.ToString.Trim & " entries filtered"
     End Sub
@@ -99,17 +121,28 @@ Public Class frmGetObject
     End Sub
 
     Private Sub tUpdateDetails_Tick(sender As Object, e As EventArgs) Handles tUpdateDetails.Tick
-        DisplaySelectedObject()
+        UpdateObjectCurrentInfo()
     End Sub
 
-    Private Sub DisplaySelectedObject()
-        Dim LeftWidth As Integer = 20
+    '''<summary>New object or location selected.</summary>
+    Private Sub NewObjectOrLocationSelected()
+        SelectedObject = FoundEntries.Item(lbResults.SelectedIndex)
+        CurrentLocation = New Ato.AstroCalc.sLatLong(MyLat, MyLong)
+        ObjectCoord = New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec)
+        UpdateObjectCurrentInfo()
+        'Show in InView display
+        UpdateInView()
+    End Sub
+
+    Private Sub UpdateObjectCurrentInfo()
+        Dim LeftWidth As Integer = 18
+        If lbResults.SelectedIndex = -1 Then
+            tbDetails.Text = "No object selected ..."
+            Exit Sub
+        End If
         Try
             'Display selected object information
-            SelectedObject = FoundEntries.Item(lbResults.SelectedIndex)
-            Dim CurrentUTC As DateTime = DateTime.UtcNow
-            Dim CurrentLocation As New Ato.AstroCalc.sLatLong(MyLat, MyLong)
-            Dim ObjectCoord As New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec)
+            Dim TimeCalc As New cTimeZoneCalc("W. Europe Standard Time", "America/Santiago")
             Dim ObjectHourAngle As Double = Double.NaN
             Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, ObjectCoord)
             Dim Details As New List(Of String)
@@ -125,15 +158,16 @@ Public Class frmGetObject
             Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
             Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
             Details.Add("═══════════════════════════════════════════════════════")
-            Details.Add(" UTC time".PadLeft(LeftWidth) & ": " & Format(CurrentUTC, "HH:mm:ss zzz"))
-            Details.Add(" Location".PadLeft(LeftWidth) & ": " & MyLocation)
-            Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LST(CurrentUTC, MyLong).ValRegIndep)
-            Details.Add(" Local Siderial Time".PadLeft(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, MyLong))
-            Details.Add(" Location latitude".PadLeft(LeftWidth) & ": " & MyLat.ToDegMinSec)
-            Details.Add(" Location longitude".PadLeft(LeftWidth) & ": " & MyLong.ToDegMinSec)
+            Details.Add("UTC time".PadRight(LeftWidth) & ": " & TimeCalc.UTCNowString)
+            Details.Add("Observatory".PadRight(LeftWidth) & ": " & MyLocation)
+            Details.Add("    Time".PadRight(LeftWidth) & ": " & TimeCalc.ObservatoryString)
+            Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Ato.AstroCalc.LST(CurrentUTC, MyLong).ValRegIndep)
+            Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, MyLong))
+            Details.Add("    Latitude".PadRight(LeftWidth) & ": " & MyLat.ToDegMinSec)
+            Details.Add("    Longitude".PadRight(LeftWidth) & ": " & MyLong.ToDegMinSec)
             tbDetails.Text = Join(Details.ToArray, System.Environment.NewLine)
         Catch ex As Exception
-            tbDetails.Text = String.Empty
+            tbDetails.Text = "Calculation error: <" & ex.Message & ">"
         End Try
     End Sub
 
@@ -141,23 +175,26 @@ Public Class frmGetObject
         MyLocation = "Deep Sky Chile"
         MyLat = Ato.AstroCalc.KnownLocations.DSC.Latitude
         MyLong = Ato.AstroCalc.KnownLocations.DSC.Longitude
+        MyUTCOffset = Ato.AstroCalc.KnownLocations.DSC.UTCOffset
+        UpdateInViewLocation()
     End Sub
 
     Private Sub btnLocationHolz_Click(sender As Object, e As EventArgs) Handles btnLocationHolz.Click
         MyLocation = "Holzkirchen"
         MyLat = Ato.AstroCalc.KnownLocations.Holzkirchen.Latitude
         MyLong = Ato.AstroCalc.KnownLocations.Holzkirchen.Longitude
+        MyUTCOffset = Ato.AstroCalc.KnownLocations.Holzkirchen.UTCOffset
+        UpdateInViewLocation()
     End Sub
 
     Private Function GetObjectPosition_ASCOM(ByVal Moment As DateTime, ByVal CurrentLocation As Ato.AstroCalc.sLatLong, ByVal ObjectCoord As Ato.AstroCalc.sRADec) As Ato.AstroCalc.sAzAlt
 
         'Use dynamically ASCOM calls
-
         Dim Util As New COMInterop.COMObj("ASCOM.Utilities.Util")
         Dim Trans As New COMInterop.COMObj("ASCOM.Astrometry.Transform.Transform")
 
         'Dim UTCDate As Object = Util.Get("UTCDate")
-        Dim Julian As Object = Util.Call("DateUTCToJulian", New Object() {Moment})
+        Dim Julian As Object = Util.Call("DateUTCToJulian", Moment)
 
         Trans.Set("JulianDateUTC", Julian)
         Trans.Set("SiteLatitude", CurrentLocation.Latitude)
@@ -173,7 +210,62 @@ Public Class frmGetObject
     End Function
 
     Private Sub lbResults_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbResults.SelectedIndexChanged
-        DisplaySelectedObject()
+        NewObjectOrLocationSelected()
+    End Sub
+
+    Private Sub tsmiData_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmiData_AstroBin.Click
+        'Parse the data from the coordinates given on the AstroBin object page
+        Dim ClipContent As String() = Split(Clipboard.GetText, System.Environment.NewLine)
+        Dim RA As Double = Double.NaN
+        Dim Dec As Double = Double.NaN
+        For Each Line As String In ClipContent
+            If Line.Trim.StartsWith("RA center:") Then
+                RA = Line.Trim.Replace("RA center:", String.Empty).ParseRA
+            End If
+            If Line.Trim.StartsWith("DEC center:") Then
+                Dec = Line.Trim.Replace("DEC center:", String.Empty).ParseDegree
+            End If
+        Next Line
+    End Sub
+
+    Private Sub tsmiTools_InViewDisplay_Click(sender As Object, e As EventArgs) Handles tsmiTools_InViewDisplay.Click
+        If IsNothing(InView) Then
+            InView = New frmInView
+            InView.Show()
+        End If
+        UpdateInViewLocation()
+        UpdateInView()
+    End Sub
+
+    '''<summary>Update the InView location.</summary>
+    Private Sub UpdateInViewLocation()
+        If IsNothing(InView) = False Then
+            InView.Props.ObservatoryLocationName = MyLocation
+            InView.Props.ObservatoryLatitude = MyLat
+            InView.Props.ObservatoryLongitude = MyLong
+            InView.Props.ObservatoryUTCOffset = MyUTCOffset
+            InView.Recalc()
+        End If
+    End Sub
+
+    '''<summary>Update location and object in the InView display window.</summary>
+    Private Sub UpdateInView()
+        If IsNothing(InView) = False Then
+            Dim UpdateRequired As Boolean = False
+            If InView.Props.ObjectName <> SelectedObject.Name Then
+                InView.Props.ObjectName = SelectedObject.Name
+                UpdateRequired = True
+            End If
+            If InView.Props.RightAscension <> SelectedObject.RA.ToHMS Then
+                InView.Props.RightAscension = SelectedObject.RA.ToHMS
+                UpdateRequired = True
+            End If
+            If InView.Props.Declination <> SelectedObject.Dec.ToDegMinSec Then
+                InView.Props.Declination = SelectedObject.Dec.ToDegMinSec
+                UpdateRequired = True
+            End If
+            If UpdateRequired Then InView.Recalc()
+        End If
     End Sub
 
 End Class
