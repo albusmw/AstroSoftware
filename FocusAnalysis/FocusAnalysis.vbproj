@@ -28,6 +28,7 @@
     <Compile Include="..\..\MyLib\Extensions.vb">
       <Link>MyLib\Extensions.vb</Link>
     </Compile>
+    <Compile Include="..\..\MyLib\MathEx.vb" Link="MyLib\MathEx.vb" />
     <Compile Include="..\..\src\atomics\AstroStatistics.vb">
       <Link>AstroStatistics.vb</Link>
     </Compile>
@@ -43,6 +44,8 @@
     <Compile Include="..\..\src\atomics\cStatMultiThread.vb">
       <Link>cStatMultiThread.vb</Link>
     </Compile>
+    <Compile Include="..\..\src\atomics\DragDrop.vb" Link="src\DragDrop.vb" />
+    <Compile Include="..\..\src\atomics\SignalProcessing.vb" Link="src\SignalProcessing.vb" />
     <Compile Include="..\..\src\atomics\Utils.vb" Link="src\Utils.vb" />
     <Compile Update="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
