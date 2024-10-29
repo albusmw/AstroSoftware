@@ -1,8 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports System.ComponentModel
-
-
 
 '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 ' Class to display object visibility information as graph and table
@@ -22,8 +19,10 @@ Public Class frmInView
         Public Shared ObjectPosition As Ato.AstroCalc.sAzAlt() = Nothing
         '''<summary>Sun position.</summary>
         Public Shared SunPosition As AstroCalc.NET.Sun.sSunPos() = Nothing
-        '''<summary>Moon phase.</summary>
-        Public Shared MoonPhases As Double() = Nothing
+        '''<summary>Moon illumination.</summary>
+        Public Shared MoonIllumination As Double() = Nothing
+        '''<summary>Moon altitude.</summary>
+        Public Shared MoonAltitude As Double() = Nothing
         '''<summary>Object azimuth.</summary>
         Public Shared Object_Azimuth As Double()
         '''<summary>Object altitude.</summary>
@@ -53,6 +52,8 @@ Public Class frmInView
     Private TraceStyle_Observable As New cZEDGraph.sGraphStyle(Color.Green, cZEDGraph.eCurveMode.Lines, 3)
     Private TraceStyle_Sun As New cZEDGraph.sGraphStyle(Color.Orange, cZEDGraph.eCurveMode.Dots)
     Private TraceStyle_Object As New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Lines)
+    Private TraceStyle_MoonAltitude As New cZEDGraph.sGraphStyle(Color.DarkBlue, cZEDGraph.eCurveMode.Dots)
+    Private TraceStyle_MoonIllumination As New cZEDGraph.sGraphStyle(Color.LightBlue, cZEDGraph.eCurveMode.Lines)
 
     '''<summary>Time spans as language codes.</summary>
     Public Class TimeSpans
@@ -110,17 +111,17 @@ Public Class frmInView
 
     Private Sub tsmiTime_Today_Click(sender As Object, e As EventArgs) Handles tsmiTime_Today.Click
         With Props
-            .UTC_Start = Now.ToUniversalTime
             .CalculationRange = TimeSpans.OneDay
-            .Stepping = TimeSpans.OneSecond
+            .UTC_Start = Now.ToUniversalTime
+            .Stepping = TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_ThisMonth_Click(sender As Object, e As EventArgs) Handles tsmiTime_ThisMonth.Click
         With Props
-            .UTC_Start = Now.ToUniversalTime
             .CalculationRange = TimeSpans.OneMonth
+            .UTC_Start = Now.ToUniversalTime
             .Stepping = TimeSpans.OneMinute
         End With
         Recalc()
@@ -128,8 +129,8 @@ Public Class frmInView
 
     Private Sub tsmiTime_Next365Days_Click(sender As Object, e As EventArgs) Handles tsmiTime_Next365Days.Click
         With Props
-            .UTC_Start = Now.ToUniversalTime
             .CalculationRange = TimeSpans.OneYear
+            .UTC_Start = Now.ToUniversalTime
             .Stepping = 10 * TimeSpans.OneMinute
         End With
         Recalc()
@@ -137,7 +138,9 @@ Public Class frmInView
 
     Private Sub tsmiTime_NextDay_Click(sender As Object, e As EventArgs) Handles tsmiTime_NextDay.Click
         With Props
+            .CalculationRange = TimeSpans.OneDay
             .UTC_Start = .UTC_Start.AddDays(1)
+            .Stepping = TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
@@ -194,9 +197,14 @@ Public Class frmInView
         TicTocID = TimingLog.Tic("SunPosition")
         Vector.SunPosition = AstroCalc.NET.Sun.SunPos(Vector.UTCTimes, Props.GetLocation.Longitude_deg, Props.GetLocation.Latitude_deg)
         TimingLog.Toc(TicTocID)
-        TicTocID = TimingLog.Tic("MoonPhases")
-        Vector.MoonPhases = ASCOMDynamic.AstroUtils.MoonPhase(Vector.JD)
+
+        TicTocID = TimingLog.Tic("Moon")
+        Vector.MoonAltitude = VSOPEx.MoonAltitude(Vector.UTCTimes, Props.GetLocation.Longitude_deg, Props.GetLocation.Latitude_deg) 'ASCOMDynamic.AstroUtils.MoonPhase(Vector.JD)
+        Vector.MoonIllumination = VSOPEx.MoonIllumination(Vector.UTCTimes)
         TimingLog.Toc(TicTocID)
+
+
+
         'TimingLog.ShowLog()
 
         'Generate traces
@@ -236,13 +244,15 @@ Public Class frmInView
         Plotter.Clear()
         Plotter.SetCaptions("Object <" & Props.ObjectName & ">", XAxisCaption, "Object altitude [°]")
 
-        If Props.Trace_Observable Then Plotter.PlotXvsT("Object observable", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Observable.ToArray, TraceStyle_Observable, False)
-        If Props.Trace_Sun Then Plotter.PlotXvsT("Sun", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Sun_Altitude.ToArray, TraceStyle_Sun, False)
-        If Props.Trace_NonObservable Then Plotter.PlotXvsT("Object", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Altitude.ToArray, TraceStyle_Object, False)
+        If Props.Trace_Observable Then Plotter.PlotXvsT("Object observable", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Observable, TraceStyle_Observable, False)
+        If Props.Trace_Sun Then Plotter.PlotXvsT("Sun", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Sun_Altitude, TraceStyle_Sun, False)
+        If Props.Trace_NonObservable Then Plotter.PlotXvsT("Object", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Altitude, TraceStyle_Object, False)
+        Plotter.PlotXvsT("Moon altitude", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.MoonAltitude, TraceStyle_MoonAltitude, False)
+        Plotter.PlotXvsT("Moon illumination", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.MoonIllumination, TraceStyle_MoonIllumination, False)
 
         zgcMain.GraphPane.XAxis.Type = ZedGraph.AxisType.Date
         'Plotter.ManuallyScaleXAxisLin(TimeLine.First.ToOADate, TimeLine.Last.ToOADate)
-        Plotter.ManuallyScaleYAxisLin(Props.Axis_YMin, 90)
+        Plotter.ManuallyScaleYAxisLin(Props.Axis_YMin, 100)
         Plotter.ForceUpdate()
 
         'Show status
@@ -299,13 +309,18 @@ Public Class frmInView
 
     End Sub
 
+    '''<summary>Get a vector with UTC time values.</summary>
+    '''<param name="UTC_Start">First entry (included).</param>
+    '''<param name="Stepping">Entry stepping.</param>
+    '''<param name="UTC_Stop">Last entry (included).</param>
+    '''<returns></returns>
     Private Function GetUTCVector(ByVal UTC_Start As DateTime, ByVal Stepping As TimeSpan, ByVal UTC_Stop As DateTime) As List(Of DateTime)
         Dim RetVal As New List(Of DateTime)
         Dim UTCMoment As DateTime = UTC_Start
         Do
             RetVal.Add(UTCMoment)
             UTCMoment = UTCMoment.Add(Stepping)
-            If UTCMoment > UTC_Stop Then Exit Do
+            If UTCMoment >= UTC_Stop Then Exit Do
         Loop Until 1 = 0
         Return RetVal
     End Function
@@ -353,13 +368,13 @@ Public Class cInViewProps
 
     Private Const Cat1 As String = "1. Object"
     Private Const Cat2 As String = "2. Observatory"
-    Private Const Cat3 As String = "3. Operator"
+    Private Const Cat3 As String = "3. Operator / Observer"
     Private Const Cat4 As String = "4. Calculation"
 
     Public Enum eTimeAxis
-        <Description("UTC")> UTC
-        <Description("Observatory time")> ObservatoryTime
-        <Description("Observer time")> ObserverTime
+        <ComponentModel.Description("UTC")> UTC
+        <ComponentModel.Description("Observatory time")> ObservatoryTime
+        <ComponentModel.Description("Observer time")> ObserverTime
     End Enum
 
     <ComponentModel.Category(Cat1)>
@@ -415,13 +430,13 @@ Public Class cInViewProps
 
     <ComponentModel.Category(Cat3)>
     <ComponentModel.DisplayName("1. Location name")>
-    Public Property OperatorLocationName As String = String.Empty
+    Public Property OperatorLocationName As String = "Holzkirchen"
 
 
     <ComponentModel.Category(Cat3)>
     <ComponentModel.DisplayName("2. UTC offset")>
     <ComponentModel.Description("UTC offset [h] of the operator")>
-    Public Property OperatorUTCOffset As Integer = 0
+    Public Property OperatorUTCOffset As Integer = 2
 
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
