@@ -9,74 +9,33 @@ Public Class frmInView
 
     Public Shared ReadOnly Property MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
 
-    '''<summary>All vectors over time.</summary>
-    Public Class Vector
-        '''<summary>UTC time - base time scale.</summary>
-        Public Shared UTCTimes As DateTime() = Nothing
-        '''<summary>Julian date.</summary>
-        Public Shared JD As Double() = Nothing
-        '''<summary>Object position.</summary>
-        Public Shared ObjectPosition As Ato.AstroCalc.sAzAlt() = Nothing
-        '''<summary>Sun position.</summary>
-        Public Shared SunPosition As AstroCalc.NET.Sun.sSunPos() = Nothing
-        '''<summary>Moon illumination.</summary>
-        Public Shared MoonIllumination As Double() = Nothing
-        '''<summary>Moon altitude.</summary>
-        Public Shared MoonAltitude As Double() = Nothing
-        '''<summary>Object azimuth.</summary>
-        Public Shared Object_Azimuth As Double()
-        '''<summary>Object altitude.</summary>
-        Public Shared Object_Altitude As Double()
-        '''<summary>Trace that contains the object altitude if the object is observable.</summary>
-        Public Shared Object_Observable As Double()
-        '''<summary>Sun altitude.</summary>
-        Public Shared Sun_Altitude As Double()
-        Public Shared Sub GetDerived()
-            ReDim Object_Azimuth(ObjectPosition.GetUpperBound(0))
-            ReDim Object_Altitude(ObjectPosition.GetUpperBound(0))
-            ReDim Object_Observable(ObjectPosition.GetUpperBound(0))
-            ReDim Sun_Altitude(ObjectPosition.GetUpperBound(0))
-            For Idx As Integer = 0 To ObjectPosition.GetUpperBound(0)
-                'Store vectors for display
-                Object_Azimuth(Idx) = ObjectPosition(Idx).AZ_deg
-                Sun_Altitude(Idx) = SunPosition(Idx).Altitude
-            Next Idx
-        End Sub
-    End Class
+    'Vector calculator and properties
+    Public WithEvents AstroInView As New cAstroInView
+    Public Props As New cAstroInView.cProps
+    Public Vector As New cAstroInView.cVectors
 
-    '''<summary>Object, location and parameters to generate plot for.</summary>
-    Public Props As New cInViewProps
+    Public PlotConfig As New cPlotConfig
+
     '''<summary>ZEDGraph plotter.</summary>
     Private Plotter As cZEDGraph
 
-    Private TraceStyle_Observable As New cZEDGraph.sGraphStyle(Color.Green, cZEDGraph.eCurveMode.Lines, 3)
-    Private TraceStyle_Sun As New cZEDGraph.sGraphStyle(Color.Orange, cZEDGraph.eCurveMode.Dots)
-    Private TraceStyle_Object As New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Lines)
-    Private TraceStyle_MoonAltitude As New cZEDGraph.sGraphStyle(Color.DarkBlue, cZEDGraph.eCurveMode.Dots)
+    Private TraceStyle_Sun As New cZEDGraph.sGraphStyle(Color.Orange, cZEDGraph.eCurveMode.Lines)
+    Private TraceStyle_Object As New cZEDGraph.sGraphStyle(Color.Black, cZEDGraph.eCurveMode.Lines)
+    Private TraceStyle_MoonAltitude As New cZEDGraph.sGraphStyle(Color.DarkBlue, cZEDGraph.eCurveMode.Lines)
     Private TraceStyle_MoonIllumination As New cZEDGraph.sGraphStyle(Color.LightBlue, cZEDGraph.eCurveMode.Lines)
-
-    '''<summary>Time spans as language codes.</summary>
-    Public Class TimeSpans
-        Public Shared ReadOnly OneSecond As New TimeSpan(0, 0, 0, 1)
-        Public Shared ReadOnly OneMinute As New TimeSpan(0, 0, 1, 0)
-        Public Shared ReadOnly OneHour As New TimeSpan(0, 1, 0, 0)
-        Public Shared ReadOnly OneDay As New TimeSpan(1, 0, 0, 0)
-        Public Shared ReadOnly OneMonth As New TimeSpan(31, 0, 0, 0)
-        Public Shared ReadOnly OneYear As New TimeSpan(365, 0, 0, 0)
-    End Class
 
     '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     ' Form processing code
     '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
     Private Sub frmInView_Load(sender As Object, e As EventArgs) Handles Me.Load
-        pgMain.SelectedObject = Props
+        pgCalcProp.SelectedObject = Props
         Plotter = New cZEDGraph(zgcMain)
     End Sub
 
-    Private Sub pgMain_MouseWheel(sender As Object, e As MouseEventArgs) Handles pgMain.MouseWheel
+    Private Sub pgMain_MouseWheel(sender As Object, e As MouseEventArgs) Handles pgCalcProp.MouseWheel
         Dim OneHour = 1
-        Select Case pgMain.SelectedGridItem.PropertyDescriptor.Name
+        Select Case pgCalcProp.SelectedGridItem.PropertyDescriptor.Name
             Case "Declination"
                 Dim CurrentValue = Props.Declination.ParseDegree
                 CurrentValue += 10 / 60 * Math.Sign(e.Delta)
@@ -97,50 +56,65 @@ Public Class frmInView
                 Props.UTC_Start = Props.UTC_Start.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
             Case "UTC_Range"
                 Props.CalculationRange = Props.CalculationRange.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
-            Case "Limit_MinHeigth"
-                Props.Limit_MinHeigth = Props.Limit_MinHeigth + 1 * Math.Sign(e.Delta)
-            Case "Limit_MaxSunHeigth"
-                Props.Limit_MaxSunHeigth = Props.Limit_MaxSunHeigth + 1 * Math.Sign(e.Delta)
+            Case "Limit_ObjectMinHeigth"
+                PlotConfig.Limit_ObjectMinHeigth = PlotConfig.Limit_ObjectMinHeigth + 1 * Math.Sign(e.Delta)
+            Case "Limit_SunMaxHeigth"
+                PlotConfig.Limit_SunMaxHeigth = PlotConfig.Limit_SunMaxHeigth + 1 * Math.Sign(e.Delta)
+            Case "Limit_MoonMaxHeigth"
+                PlotConfig.Limit_MoonMaxHeigth = PlotConfig.Limit_MoonMaxHeigth + 1 * Math.Sign(e.Delta)
         End Select
         Recalc()
     End Sub
 
-    Private Sub pgMain_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgMain.PropertyValueChanged
+    Private Sub PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgCalcProp.PropertyValueChanged
         Recalc()
+    End Sub
+
+    Private Sub pgDispProp_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgDispProp.PropertyValueChanged
+        PlotTraces()
     End Sub
 
     Private Sub tsmiTime_Today_Click(sender As Object, e As EventArgs) Handles tsmiTime_Today.Click
         With Props
-            .CalculationRange = TimeSpans.OneDay
+            .CalculationRange = cAstroInView.TimeSpans.OneDay
             .UTC_Start = Now.ToUniversalTime
-            .Stepping = TimeSpans.OneMinute
+            .Stepping = cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_ThisMonth_Click(sender As Object, e As EventArgs) Handles tsmiTime_ThisMonth.Click
         With Props
-            .CalculationRange = TimeSpans.OneMonth
+            .CalculationRange = cAstroInView.TimeSpans.OneMonth
             .UTC_Start = Now.ToUniversalTime
-            .Stepping = TimeSpans.OneMinute
+            .Stepping = cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_Next365Days_Click(sender As Object, e As EventArgs) Handles tsmiTime_Next365Days.Click
         With Props
-            .CalculationRange = TimeSpans.OneYear
+            .CalculationRange = cAstroInView.TimeSpans.OneYear
             .UTC_Start = Now.ToUniversalTime
-            .Stepping = 10 * TimeSpans.OneMinute
+            .Stepping = 10 * cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_NextDay_Click(sender As Object, e As EventArgs) Handles tsmiTime_NextDay.Click
         With Props
-            .CalculationRange = TimeSpans.OneDay
-            .UTC_Start = .UTC_Start.AddDays(1)
-            .Stepping = TimeSpans.OneMinute
+            .CalculationRange = cAstroInView.TimeSpans.OneDay
+            .UTC_Start = .UTC_Start.Add(cAstroInView.TimeSpans.OneDay)
+            .Stepping = cAstroInView.TimeSpans.OneMinute
+        End With
+        Recalc()
+    End Sub
+
+    Private Sub tsmiTime_PrevDay_Click(sender As Object, e As EventArgs) Handles tsmiTime_PrevDay.Click
+        With Props
+            .CalculationRange = cAstroInView.TimeSpans.OneDay
+            .UTC_Start = .UTC_Start.Subtract(cAstroInView.TimeSpans.OneDay)
+            .Stepping = cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
@@ -149,16 +123,16 @@ Public Class frmInView
     ' Calculation code
     '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
+    '''<summary>Recalculate the traces and plot them.</summary>
     Public Sub Recalc()
-        pgMain.SelectedObject = Props
-        CalcOverTime()
+        pgCalcProp.SelectedObject = Props
+        pgDispProp.SelectedObject = PlotConfig
+        AstroInViewCalc()
+        PlotTraces()
     End Sub
 
     '''<summary>Calculate the requested parameters over time.</summary>
-    Public Sub CalcOverTime()
-
-        Dim TimingLog As New cLogging
-        Dim TicTocID As Long
+    Public Sub AstroInViewCalc()
 
         'Exit on invalid conditions
         Dim ErrorText As String = String.Empty
@@ -169,51 +143,24 @@ Public Class frmInView
             Exit Sub
         End If
 
-        'Show status
+        'Calculate
         tsslMain.Text = "Calculating ..." : De()
-
-        'Generate UTC timeline
-        TicTocID = TimingLog.Tic("UTC list generation")
-        Vector.UTCTimes = GetUTCVector(Props.UTC_Start, Props.Stepping, Props.UTC_Start.Add(Props.CalculationRange)).ToArray  'All points in UTC time to calculate the position
-        TimingLog.Toc(TicTocID)
-
-        'Generate derived timelines
-        TicTocID = TimingLog.Tic("Derived timelines")
-        ReDim Vector.JD(Vector.UTCTimes.Count - 1)                  'All points in julian dates
-        Dim Ptr As Integer = 0
-        For Each UTCMoment As DateTime In Vector.UTCTimes
-            Vector.JD(Ptr) = AstroCoordinates.Ato.AstroCalc.JulianDateTime(UTCMoment)
-            Ptr += 1
-        Next UTCMoment
-        TimingLog.Toc(TicTocID)
-
-        'Show status
-        tsslMain.Text = "Calculating <" & Vector.UTCTimes.Count.ValRegIndep & "> points ..." : De()
-
-        'Calculate all positions
-        TicTocID = TimingLog.Tic("ObjectPosition")
-        Vector.ObjectPosition = Ato.AstroCalc.GetObjectPosition(Vector.UTCTimes, Props.GetLocation, Props.GetJ2000, Nothing)
-        TimingLog.Toc(TicTocID)
-        TicTocID = TimingLog.Tic("SunPosition")
-        Vector.SunPosition = AstroCalc.NET.Sun.SunPos(Vector.UTCTimes, Props.GetLocation.Longitude_deg, Props.GetLocation.Latitude_deg)
-        TimingLog.Toc(TicTocID)
-
-        TicTocID = TimingLog.Tic("Moon")
-        Vector.MoonAltitude = VSOPEx.MoonAltitude(Vector.UTCTimes, Props.GetLocation.Longitude_deg, Props.GetLocation.Latitude_deg) 'ASCOMDynamic.AstroUtils.MoonPhase(Vector.JD)
-        Vector.MoonIllumination = VSOPEx.MoonIllumination(Vector.UTCTimes)
-        TimingLog.Toc(TicTocID)
-
-
+        Vector = AstroInView.Calculate(Props)
+        tsslMain.Text = "Calculated." : De()
 
         'TimingLog.ShowLog()
 
+    End Sub
+
+    Public Sub PlotTraces()
+
         'Generate traces
-        Vector.GetDerived()
         For Idx As Integer = 0 To Vector.ObjectPosition.GetUpperBound(0)
             'Observable
             Dim Observable As Boolean = True
-            If Vector.Sun_Altitude(Idx) > Props.Limit_MaxSunHeigth Then Observable = False
-            If Vector.ObjectPosition(Idx).ALT_deg < Props.Limit_MinHeigth Then Observable = False
+            If Vector.Sun_Altitude(Idx) > PlotConfig.Limit_SunMaxHeigth Then Observable = False
+            If Vector.ObjectPosition(Idx).ALT_deg < PlotConfig.Limit_ObjectMinHeigth Then Observable = False
+            If Vector.MoonAltitude(Idx) > PlotConfig.Limit_MoonMaxHeigth Then Observable = False
             If Observable Then
                 Vector.Object_Observable(Idx) = Vector.ObjectPosition(Idx).ALT_deg
                 Vector.Object_Altitude(Idx) = Double.NaN
@@ -226,37 +173,40 @@ Public Class frmInView
         'Set x axis caption and data
         Dim XAxisCaption As String = String.Empty
         Dim XAxisTimeOffset As New TimeSpan(0)
-        Select Case Props.Trace_TimeAxis
-            Case cInViewProps.eTimeAxis.UTC
+        Dim XAxisStart As DateTime = Vector.UTCTimes.First
+        Select Case PlotConfig.Trace_TimeAxis
+            Case cPlotConfig.eTimeAxis.UTC
                 XAxisCaption = "UTC Time"
                 XAxisTimeOffset = New TimeSpan(0)
-            Case cInViewProps.eTimeAxis.ObservatoryTime
-                XAxisCaption = "Observatory time @ <" & Props.ObservatoryLocationName & ">"
+            Case cPlotConfig.eTimeAxis.ObservatoryTime
+                XAxisCaption = "Observatory time @ " & Props.ObservatoryLocationName & ""
                 XAxisTimeOffset = New TimeSpan(Props.ObservatoryUTCOffset, 0, 0)
-            Case cInViewProps.eTimeAxis.ObserverTime
-                XAxisCaption = "Observer time @ <" & Props.OperatorLocationName & ">"
+            Case cPlotConfig.eTimeAxis.ObserverTime
+                XAxisCaption = "Observer time @ " & Props.OperatorLocationName & ""
                 XAxisTimeOffset = New TimeSpan(Props.OperatorUTCOffset, 0, 0)
         End Select
+        XAxisStart = XAxisStart.Add(XAxisTimeOffset)
+        XAxisCaption &= ", starting " & XAxisStart.ValRegIndep
 
+        'Start plot
         If IsNothing(Plotter) = True Then Exit Sub
-
-        'Plot traces
         Plotter.Clear()
         Plotter.SetCaptions("Object <" & Props.ObjectName & ">", XAxisCaption, "Object altitude [°]")
 
-        If Props.Trace_Observable Then Plotter.PlotXvsT("Object observable", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Observable, TraceStyle_Observable, False)
-        If Props.Trace_Sun Then Plotter.PlotXvsT("Sun", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Sun_Altitude, TraceStyle_Sun, False)
-        If Props.Trace_NonObservable Then Plotter.PlotXvsT("Object", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Altitude, TraceStyle_Object, False)
-        Plotter.PlotXvsT("Moon altitude", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.MoonAltitude, TraceStyle_MoonAltitude, False)
-        Plotter.PlotXvsT("Moon illumination", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.MoonIllumination, TraceStyle_MoonIllumination, False)
+        'Plot traces
+        Dim TraceStyle_Observable As New cZEDGraph.sGraphStyle(Color.DarkGreen, cZEDGraph.eCurveMode.LinesAndPoints, PlotConfig.ObservableTraceDotSize)
+        If PlotConfig.Trace_Observable Then Plotter.PlotXvsT("Observable [°]", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Observable, TraceStyle_Observable, False)
+        If PlotConfig.Trace_Sun Then Plotter.PlotXvsT("Sun altiude [°]", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Sun_Altitude, TraceStyle_Sun, False)
+        If PlotConfig.Trace_NonObservable Then Plotter.PlotXvsT("Object altitude [°]", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.Object_Altitude, TraceStyle_Object, False)
+        If PlotConfig.Trace_MoonAltitude Then Plotter.PlotXvsT("Moon altitude [°]", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.MoonAltitude, TraceStyle_MoonAltitude, False)
+        If PlotConfig.Trace_MoonIllumination Then Plotter.PlotXvsT("Moon illumination [%]", Vector.UTCTimes.ToArray.Add(XAxisTimeOffset), Vector.MoonIllumination, TraceStyle_MoonIllumination, False)
 
         zgcMain.GraphPane.XAxis.Type = ZedGraph.AxisType.Date
+        zgcMain.GraphPane.XAxis.MajorGrid.IsVisible = True
+        zgcMain.GraphPane.YAxis.MajorGrid.IsVisible = True
         'Plotter.ManuallyScaleXAxisLin(TimeLine.First.ToOADate, TimeLine.Last.ToOADate)
-        Plotter.ManuallyScaleYAxisLin(Props.Axis_YMin, 100)
+        Plotter.ManuallyScaleYAxisLin(PlotConfig.Axis_YMin, PlotConfig.Axis_YMax)
         Plotter.ForceUpdate()
-
-        'Show status
-        tsslMain.Text = "Calculated." : De()
 
     End Sub
 
@@ -271,7 +221,7 @@ Public Class frmInView
         Dim UTCNoew As DateTime = Now.ToUniversalTime
 
         'All points in UTC time to calculate the position
-        Dim UTCTimes As List(Of DateTime) = GetUTCVector(UTCStart, 5 * TimeSpans.OneMinute, UTCStart.Add(TimeSpans.OneYear))
+        Dim UTCTimes As List(Of DateTime) = Props.GetUTCVector(UTCStart, 5 * cAstroInView.TimeSpans.OneMinute, UTCStart.Add(cAstroInView.TimeSpans.OneYear))
         Dim SunPositions As AstroCalc.NET.Sun.sSunPos() = AstroCalc.NET.Sun.SunPos(UTCTimes, Props.GetLocation.Longitude_deg, Props.GetLocation.Latitude_deg)
         Dim ObjectPosition As Ato.AstroCalc.sAzAlt() = Ato.AstroCalc.GetObjectPosition(UTCTimes, Props.GetLocation, Props.GetJ2000, Nothing)
 
@@ -283,7 +233,7 @@ Public Class frmInView
                 CopyPtr = (Y * ScaleImage.Width) + X
                 Dim TimPtr As Integer = (X * ScaleImage.Height) + Y
                 Dim ColorToUse As System.Drawing.Color
-                Dim SunAlt As Double = SunPositions(TimPtr).Altitude
+                Dim SunAlt As Double = SunPositions(TimPtr).AzAlt.Alt
                 Select Case SunAlt
                     Case Is > 0
                         ColorToUse = System.Drawing.Color.FromArgb(255, 255, 255)
@@ -295,7 +245,7 @@ Public Class frmInView
                         ColorToUse = System.Drawing.Color.DarkRed
                     Case Is < -18
                         ColorToUse = System.Drawing.Color.FromArgb(0, 0, 0)
-                        If ObjectPosition(TimPtr).Alt > Props.Limit_MinHeigth Then
+                        If ObjectPosition(TimPtr).Alt > PlotConfig.Limit_ObjectMinHeigth Then
                             ColorToUse = System.Drawing.Color.FromArgb(0, 255, 0)
                         End If
                 End Select
@@ -308,22 +258,6 @@ Public Class frmInView
         MsgBox("DONE.")
 
     End Sub
-
-    '''<summary>Get a vector with UTC time values.</summary>
-    '''<param name="UTC_Start">First entry (included).</param>
-    '''<param name="Stepping">Entry stepping.</param>
-    '''<param name="UTC_Stop">Last entry (included).</param>
-    '''<returns></returns>
-    Private Function GetUTCVector(ByVal UTC_Start As DateTime, ByVal Stepping As TimeSpan, ByVal UTC_Stop As DateTime) As List(Of DateTime)
-        Dim RetVal As New List(Of DateTime)
-        Dim UTCMoment As DateTime = UTC_Start
-        Do
-            RetVal.Add(UTCMoment)
-            UTCMoment = UTCMoment.Add(Stepping)
-            If UTCMoment >= UTC_Stop Then Exit Do
-        Loop Until 1 = 0
-        Return RetVal
-    End Function
 
     Private Sub De()
         System.Windows.Forms.Application.DoEvents()
@@ -340,7 +274,7 @@ Public Class frmInView
                 Results.Add(Vector.JD(Idx))
                 Results.Add(Vector.ObjectPosition(Idx).ALT_deg)
                 Results.Add(Vector.ObjectPosition(Idx).AZ_deg)
-                Results.Add(Vector.SunPosition(Idx).Altitude)
+                Results.Add(Vector.SunPosition(Idx).AzAlt.Alt)
                 Results.Add(Ato.AstroCalc.LST(Vector.UTCTimes(Idx), Props.ObservatoryLongitude))
                 worksheet1.Cell(Idx + 2, 1).InsertData(Results, True)
             Next Idx
@@ -358,18 +292,21 @@ Public Class frmInView
 
     End Sub
 
+    Private Sub AstroInView_CalcProgress(Message As String) Handles AstroInView.CalcProgress
+        tsslMain.Text = Message : De()
+    End Sub
+
 End Class
 
 '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 ' Class that describes what to show
 '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-Public Class cInViewProps
+Public Class cPlotConfig
 
-    Private Const Cat1 As String = "1. Object"
-    Private Const Cat2 As String = "2. Observatory"
-    Private Const Cat3 As String = "3. Operator / Observer"
-    Private Const Cat4 As String = "4. Calculation"
+    Private Const Cat1_Limits As String = "1. Observable limits"
+    Private Const Cat2_Traces As String = "2. Active traces"
+    Private Const Cat3_PlotConfig As String = "3. Plot configuration"
 
     Public Enum eTimeAxis
         <ComponentModel.Description("UTC")> UTC
@@ -377,85 +314,113 @@ Public Class cInViewProps
         <ComponentModel.Description("Observer time")> ObserverTime
     End Enum
 
-    <ComponentModel.Category(Cat1)>
-    <ComponentModel.DisplayName("1. Object name")>
-    Public Property ObjectName As String = String.Empty
+    '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-    <ComponentModel.Category(Cat1)>
-    <ComponentModel.DisplayName("2. Right Ascension")>
-    Public Property RightAscension As String = String.Empty
+    <ComponentModel.Category(Cat1_Limits)>
+    <ComponentModel.DisplayName("1. Minimum heigth above horizon")>
+    Public Property Limit_ObjectMinHeigth As Double
+        Get
+            Return MyLimit_ObjectMinHeigth
+        End Get
+        Set(value As Double)
+            MyLimit_ObjectMinHeigth = value
+        End Set
+    End Property
+    Private MyLimit_ObjectMinHeigth As Double = 5.0
 
-    <ComponentModel.Category(Cat1)>
-    <ComponentModel.DisplayName("3. Declination")>
-    Public Property Declination As String = String.Empty
+    <ComponentModel.Category(Cat1_Limits)>
+    <ComponentModel.DisplayName("2. Maximum sun heigth")>
+    Public Property Limit_SunMaxHeigth As Double
+        Get
+            Return MyLimit_SunMaxHeigth
+        End Get
+        Set(value As Double)
+            MyLimit_SunMaxHeigth = value
+        End Set
+    End Property
+    Private MyLimit_SunMaxHeigth As Double = -12.0
 
-    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-    <ComponentModel.Category(Cat2)>
-    <ComponentModel.DisplayName("1. Location name")>
-    Public Property ObservatoryLocationName As String = String.Empty
-
-    <ComponentModel.Category(Cat2)>
-    <ComponentModel.DisplayName("2. Latitude")>
-    <ComponentModel.Description("Geodetic (ITRS) latitude; north positive (degrees)")>
-    <ComponentModel.TypeConverter(GetType(Ato.AstroCalc.DoublePropertyConverter_dms))>
-    Public Property ObservatoryLatitude As Double = Double.NaN
-
-    <ComponentModel.Category(Cat2)>
-    <ComponentModel.DisplayName("3. Longitude")>
-    <ComponentModel.Description("Geodetic (ITRS) longitude; east positive (degrees)")>
-    <ComponentModel.TypeConverter(GetType(Ato.AstroCalc.DoublePropertyConverter_dms))>
-    Public Property ObservatoryLongitude As Double = Double.NaN
-
-    <ComponentModel.Category(Cat2)>
-    <ComponentModel.DisplayName("4. UTC offset")>
-    <ComponentModel.Description("UTC offset [h] of the location")>
-    Public Property ObservatoryUTCOffset As Integer = 0
-
-    <ComponentModel.Category(Cat2)>
-    <ComponentModel.DisplayName("5. Height")>
-    Public Property ObservatoryHeigth As Double = 0
-
-    <ComponentModel.Category(Cat2)>
-    <ComponentModel.DisplayName("6. Temperature")>
-    <ComponentModel.Description("Observer's location's ambient temperature (degrees Celsius)")>
-    Public Property ObservatoryTemperature As Double = 0
-
-    <ComponentModel.Category(Cat2)>
-    <ComponentModel.DisplayName("7. Pressure")>
-    <ComponentModel.Description("Observer's location's atmospheric pressure (millibars)")>
-    Public Property ObservatoryPressure As Double = 1013.0
+    <ComponentModel.Category(Cat1_Limits)>
+    <ComponentModel.DisplayName("3. Maximum moon heigth")>
+    Public Property Limit_MoonMaxHeigth As Double
+        Get
+            Return MyLimit_MoonMaxHeigth
+        End Get
+        Set(value As Double)
+            MyLimit_MoonMaxHeigth = value
+        End Set
+    End Property
+    Private MyLimit_MoonMaxHeigth As Double = 90.0
 
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-    <ComponentModel.Category(Cat3)>
-    <ComponentModel.DisplayName("1. Location name")>
-    Public Property OperatorLocationName As String = "Holzkirchen"
+    <ComponentModel.Category(Cat2_Traces)>
+    <ComponentModel.DisplayName("1. Observable object")>
+    <ComponentModel.TypeConverter(GetType(ComponentModelEx.BooleanPropertyConverter_YesNo))>
+    Public Property Trace_Observable As Boolean
+        Get
+            Return MyTrace_Observable
+        End Get
+        Set(value As Boolean)
+            MyTrace_Observable = value
+        End Set
+    End Property
+    Private MyTrace_Observable As Boolean = True
 
+    <ComponentModel.Category(Cat2_Traces)>
+    <ComponentModel.DisplayName("2. Object altitude")>
+    <ComponentModel.TypeConverter(GetType(ComponentModelEx.BooleanPropertyConverter_YesNo))>
+    Public Property Trace_NonObservable As Boolean
+        Get
+            Return MyTrace_NonObservable
+        End Get
+        Set(value As Boolean)
+            MyTrace_NonObservable = value
+        End Set
+    End Property
+    Private MyTrace_NonObservable As Boolean = True
 
-    <ComponentModel.Category(Cat3)>
-    <ComponentModel.DisplayName("2. UTC offset")>
-    <ComponentModel.Description("UTC offset [h] of the operator")>
-    Public Property OperatorUTCOffset As Integer = 2
+    <ComponentModel.Category(Cat2_Traces)>
+    <ComponentModel.DisplayName("3. Sun altitude")>
+    <ComponentModel.TypeConverter(GetType(ComponentModelEx.BooleanPropertyConverter_YesNo))>
+    Public Property Trace_Sun As Boolean
+        Get
+            Return MyTrace_Sun
+        End Get
+        Set(value As Boolean)
+            MyTrace_Sun = value
+        End Set
+    End Property
+    Private MyTrace_Sun As Boolean = True
 
-    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    <ComponentModel.Category(Cat2_Traces)>
+    <ComponentModel.DisplayName("4. Moon altitude")>
+    <ComponentModel.TypeConverter(GetType(ComponentModelEx.BooleanPropertyConverter_YesNo))>
+    Public Property Trace_MoonAltitude As Boolean
+        Get
+            Return MyTrace_MoonAltitude
+        End Get
+        Set(value As Boolean)
+            MyTrace_MoonAltitude = value
+        End Set
+    End Property
+    Private MyTrace_MoonAltitude As Boolean = True
 
-    <ComponentModel.Category(Cat4)>
-    <ComponentModel.DisplayName("1. Start date and time")>
-    Public Property UTC_Start As DateTime = Now.ToUniversalTime
+    <ComponentModel.Category(Cat2_Traces)>
+    <ComponentModel.DisplayName("5. Moon illumination")>
+    <ComponentModel.TypeConverter(GetType(ComponentModelEx.BooleanPropertyConverter_YesNo))>
+    Public Property Trace_MoonIllumination As Boolean
+        Get
+            Return MyTrace_MoonIllumination
+        End Get
+        Set(value As Boolean)
+            MyTrace_MoonIllumination = value
+        End Set
+    End Property
+    Private MyTrace_MoonIllumination As Boolean = True
 
-    <ComponentModel.Category(Cat4)>
-    <ComponentModel.DisplayName("2. Calculation duration")>
-    Public Property CalculationRange As TimeSpan = New TimeSpan(1, 0, 0, 0)
-
-    <ComponentModel.Category(Cat4)>
-    <ComponentModel.DisplayName("3. Calculation stepping")>
-    Public Property Stepping As TimeSpan = New TimeSpan(0, 1, 0)
-
-    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-    <ComponentModel.Category("5. Plots")>
-    <ComponentModel.DisplayName("4. Time axis")>
+    <ComponentModel.Category(Cat3_PlotConfig)>
+    <ComponentModel.DisplayName("1. Time axis")>
     <ComponentModel.TypeConverter(GetType(ComponentModelEx.EnumDesciptionConverter))>
     Public Property Trace_TimeAxis As eTimeAxis
         Get
@@ -467,72 +432,20 @@ Public Class cInViewProps
     End Property
     Private MyTrace_TimeAxis As eTimeAxis = eTimeAxis.UTC
 
-    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-    <ComponentModel.Category("4. Limits")>
-    <ComponentModel.DisplayName("1. Minimum heigth above horizon")>
-    Public Property Limit_MinHeigth As Double
+    <ComponentModel.Category(Cat3_PlotConfig)>
+    <ComponentModel.DisplayName("2. Y axis maximum")>
+    Public Property Axis_YMax As Double
         Get
-            Return MyLimit_MinHeigth
+            Return MyAxis_YMax
         End Get
         Set(value As Double)
-            MyLimit_MinHeigth = value
+            MyAxis_YMax = value
         End Set
     End Property
-    Private MyLimit_MinHeigth As Double = 5.0
+    Private MyAxis_YMax As Double = 100
 
-    <ComponentModel.Category("4. Limits")>
-    <ComponentModel.DisplayName("2. Maximum sun heigth")>
-    Public Property Limit_MaxSunHeigth As Double
-        Get
-            Return MyLimit_MaxSunHeigth
-        End Get
-        Set(value As Double)
-            MyLimit_MaxSunHeigth = value
-        End Set
-    End Property
-    Private MyLimit_MaxSunHeigth As Double = -12.0
-
-    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
-
-    <ComponentModel.Category("5. Plots")>
-    <ComponentModel.DisplayName("1. Observable trace")>
-    Public Property Trace_Observable As Boolean
-        Get
-            Return MyTrace_Observable
-        End Get
-        Set(value As Boolean)
-            MyTrace_Observable = value
-        End Set
-    End Property
-    Private MyTrace_Observable As Boolean = True
-
-    <ComponentModel.Category("5. Plots")>
-    <ComponentModel.DisplayName("2. Non-obserable trace")>
-    Public Property Trace_NonObservable As Boolean
-        Get
-            Return MyTrace_NonObservable
-        End Get
-        Set(value As Boolean)
-            MyTrace_NonObservable = value
-        End Set
-    End Property
-    Private MyTrace_NonObservable As Boolean = True
-
-    <ComponentModel.Category("5. Plots")>
-    <ComponentModel.DisplayName("3. Sun trace")>
-    Public Property Trace_Sun As Boolean
-        Get
-            Return MyTrace_Sun
-        End Get
-        Set(value As Boolean)
-            MyTrace_Sun = value
-        End Set
-    End Property
-    Private MyTrace_Sun As Boolean = True
-
-    <ComponentModel.Category("5. Plots")>
-    <ComponentModel.DisplayName("4. Y axis minimum")>
+    <ComponentModel.Category(Cat3_PlotConfig)>
+    <ComponentModel.DisplayName("3. Y axis minimum")>
     Public Property Axis_YMin As Double
         Get
             Return MyAxis_YMin
@@ -541,29 +454,23 @@ Public Class cInViewProps
             MyAxis_YMin = value
         End Set
     End Property
-    Private MyAxis_YMin As Double = -18
+    Private MyAxis_YMin As Double = -12
+
+    <ComponentModel.Category(Cat3_PlotConfig)>
+    <ComponentModel.DisplayName("4. Observable trace dot size")>
+    Public Property ObservableTraceDotSize As Integer
+        Get
+            Return MyObservableTraceDotSize
+        End Get
+        Set(value As Integer)
+            MyObservableTraceDotSize = value
+        End Set
+    End Property
+    Private MyObservableTraceDotSize As Integer = 2
+
 
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
-    '''<summary>Get the current observer position.</summary>
-    Public Function GetObserver() As ASCOMDynamic.sOnSurface
-        Dim RetVal As New ASCOMDynamic.sOnSurface
-        With RetVal
-            .Temperature = ObservatoryTemperature
-            .Pressure = ObservatoryPressure
-            .Latitude = GetLocation.Latitude
-            .Longitude = GetLocation.Longitude
-            .Height = ObservatoryHeigth
-        End With
-        Return RetVal
-    End Function
 
-    Public Function GetLocation() As Ato.AstroCalc.sLatLong
-        Return New Ato.AstroCalc.sLatLong(ObservatoryLatitude, ObservatoryLongitude)
-    End Function
-
-    Public Function GetJ2000() As Ato.AstroCalc.sRADec
-        Return New Ato.AstroCalc.sRADec(RightAscension, Declination)
-    End Function
 
 End Class

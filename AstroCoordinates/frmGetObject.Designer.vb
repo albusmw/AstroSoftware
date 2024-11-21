@@ -30,21 +30,28 @@ Partial Class frmGetObject
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
         scMain = New SplitContainer()
-        btnLocationHolz = New Button()
-        btnLocationDSC = New Button()
         tbDetails = New TextBox()
         tUpdateDetails = New Timer(components)
         msMain = New MenuStrip()
         tsmiData = New ToolStripMenuItem()
         tsmiData_AstroBin = New ToolStripMenuItem()
+        tsmiData_SetLocation = New ToolStripMenuItem()
+        ToolStripMenuItem1 = New ToolStripSeparator()
+        tsmiData_Accept = New ToolStripMenuItem()
         tsmiTools = New ToolStripMenuItem()
         tsmiTools_InViewDisplay = New ToolStripMenuItem()
+        scRight = New SplitContainer()
+        zgcMain = New ZedGraph.ZedGraphControl()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
         scMain.Panel2.SuspendLayout()
         scMain.SuspendLayout()
         msMain.SuspendLayout()
+        CType(scRight, ComponentModel.ISupportInitialize).BeginInit()
+        scRight.Panel1.SuspendLayout()
+        scRight.Panel2.SuspendLayout()
+        scRight.SuspendLayout()
         SuspendLayout()
         ' 
         ' tbSearchString
@@ -53,7 +60,7 @@ Partial Class frmGetObject
         tbSearchString.Font = New Font("Courier New", 9F)
         tbSearchString.Location = New Point(93, 27)
         tbSearchString.Name = "tbSearchString"
-        tbSearchString.Size = New Size(815, 21)
+        tbSearchString.Size = New Size(1118, 21)
         tbSearchString.TabIndex = 0
         ' 
         ' Label1
@@ -75,15 +82,15 @@ Partial Class frmGetObject
         lbResults.ItemHeight = 15
         lbResults.Location = New Point(3, 3)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(405, 561)
+        lbResults.Size = New Size(231, 848)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
         ' 
         ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength})
-        ssMain.Location = New Point(0, 624)
+        ssMain.Location = New Point(0, 911)
         ssMain.Name = "ssMain"
-        ssMain.Size = New Size(920, 22)
+        ssMain.Size = New Size(1223, 22)
         ssMain.TabIndex = 3
         ssMain.Text = "StatusStrip1"
         ' 
@@ -102,6 +109,7 @@ Partial Class frmGetObject
         ' scMain
         ' 
         scMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        scMain.FixedPanel = FixedPanel.Panel1
         scMain.Location = New Point(12, 54)
         scMain.Name = "scMain"
         ' 
@@ -111,32 +119,10 @@ Partial Class frmGetObject
         ' 
         ' scMain.Panel2
         ' 
-        scMain.Panel2.Controls.Add(btnLocationHolz)
-        scMain.Panel2.Controls.Add(btnLocationDSC)
-        scMain.Panel2.Controls.Add(tbDetails)
-        scMain.Size = New Size(896, 567)
-        scMain.SplitterDistance = 411
+        scMain.Panel2.Controls.Add(scRight)
+        scMain.Size = New Size(1199, 854)
+        scMain.SplitterDistance = 237
         scMain.TabIndex = 4
-        ' 
-        ' btnLocationHolz
-        ' 
-        btnLocationHolz.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        btnLocationHolz.Location = New Point(364, 537)
-        btnLocationHolz.Name = "btnLocationHolz"
-        btnLocationHolz.Size = New Size(114, 23)
-        btnLocationHolz.TabIndex = 2
-        btnLocationHolz.Text = "Holzkirchen"
-        btnLocationHolz.UseVisualStyleBackColor = True
-        ' 
-        ' btnLocationDSC
-        ' 
-        btnLocationDSC.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        btnLocationDSC.Location = New Point(3, 537)
-        btnLocationDSC.Name = "btnLocationDSC"
-        btnLocationDSC.Size = New Size(58, 23)
-        btnLocationDSC.TabIndex = 1
-        btnLocationDSC.Text = "DSC"
-        btnLocationDSC.UseVisualStyleBackColor = True
         ' 
         ' tbDetails
         ' 
@@ -146,7 +132,7 @@ Partial Class frmGetObject
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(475, 528)
+        tbDetails.Size = New Size(946, 124)
         tbDetails.TabIndex = 0
         tbDetails.WordWrap = False
         ' 
@@ -160,13 +146,13 @@ Partial Class frmGetObject
         msMain.Items.AddRange(New ToolStripItem() {tsmiData, tsmiTools})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(920, 24)
+        msMain.Size = New Size(1223, 24)
         msMain.TabIndex = 6
         msMain.Text = "MenuStrip1"
         ' 
         ' tsmiData
         ' 
-        tsmiData.DropDownItems.AddRange(New ToolStripItem() {tsmiData_AstroBin})
+        tsmiData.DropDownItems.AddRange(New ToolStripItem() {tsmiData_AstroBin, tsmiData_SetLocation, ToolStripMenuItem1, tsmiData_Accept})
         tsmiData.Name = "tsmiData"
         tsmiData.Size = New Size(43, 20)
         tsmiData.Text = "Data"
@@ -174,8 +160,25 @@ Partial Class frmGetObject
         ' tsmiData_AstroBin
         ' 
         tsmiData_AstroBin.Name = "tsmiData_AstroBin"
-        tsmiData_AstroBin.Size = New Size(184, 22)
-        tsmiData_AstroBin.Text = "... AstroBin clipboard"
+        tsmiData_AstroBin.Size = New Size(203, 22)
+        tsmiData_AstroBin.Text = "Parse AstroBin clipboard"
+        ' 
+        ' tsmiData_SetLocation
+        ' 
+        tsmiData_SetLocation.Name = "tsmiData_SetLocation"
+        tsmiData_SetLocation.Size = New Size(203, 22)
+        tsmiData_SetLocation.Text = "Set location"
+        ' 
+        ' ToolStripMenuItem1
+        ' 
+        ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        ToolStripMenuItem1.Size = New Size(200, 6)
+        ' 
+        ' tsmiData_Accept
+        ' 
+        tsmiData_Accept.Name = "tsmiData_Accept"
+        tsmiData_Accept.Size = New Size(203, 22)
+        tsmiData_Accept.Text = "Accept and close"
         ' 
         ' tsmiTools
         ' 
@@ -190,11 +193,46 @@ Partial Class frmGetObject
         tsmiTools_InViewDisplay.Size = New Size(184, 22)
         tsmiTools_InViewDisplay.Text = "Open In View display"
         ' 
+        ' scRight
+        ' 
+        scRight.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        scRight.FixedPanel = FixedPanel.Panel1
+        scRight.Location = New Point(3, 3)
+        scRight.Name = "scRight"
+        scRight.Orientation = Orientation.Horizontal
+        ' 
+        ' scRight.Panel1
+        ' 
+        scRight.Panel1.Controls.Add(tbDetails)
+        ' 
+        ' scRight.Panel2
+        ' 
+        scRight.Panel2.Controls.Add(zgcMain)
+        scRight.Size = New Size(952, 848)
+        scRight.SplitterDistance = 130
+        scRight.TabIndex = 1
+        ' 
+        ' zgcMain
+        ' 
+        zgcMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        zgcMain.Location = New Point(4, 3)
+        zgcMain.Margin = New Padding(4, 3, 4, 3)
+        zgcMain.Name = "zgcMain"
+        zgcMain.ScrollGrace = 0R
+        zgcMain.ScrollMaxX = 0R
+        zgcMain.ScrollMaxY = 0R
+        zgcMain.ScrollMaxY2 = 0R
+        zgcMain.ScrollMinX = 0R
+        zgcMain.ScrollMinY = 0R
+        zgcMain.ScrollMinY2 = 0R
+        zgcMain.Size = New Size(944, 708)
+        zgcMain.TabIndex = 0
+        ' 
         ' frmGetObject
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(920, 646)
+        ClientSize = New Size(1223, 933)
         Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(msMain)
@@ -207,11 +245,15 @@ Partial Class frmGetObject
         ssMain.PerformLayout()
         scMain.Panel1.ResumeLayout(False)
         scMain.Panel2.ResumeLayout(False)
-        scMain.Panel2.PerformLayout()
         CType(scMain, ComponentModel.ISupportInitialize).EndInit()
         scMain.ResumeLayout(False)
         msMain.ResumeLayout(False)
         msMain.PerformLayout()
+        scRight.Panel1.ResumeLayout(False)
+        scRight.Panel1.PerformLayout()
+        scRight.Panel2.ResumeLayout(False)
+        CType(scRight, ComponentModel.ISupportInitialize).EndInit()
+        scRight.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -225,11 +267,14 @@ Partial Class frmGetObject
     Friend WithEvents scMain As SplitContainer
     Friend WithEvents tbDetails As TextBox
     Friend WithEvents tUpdateDetails As Timer
-    Friend WithEvents btnLocationHolz As Button
-    Friend WithEvents btnLocationDSC As Button
     Friend WithEvents msMain As MenuStrip
     Friend WithEvents tsmiData As ToolStripMenuItem
     Friend WithEvents tsmiData_AstroBin As ToolStripMenuItem
     Friend WithEvents tsmiTools As ToolStripMenuItem
     Friend WithEvents tsmiTools_InViewDisplay As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem1 As ToolStripSeparator
+    Friend WithEvents tsmiData_Accept As ToolStripMenuItem
+    Friend WithEvents tsmiData_SetLocation As ToolStripMenuItem
+    Friend WithEvents scRight As SplitContainer
+    Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
 End Class

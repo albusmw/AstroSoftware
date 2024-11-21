@@ -21,6 +21,7 @@
     <Compile Include="..\..\MyLib\ASCOMDynamic.vb" Link="MyLib\ASCOMDynamic.vb" />
     <Compile Include="..\..\MyLib\Astro.vb" Link="MyLib\Astro.vb" />
     <Compile Include="..\..\MyLib\AstroObjectInfo.vb" Link="MyLib\AstroObjectInfo.vb" />
+    <Compile Include="..\..\MyLib\cAstroInView.vb" Link="MyLib\cAstroInView.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
     <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
@@ -29,6 +30,8 @@
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
+    <Compile Include="..\..\MyLib\frmSelectFromList.Designer.vb" Link="MyLib\frmSelectFromList.Designer.vb" />
+    <Compile Include="..\..\MyLib\frmSelectFromList.vb" Link="MyLib\frmSelectFromList.vb" />
     <Compile Include="..\..\MyLib\GetBuildDateTime.vb" Link="MyLib\GetBuildDateTime.vb" />
     <Compile Include="..\..\MyLib\TimeZoneCalc.vb" Link="MyLib\TimeZoneCalc.vb" />
     <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
@@ -51,6 +54,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="MyLib\frmLogDisplay.resx" />
+    <EmbeddedResource Include="..\..\MyLib\frmSelectFromList.resx" Link="MyLib\frmSelectFromList.resx" />
     <EmbeddedResource Include="catalogs\messier.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

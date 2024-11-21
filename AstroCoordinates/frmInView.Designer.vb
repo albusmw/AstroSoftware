@@ -23,7 +23,7 @@ Partial Class frmInView
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
-        pgMain = New PropertyGrid()
+        pgCalcProp = New PropertyGrid()
         zgcMain = New ZedGraph.ZedGraphControl()
         ssMain = New StatusStrip()
         tsslMain = New ToolStripStatusLabel()
@@ -36,17 +36,24 @@ Partial Class frmInView
         tsmiGenerate = New ToolStripMenuItem()
         tsmiGenerate_VisImage = New ToolStripMenuItem()
         tsmiGenerate_ExcelExport = New ToolStripMenuItem()
+        scMain = New SplitContainer()
+        pgDispProp = New PropertyGrid()
+        tsmiTime_PrevDay = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         msMain.SuspendLayout()
+        CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
+        scMain.Panel1.SuspendLayout()
+        scMain.Panel2.SuspendLayout()
+        scMain.SuspendLayout()
         SuspendLayout()
         ' 
-        ' pgMain
+        ' pgCalcProp
         ' 
-        pgMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left
-        pgMain.Location = New Point(12, 27)
-        pgMain.Name = "pgMain"
-        pgMain.Size = New Size(309, 704)
-        pgMain.TabIndex = 0
+        pgCalcProp.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        pgCalcProp.Location = New Point(3, 3)
+        pgCalcProp.Name = "pgCalcProp"
+        pgCalcProp.Size = New Size(303, 346)
+        pgCalcProp.TabIndex = 0
         ' 
         ' zgcMain
         ' 
@@ -90,7 +97,7 @@ Partial Class frmInView
         ' 
         ' tsmiTime
         ' 
-        tsmiTime.DropDownItems.AddRange(New ToolStripItem() {tsmiTime_Today, tsmiTime_ThisMonth, tsmiTime_Next365Days, tsmiTime_NextDay})
+        tsmiTime.DropDownItems.AddRange(New ToolStripItem() {tsmiTime_Today, tsmiTime_ThisMonth, tsmiTime_Next365Days, tsmiTime_NextDay, tsmiTime_PrevDay})
         tsmiTime.Name = "tsmiTime"
         tsmiTime.Size = New Size(85, 20)
         tsmiTime.Text = "Time presets"
@@ -98,26 +105,26 @@ Partial Class frmInView
         ' tsmiTime_Today
         ' 
         tsmiTime_Today.Name = "tsmiTime_Today"
-        tsmiTime_Today.Size = New Size(166, 22)
+        tsmiTime_Today.Size = New Size(184, 22)
         tsmiTime_Today.Text = "Today"
         ' 
         ' tsmiTime_ThisMonth
         ' 
         tsmiTime_ThisMonth.Name = "tsmiTime_ThisMonth"
-        tsmiTime_ThisMonth.Size = New Size(166, 22)
+        tsmiTime_ThisMonth.Size = New Size(184, 22)
         tsmiTime_ThisMonth.Text = "This month"
         ' 
         ' tsmiTime_Next365Days
         ' 
         tsmiTime_Next365Days.Name = "tsmiTime_Next365Days"
-        tsmiTime_Next365Days.Size = New Size(166, 22)
+        tsmiTime_Next365Days.Size = New Size(184, 22)
         tsmiTime_Next365Days.Text = "Next 365 days"
         ' 
         ' tsmiTime_NextDay
         ' 
         tsmiTime_NextDay.Name = "tsmiTime_NextDay"
         tsmiTime_NextDay.ShortcutKeys = Keys.Control Or Keys.N
-        tsmiTime_NextDay.Size = New Size(166, 22)
+        tsmiTime_NextDay.Size = New Size(184, 22)
         tsmiTime_NextDay.Text = "Next day"
         ' 
         ' tsmiGenerate
@@ -130,24 +137,57 @@ Partial Class frmInView
         ' tsmiGenerate_VisImage
         ' 
         tsmiGenerate_VisImage.Name = "tsmiGenerate_VisImage"
-        tsmiGenerate_VisImage.Size = New Size(180, 22)
+        tsmiGenerate_VisImage.Size = New Size(154, 22)
         tsmiGenerate_VisImage.Text = "Visibility image"
         ' 
         ' tsmiGenerate_ExcelExport
         ' 
         tsmiGenerate_ExcelExport.Name = "tsmiGenerate_ExcelExport"
-        tsmiGenerate_ExcelExport.Size = New Size(180, 22)
+        tsmiGenerate_ExcelExport.Size = New Size(154, 22)
         tsmiGenerate_ExcelExport.Text = "Excel export"
+        ' 
+        ' scMain
+        ' 
+        scMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left
+        scMain.Location = New Point(12, 27)
+        scMain.Name = "scMain"
+        scMain.Orientation = Orientation.Horizontal
+        ' 
+        ' scMain.Panel1
+        ' 
+        scMain.Panel1.Controls.Add(pgCalcProp)
+        ' 
+        ' scMain.Panel2
+        ' 
+        scMain.Panel2.Controls.Add(pgDispProp)
+        scMain.Size = New Size(309, 704)
+        scMain.SplitterDistance = 352
+        scMain.TabIndex = 4
+        ' 
+        ' pgDispProp
+        ' 
+        pgDispProp.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        pgDispProp.Location = New Point(3, 5)
+        pgDispProp.Name = "pgDispProp"
+        pgDispProp.Size = New Size(303, 340)
+        pgDispProp.TabIndex = 5
+        ' 
+        ' tsmiTime_PrevDay
+        ' 
+        tsmiTime_PrevDay.Name = "tsmiTime_PrevDay"
+        tsmiTime_PrevDay.ShortcutKeys = Keys.Control Or Keys.P
+        tsmiTime_PrevDay.Size = New Size(184, 22)
+        tsmiTime_PrevDay.Text = "Previous day"
         ' 
         ' frmInView
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1189, 756)
+        Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(msMain)
         Controls.Add(zgcMain)
-        Controls.Add(pgMain)
         MainMenuStrip = msMain
         Name = "frmInView"
         Text = "In View Display"
@@ -155,11 +195,15 @@ Partial Class frmInView
         ssMain.PerformLayout()
         msMain.ResumeLayout(False)
         msMain.PerformLayout()
+        scMain.Panel1.ResumeLayout(False)
+        scMain.Panel2.ResumeLayout(False)
+        CType(scMain, ComponentModel.ISupportInitialize).EndInit()
+        scMain.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
     End Sub
 
-    Friend WithEvents pgMain As PropertyGrid
+    Friend WithEvents pgCalcProp As PropertyGrid
     Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
     Friend WithEvents ssMain As StatusStrip
     Friend WithEvents msMain As MenuStrip
@@ -172,4 +216,7 @@ Partial Class frmInView
     Friend WithEvents tsmiGenerate As ToolStripMenuItem
     Friend WithEvents tsmiGenerate_VisImage As ToolStripMenuItem
     Friend WithEvents tsmiGenerate_ExcelExport As ToolStripMenuItem
+    Friend WithEvents scMain As SplitContainer
+    Friend WithEvents pgDispProp As PropertyGrid
+    Friend WithEvents tsmiTime_PrevDay As ToolStripMenuItem
 End Class

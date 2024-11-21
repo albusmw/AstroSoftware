@@ -101,20 +101,20 @@ Public Class MainForm
         CalcLog.Add("  Longitude   : " & (Ato.AstroCalc.KnownLocations.DSC.Longitude.ToDegMinSec))
         CalcLog.Add("  Latitude    : " & (Ato.AstroCalc.KnownLocations.DSC.Latitude.ToDegMinSec))
         Dim SunPos As AstroCalc.NET.Sun.sSunPos = AstroCalc.NET.Sun.SunPos(Now.ToUniversalTime, Ato.AstroCalc.KnownLocations.DSC.Longitude, Ato.AstroCalc.KnownLocations.DSC.Latitude)
-        CalcLog.Add("  Sun Altitude: " & (SunPos.Altitude.ToDegMinSec))
-        CalcLog.Add("  Sun Azimuth : " & (SunPos.Azimuth.ToDegMinSec))
-        CalcLog.Add("  Sun RA      : " & (SunPos.RightAscension.ToDegMinSec))
+        CalcLog.Add("  Sun Altitude: " & (SunPos.AzAlt.Alt.ToDegMinSec))
+        CalcLog.Add("  Sun Azimuth : " & (SunPos.AzAlt.AZ.ToDegMinSec))
+        CalcLog.Add("  Sun RA      : " & (SunPos.RaDec.RA.ToDegMinSec))
         CalcLog.Add("  Sun Dec     : " & (SunPos.Declination.ToDegMinSec))
         CalcLog.Add("Sun opposition:")
         Dim UseAltAz As Boolean = False
         If UseAltAz Then
-            Dim Sun_Oppo_Alt As Double = -SunPos.Altitude
-            Dim Sun_Oppo_Az As Double = SunPos.Azimuth - 180 : If SunPos.Azimuth < 0 Then SunPos.Azimuth += 360
+            Dim Sun_Oppo_Alt As Double = -SunPos.AzAlt.Alt
+            Dim Sun_Oppo_Az As Double = SunPos.AzAlt.AZ - 180 : If SunPos.AzAlt.AZ < 0 Then SunPos.AzAlt.AZ += 360
             CalcLog.Add("  Sun Altitude: " & (Sun_Oppo_Alt.ToDegMinSec))
             CalcLog.Add("  Sun Azimuth : " & (Sun_Oppo_Az.ToDegMinSec))
             Response = Download.GetResponse(PWI4.Command.Goto_AltAz(Sun_Oppo_Alt, Sun_Oppo_Az))
         Else
-            Dim Sun_Oppo_Ra As Double = SunPos.RightAscension - 180 : If Sun_Oppo_Ra < 0 Then Sun_Oppo_Ra += 360
+            Dim Sun_Oppo_Ra As Double = SunPos.RaDec.RA - 180 : If Sun_Oppo_Ra < 0 Then Sun_Oppo_Ra += 360
             Dim Sun_Oppo_Dec As Double = -SunPos.Declination
             CalcLog.Add("  Sun RA      : " & (Sun_Oppo_Ra.ToDegMinSec))
             CalcLog.Add("  Sun Dec     : " & (Sun_Oppo_Dec.ToDegMinSec))
