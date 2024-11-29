@@ -7,6 +7,9 @@ Public Class MainForm
 
     Private PWI4 As New cPWI4("http://localhost:8220")
 
+    'AstroBin V2 search query
+    Private AstrobinAPIV2 As New cAstrobinAPIV2
+
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = GetBuildDateTime.GetMainformTitle
         Me.CenterToScreen()
@@ -132,6 +135,15 @@ Public Class MainForm
         Dim X As New cVizier
         X.DownloadCatalogs()
         X.UncompressCatalogs()
+    End Sub
+
+    Private Sub tsmiFile_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmiFile_AstroBin.Click
+        Dim RaMin As Double = tbRAParsedDecimal.Text.ValRegIndep - 1 / 6
+        Dim RaMax As Double = tbRAParsedDecimal.Text.ValRegIndep + 1 / 6
+        Dim DecMin As Double = tbDecParsedDecimal.Text.ValRegIndep - 0.5
+        Dim DecMax As Double = tbDecParsedDecimal.Text.ValRegIndep + 0.5
+        Dim AstroBinQuery As String = AstrobinAPIV2.CreateQuery(RaMin, RaMax, DecMin, DecMax)
+        AstrobinAPIV2.OpenAstroBinURL(AstrobinAPIV2.QueryBase2 & AstrobinAPIV2.EncodeWebPageQuery(AstroBinQuery))
     End Sub
 
 End Class

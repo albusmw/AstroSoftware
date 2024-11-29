@@ -52,6 +52,7 @@ Partial Class MainForm
         tsmiGoTo_Object = New ToolStripMenuItem()
         tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
+        tsmiFile_AstroBin = New ToolStripMenuItem()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -198,9 +199,6 @@ Partial Class MainForm
         cbJ2000.Text = "J2000"
         cbJ2000.UseVisualStyleBackColor = True
         ' 
-        ' bgMain
-        ' 
-        ' 
         ' msMain
         ' 
         msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo})
@@ -212,7 +210,7 @@ Partial Class MainForm
         ' 
         ' tsmiFile
         ' 
-        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_LoadVizier, ToolStripMenuItem1, tsmiFile_End})
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_LoadVizier, tsmiFile_AstroBin, ToolStripMenuItem1, tsmiFile_End})
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
@@ -220,24 +218,24 @@ Partial Class MainForm
         ' tsmiFile_OpenEXE
         ' 
         tsmiFile_OpenEXE.Name = "tsmiFile_OpenEXE"
-        tsmiFile_OpenEXE.Size = New Size(178, 22)
+        tsmiFile_OpenEXE.Size = New Size(180, 22)
         tsmiFile_OpenEXE.Text = "Open EXE folder"
         ' 
         ' tsmiFile_LoadVizier
         ' 
         tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
-        tsmiFile_LoadVizier.Size = New Size(178, 22)
+        tsmiFile_LoadVizier.Size = New Size(180, 22)
         tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(175, 6)
+        ToolStripMenuItem1.Size = New Size(177, 6)
         ' 
         ' tsmiFile_End
         ' 
         tsmiFile_End.Name = "tsmiFile_End"
-        tsmiFile_End.Size = New Size(178, 22)
+        tsmiFile_End.Size = New Size(180, 22)
         tsmiFile_End.Text = "Exit"
         ' 
         ' tsmiEnter
@@ -283,6 +281,12 @@ Partial Class MainForm
         tsmiGoTo_SunOpposition.Name = "tsmiGoTo_SunOpposition"
         tsmiGoTo_SunOpposition.Size = New Size(206, 22)
         tsmiGoTo_SunOpposition.Text = "Sun opposition and track"
+        ' 
+        ' tsmiFile_AstroBin
+        ' 
+        tsmiFile_AstroBin.Name = "tsmiFile_AstroBin"
+        tsmiFile_AstroBin.Size = New Size(180, 22)
+        tsmiFile_AstroBin.Text = "AstroBin around"
         ' 
         ' MainForm
         ' 
@@ -335,4 +339,5 @@ Partial Class MainForm
     Friend WithEvents tsmiFile_End As ToolStripMenuItem
     Friend WithEvents tsmiFile_LoadVizier As ToolStripMenuItem
     Friend WithEvents tsmiGoTo_SunOpposition As ToolStripMenuItem
+    Friend WithEvents tsmiFile_AstroBin As ToolStripMenuItem
 End Class
