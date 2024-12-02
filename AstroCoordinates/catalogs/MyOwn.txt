@@ -1,0 +1,3 @@
+﻿Code;RA;DEC;Diameter;mag;Name
+PGC 2248;00hr 37' 41";-33º 42' 59";1;19.3;Cartwheel Galaxy
+Abell 7;05h03m09s.115;-15°36′05″.28;0.311;N/A;Ancient Planetary Nebula

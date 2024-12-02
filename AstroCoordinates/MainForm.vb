@@ -132,9 +132,19 @@ Public Class MainForm
     End Sub
 
     Private Sub tsmiFile_LoadVizier_Click(sender As Object, e As EventArgs) Handles tsmiFile_LoadVizier.Click
-        Dim X As New cVizier
-        X.DownloadCatalogs()
-        X.UncompressCatalogs()
+        Dim Vizier As New cVizier
+        Dim Log As New List(Of String)
+        Log.Add("DownloadCatalogs")
+        Log.AddRange(Vizier.DownloadCatalogs())
+        Log.Add("'══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════")
+        Log.Add("UncompressCatalogs")
+        Log.AddRange(Vizier.UncompressCatalogs())
+        Log.Add("'══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════")
+        Log.Add("InspectCatalog")
+        Log.AddRange(Vizier.InspectCatalog())
+        Log.Add("'══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════")
+        Dim X As New frmLogDisplay
+        X.Show(Log)
     End Sub
 
     Private Sub tsmiFile_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmiFile_AstroBin.Click
