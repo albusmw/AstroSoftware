@@ -1,9 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports OpenMacroBoard.SDK
-Imports StreamDeckSharp
-
-
 
 'TODO: Join ASIGetControlCaps and ControlValues output
 
@@ -365,8 +361,9 @@ Public Class MyMainForm
 
         'Display image
         If M.DB.Flow_DisplayImage = True Then
-            Dim SpeedReport As List(Of String) = M.DB.ImageFromData.GenerateDisplayImage(M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data, Data_Min, Data_Max, M.DB.IPP)
-            'ReportToFile(SpeedReport)
+            M.DB.ImageFromData.CM_LowerEnd_Absolute = M.DB.SingleStat.MonoStatistics_Int.Min.Key
+            M.DB.ImageFromData.CM_UpperEnd_Absolute = M.DB.SingleStat.MonoStatistics_Int.Max.Key
+            M.DB.ImageFromData.GenerateDisplayImage(M.DB.StatCalc, Nothing, M.DB.SingleStat, M.DB.IPP)
             M.DB.ImageFromData.OutputImage.UnlockBits()
             If DisplayROIPart() = False Then
                 pbMain.Image = M.DB.ImageFromData.OutputImage.BitmapToProcess
@@ -381,7 +378,8 @@ Public Class MyMainForm
         'Store image
         If M.DB.Flow_StoreImage = True Then
             Dim FITSFormat As cFITSWriter.eBitPix = cFITSWriter.eBitPix.Int16
-            cFITSWriter.Write("C:\TEMP\Image" & FrameIdx.ValRegIndep("00000") & ".fits", M.DB.CaptureDB.ImgBufferer_UInt16, FITSFormat, False)
+            cFITSWriter.Write("C:\TEMP\Image" & FrameIdx.ValRegIndep("00000") & ".fits", M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data, FITSFormat, False)
+            'pbMain.Image.Save("C:\TEMP\Image" & FrameIdx.ValRegIndep("00000") & ".png", Imaging.ImageFormat.Png)
         End If
 
     End Sub
@@ -572,10 +570,10 @@ Public Class MyMainForm
     End Sub
 
     Private Sub ChangeGamma_Display(ByVal Delta As Integer)
-        Dim NewGamma As Double = M.DB.ImageFromData.Gamma
+        Dim NewGamma As Double = M.DB.ImageFromData.CM_Gamma
         NewGamma += Math.Sign(Delta) * M.DB.ValueStep_Gamma
         If NewGamma < 0 Then NewGamma = 0
-        M.DB.ImageFromData.Gamma = NewGamma
+        M.DB.ImageFromData.CM_Gamma = NewGamma
         UpdatePropGrid()
     End Sub
 
@@ -600,7 +598,7 @@ Public Class MyMainForm
             Case 2
                 M.DB.Capture_Gain = 20
             Case 3
-                M.DB.ImageFromData.Gamma = 1.0
+                M.DB.ImageFromData.CM_Gamma = 1.0
             Case 4
                 M.DB.Capture_Gamma = 50
         End Select
@@ -610,11 +608,11 @@ Public Class MyMainForm
     Private Sub ReactOnKey(sender As Object, e As OpenMacroBoard.SDK.KeyEventArgs)
         Select Case e.Key
             Case 0
-                M.DB.ImageFromData.ColorMap = cColorMaps.eMaps.None
+                M.DB.ImageFromData.CM = cColorMaps.eMaps.None
             Case 1
-                M.DB.ImageFromData.ColorMap = cColorMaps.eMaps.Bone
+                M.DB.ImageFromData.CM = cColorMaps.eMaps.Bone
             Case 2
-                M.DB.ImageFromData.ColorMap = cColorMaps.eMaps.FalseColor
+                M.DB.ImageFromData.CM = cColorMaps.eMaps.FalseColor
             Case 3
                 M.DB.ROISet = New Rectangle(M.DB.ROISet.X, M.DB.ROISet.Y, M.DB.ROISet.Width, M.DB.ROISet.Height)
         End Select
