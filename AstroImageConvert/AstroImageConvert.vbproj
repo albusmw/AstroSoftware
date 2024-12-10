@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <StartupObject>Sub Main</StartupObject>
+    <UseWindowsForms>true</UseWindowsForms>
+    <MyType>WindowsForms</MyType>
+    <UseWPF>True</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\MyLib\ImageFileFormatSpecific.vb" Link="MyLib\ImageFileFormatSpecific.vb" />
+    <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="src\AstroStatistics.vb" />
+    <Compile Include="..\..\src\atomics\cColorMaps.vb" Link="src\cColorMaps.vb" />
+    <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="src\cDLLDynCall.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
+    <Compile Include="..\..\src\atomics\cImageFromData.vb" Link="src\cImageFromData.vb" />
+    <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="src\cIntelIPP.vb" />
+    <Compile Include="..\..\src\atomics\cLockBitmap.vb" Link="src\cLockBitmap.vb" />
+    <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="src\ComponentModelConverter.vb" />
+    <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="src\cStatMultiThread.vb" />
+    <Compile Include="..\..\src\atomics\DragDrop.vb" Link="MyLib\DragDrop.vb" />
+    <Compile Include="..\..\src\atomics\ImageProcessing.vb" Link="src\ImageProcessing.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="My Project\Application.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MyLib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
+  </ItemGroup>
+
+</Project>
