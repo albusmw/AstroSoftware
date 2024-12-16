@@ -22,19 +22,20 @@ Partial Class Form1
     'Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        tbTIFFFile = New TextBox()
+        tbInputFile = New TextBox()
         btnProcess = New Button()
         lbExamples = New ListBox()
         tbLog = New TextBox()
+        btnOpenGeneratedFile = New Button()
         SuspendLayout()
         ' 
-        ' tbTIFFFile
+        ' tbInputFile
         ' 
-        tbTIFFFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        tbTIFFFile.Location = New Point(12, 12)
-        tbTIFFFile.Name = "tbTIFFFile"
-        tbTIFFFile.Size = New Size(1033, 23)
-        tbTIFFFile.TabIndex = 0
+        tbInputFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        tbInputFile.Location = New Point(12, 12)
+        tbInputFile.Name = "tbInputFile"
+        tbInputFile.Size = New Size(1173, 23)
+        tbInputFile.TabIndex = 0
         ' 
         ' btnProcess
         ' 
@@ -52,38 +53,51 @@ Partial Class Form1
         lbExamples.ItemHeight = 15
         lbExamples.Location = New Point(12, 70)
         lbExamples.Name = "lbExamples"
-        lbExamples.Size = New Size(1033, 184)
+        lbExamples.Size = New Size(1173, 184)
         lbExamples.TabIndex = 2
         ' 
         ' tbLog
         ' 
         tbLog.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        tbLog.Font = New Font("Courier New", 9.75F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
         tbLog.Location = New Point(12, 260)
         tbLog.Multiline = True
         tbLog.Name = "tbLog"
         tbLog.ScrollBars = ScrollBars.Both
-        tbLog.Size = New Size(1033, 426)
+        tbLog.Size = New Size(1173, 620)
         tbLog.TabIndex = 3
         tbLog.WordWrap = False
+        ' 
+        ' btnOpenGeneratedFile
+        ' 
+        btnOpenGeneratedFile.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnOpenGeneratedFile.Location = New Point(1101, 41)
+        btnOpenGeneratedFile.Name = "btnOpenGeneratedFile"
+        btnOpenGeneratedFile.Size = New Size(84, 23)
+        btnOpenGeneratedFile.TabIndex = 4
+        btnOpenGeneratedFile.Text = "Open ..."
+        btnOpenGeneratedFile.UseVisualStyleBackColor = True
         ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1057, 698)
+        ClientSize = New Size(1197, 892)
+        Controls.Add(btnOpenGeneratedFile)
         Controls.Add(tbLog)
         Controls.Add(lbExamples)
         Controls.Add(btnProcess)
-        Controls.Add(tbTIFFFile)
+        Controls.Add(tbInputFile)
         Name = "Form1"
         Text = "Form1"
         ResumeLayout(False)
         PerformLayout()
     End Sub
 
-    Friend WithEvents tbTIFFFile As TextBox
+    Friend WithEvents tbInputFile As TextBox
     Friend WithEvents btnProcess As Button
     Friend WithEvents lbExamples As ListBox
     Friend WithEvents tbLog As TextBox
+    Friend WithEvents btnOpenGeneratedFile As Button
 
 End Class

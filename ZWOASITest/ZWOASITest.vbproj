@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\cStreamDeck.vb" Link="MyLib\cStreamDeck.vb" />
     <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
@@ -24,10 +25,10 @@
     <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="src\cIntelIPP.vb" />
     <Compile Include="..\..\src\atomics\cLockBitmap.vb" Link="src\cLockBitmap.vb" />
     <Compile Include="..\..\src\atomics\cMIDIMonitor.vb" Link="src\cMIDIMonitor.vb" />
-    <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="ComponentModelConverter.vb" />
+    <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="src\ComponentModelConverter.vb" />
     <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="src\cStatMultiThread.vb" />
     <Compile Include="..\..\src\cAstroStatDisp.vb" Link="src\cAstroStatDisp.vb" />
-    <Compile Include="..\..\src\cZWOASI.vb" Link="cZWOASI.vb" />
+    <Compile Include="..\..\src\cZWOASI.vb" Link="src\cZWOASI.vb" />
     <Compile Include="..\..\src\GUIElements\PictureBoxEx.vb" Link="PictureBoxEx.vb" />
   </ItemGroup>
 
@@ -64,6 +65,7 @@
   <ItemGroup>
     <PackageReference Include="OpenMacroBoard.SDK" Version="6.0.0" />
     <PackageReference Include="OpenMacroBoard.SDK.KeyBitmap.GDI" Version="6.0.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
     <PackageReference Include="StreamDeckSharp" Version="6.0.0" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>

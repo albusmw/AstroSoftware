@@ -63,27 +63,26 @@ Public Class MyMainForm
 
         'StreamDeck
         'https://openmacroboard.github.io/
-        Dim FoundDecks As List(Of StreamDeckSharp.StreamDeckDeviceReference) = StreamDeckSharp.StreamDeck.EnumerateDevices.Cast(Of StreamDeckSharp.StreamDeckDeviceReference).ToList
-        If FoundDecks.Count > 0 Then
-            MyStreamDeck = StreamDeckSharp.StreamDeck.OpenDevice()
-            StreamDeck = New cStreamDeck(MyStreamDeck)
-            AddHandler MyStreamDeck.KeyStateChanged, AddressOf ReactOnKey
-            Dim FontToUse As New Font("Courier New", 20, FontStyle.Bold)
+        Dim FoundDecks As IEnumerable(Of StreamDeckSharp.StreamDeckDeviceReference) = StreamDeckSharp.StreamDeck.EnumerateDevices(Nothing)
+        'Dim FoundDecks As List(Of StreamDeckSharp.StreamDeckDeviceReference) = StreamDeckSharp.StreamDeck.EnumerateDevices.Cast(Of StreamDeckSharp.StreamDeckDeviceReference).ToList
+        'If FoundDecks.Count > 0 Then
+        '    MyStreamDeck = StreamDeckSharp.StreamDeck.OpenDevice()
+        '    StreamDeck = New cStreamDeck(MyStreamDeck)
+        '    AddHandler MyStreamDeck.KeyStateChanged, AddressOf ReactOnKey
+        '    Dim FontToUse As New Font("Courier New", 20, FontStyle.Bold)
 
-            For Idx As Integer = 0 To 33
-                StreamDeck.SetKeyText(Idx, "---", FontToUse, Color.Black, Color.White)
-            Next Idx
-            StreamDeck.SetKeyText(0, "ColorKey" & System.Environment.NewLine & "None", FontToUse, Color.Black, Color.White)
-            StreamDeck.SetKeyText(1, "ColorKey" & System.Environment.NewLine & "Bone", FontToUse, Color.DarkGray, Color.Black)
-            StreamDeck.SetKeyText(2, "ColorKey" & System.Environment.NewLine & "False", FontToUse, Color.Red, Color.Green)
-            StreamDeck.SetKeyText(3, "ROI" & System.Environment.NewLine & "Focus", FontToUse)
-            StreamDeck.SetKeyText(4, "???" & System.Environment.NewLine & "!!!", FontToUse)
-            StreamDeck.SetKeyText(5, String.Empty, FontToUse)
-        End If
+        '    For Idx As Integer = 0 To 33
+        '        StreamDeck.SetKeyText(Idx, "---", FontToUse, Color.Black, Color.White)
+        '    Next Idx
+        '    StreamDeck.SetKeyText(0, "ColorKey" & System.Environment.NewLine & "None", FontToUse, Color.Black, Color.White)
+        '    StreamDeck.SetKeyText(1, "ColorKey" & System.Environment.NewLine & "Bone", FontToUse, Color.DarkGray, Color.Black)
+        '    StreamDeck.SetKeyText(2, "ColorKey" & System.Environment.NewLine & "False", FontToUse, Color.Red, Color.Green)
+        '    StreamDeck.SetKeyText(3, "ROI" & System.Environment.NewLine & "Focus", FontToUse)
+        '    StreamDeck.SetKeyText(4, "???" & System.Environment.NewLine & "!!!", FontToUse)
+        '    StreamDeck.SetKeyText(5, String.Empty, FontToUse)
+        'End If
 
     End Sub
-
-
 
     Private Sub btnRunTest_Click(sender As Object, e As EventArgs) Handles btnRunTest.Click
 
@@ -237,8 +236,8 @@ Public Class MyMainForm
                     CallOK("ASISetControlValue ASI_GAMMA", ZWO.ASICameraDll.ASISetControlValue(CamHandle, ZWO.ASICameraDll.ASI_CONTROL_TYPE.ASI_GAMMA, M.DB.Capture_Gamma))
                     ValueChanged = True
                 End If
-                Dim ROI_Running As Rectangle = GetROI(CamHandle)
-                If ROI_Running <> M.DB.ROISet Then
+                M.DB.CaptureDB.ROI = GetROI(CamHandle)
+                If M.DB.CaptureDB.ROI <> M.DB.ROISet Then
                     M.DB.ROISet = SetROI(CamHandle, M.DB.ROISet, M.DB.ImgType) : ValueChanged = True
                 End If
                 If ValueChanged = True Then UpdatePropGrid()
@@ -249,7 +248,7 @@ Public Class MyMainForm
                     'Video mode
                     Dim CaptureStatus As ZWO.ASICameraDll.ASI_ERROR_CODE = ZWO.ASICameraDll.ASI_ERROR_CODE.ASI_ERROR_END
                     Do
-                        CaptureStatus = ZWO.ASICameraDll.ASIGetVideoData(CamHandle, M.DB.CaptureDB.ImgBuffererPtr, M.DB.CaptureDB.ImgBufferSize, 0)
+                        CaptureStatus = ZWO.ASICameraDll.ASIGetVideoData(CamHandle, M.DB.CaptureDB.ImgBuffererPtr, M.DB.CaptureDB.BufferBytes, 0)
                         ZWO.ASICameraDll.ASIGetDroppedFrames(CamHandle, DroppedFrames)
                         If CaptureStatus = ZWO.ASICameraDll.ASI_ERROR_CODE.ASI_SUCCESS Then
                             CapturedFrames += 1
@@ -267,7 +266,7 @@ Public Class MyMainForm
                     CaptureStatus = RunExposure(CamHandle, 0, -1, Duration_ms)
                     Duration_Total_ms += Duration_ms
                     If CaptureStatus = ZWO.ASICameraDll.ASI_EXPOSURE_STATUS.ASI_EXP_SUCCESS Then
-                        CallOK("ASIGetDataAfterExp", ZWO.ASICameraDll.ASIGetDataAfterExp(CamHandle, M.DB.CaptureDB.ImgBuffererPtr, M.DB.CaptureDB.ImgBufferSize))
+                        CallOK("ASIGetDataAfterExp", ZWO.ASICameraDll.ASIGetDataAfterExp(CamHandle, M.DB.CaptureDB.ImgBuffererPtr, M.DB.CaptureDB.BufferBytes))
                         CapturedFrames += 1
                         CaptureOK = True
                         tsslCaptureProgress.Text = CapturedFrames.ValRegIndep & " still frames captured"
@@ -278,9 +277,7 @@ Public Class MyMainForm
                 End If
 
                 'Process
-                If CaptureOK = True Then
-                    ProcessFrame(CapturedFrames)
-                End If
+                If CaptureOK = True Then ProcessFrame(CapturedFrames)
 
                 ProcessEvents()
 
@@ -320,9 +317,12 @@ Public Class MyMainForm
 
     Private Sub ProcessFrame(ByVal FrameIdx As Integer)
 
+        'Get the image data from the capture buffer
+        Dim FirstOrientation As Integer = M.DB.CaptureDB.ROI.Width
+        M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data = M.DB.CaptureDB.ImgBufferer_UInt16.FlatTo2D(FirstOrientation)
+
         Dim Data_Min As UInt16 = UInt16.MaxValue
         Dim Data_Max As UInt16 = UInt16.MinValue
-        M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data = M.DB.CaptureDB.ImgBufferer_UInt16
         M.DB.IPP.MinMax(M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data, Data_Min, Data_Max)
 
         If M.DB.Flow_CalcStatistics = True Then
@@ -363,7 +363,7 @@ Public Class MyMainForm
         If M.DB.Flow_DisplayImage = True Then
             M.DB.ImageFromData.CM_LowerEnd_Absolute = M.DB.SingleStat.MonoStatistics_Int.Min.Key
             M.DB.ImageFromData.CM_UpperEnd_Absolute = M.DB.SingleStat.MonoStatistics_Int.Max.Key
-            M.DB.ImageFromData.GenerateDisplayImage(M.DB.StatCalc, Nothing, M.DB.SingleStat, M.DB.IPP)
+            M.DB.ImageFromData.GenerateDisplayImage(M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data, Nothing, M.DB.SingleStat, M.DB.IPP)
             M.DB.ImageFromData.OutputImage.UnlockBits()
             If DisplayROIPart() = False Then
                 pbMain.Image = M.DB.ImageFromData.OutputImage.BitmapToProcess
@@ -409,12 +409,14 @@ Public Class MyMainForm
         Return GetROI(CamHandle, Binning, ImgType)
     End Function
 
+    '''<summary>Get the ROI that the camera currently uses.</summary>
     Private Function GetROI(ByVal CamHandle As Integer) As Rectangle
         Dim Binning As Integer = -1
         Dim ImgType As ZWO.ASICameraDll.ASI_IMG_TYPE = ZWO.ASICameraDll.ASI_IMG_TYPE.ASI_IMG_END
         Return GetROI(CamHandle, Binning, ImgType)
     End Function
 
+    '''<summary>Get the ROI that the camera currently uses.</summary>
     Private Function GetROI(ByVal CamHandle As Integer, ByRef Binning As Integer, ByRef ImgType As ZWO.ASICameraDll.ASI_IMG_TYPE) As Rectangle
         Dim RetVal As New Rectangle(-1, -1, -1, -1)
         ImgType = ZWO.ASICameraDll.ASI_IMG_TYPE.ASI_IMG_END
@@ -515,8 +517,6 @@ Public Class MyMainForm
         M.DB.Log_Generic.Clear()
         DisplayLog()
     End Sub
-
-
 
     Private Sub UpdatePropGrid()
         pgConfig.SelectedObject = M.DB

@@ -85,6 +85,11 @@ Public Class MainForm
         UpdateRA(TextInput.ParseRA)
     End Sub
 
+    Private Sub tsmiEnter_RADeg_Click(sender As Object, e As EventArgs) Handles tsmiEnter_RADeg.Click
+        Dim TextInput As String = InputBox("RA to parse [°]: ", "RA to parse")
+        UpdateRA(TextInput.ParseDegree * (24 / 360))
+    End Sub
+
     Private Sub tsmiGoTo_Object_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_Object.Click
         GotoObject()
     End Sub

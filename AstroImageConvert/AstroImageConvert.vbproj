@@ -17,7 +17,10 @@
     <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="src\AstroStatistics.vb" />
     <Compile Include="..\..\src\atomics\cColorMaps.vb" Link="src\cColorMaps.vb" />
     <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="src\cDLLDynCall.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="src\cFITSHeaderChanger.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="src\cFITSHeaderParser.vb" />
+    <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="src\cFITSReader.vb" />
     <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
     <Compile Include="..\..\src\atomics\cImageFromData.vb" Link="src\cImageFromData.vb" />
     <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="src\cIntelIPP.vb" />
@@ -26,6 +29,7 @@
     <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="src\cStatMultiThread.vb" />
     <Compile Include="..\..\src\atomics\DragDrop.vb" Link="MyLib\DragDrop.vb" />
     <Compile Include="..\..\src\atomics\ImageProcessing.vb" Link="src\ImageProcessing.vb" />
+    <Compile Include="..\..\src\atomics\Utils.vb" Link="src\Utils.vb" />
   </ItemGroup>
 
   <ItemGroup>

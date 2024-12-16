@@ -6,6 +6,34 @@ Public Class M
     Public Shared WithEvents DB As New cDB
 End Class
 
+'''<summary>Capture data class.</summary>
+Public Class cCaptureDB
+    '''<summary>Number of bytes per sample.</summary>
+    Public ReadOnly Property BytePerSample As Integer = 2
+    '''<summary>Helper to pin the buffer in order to access it via direct memory operations.</summary>
+    Public Pinner As New Ato.cDLLDynCall.cPinHandler
+    '''<summary>The image buffer itself.</summary>
+    Public ImgBufferer_UInt16() As UInt16 = Array.Empty(Of UShort)()
+    '''<summary>Pointer to the buffer.</summary>
+    Public ImgBuffererPtr As IntPtr = Nothing
+    '''<summary>ROI which was used to generate the image.</summary>
+    Public ROI As Rectangle = Nothing
+    '''<summary>Current size of the buffer [sample].</summary>
+    Public ReadOnly Property BufferSample() As Integer
+        Get
+            If IsNothing(ImgBufferer_UInt16) Then Return 0
+            Return CInt(ImgBufferer_UInt16.LongLength)
+        End Get
+    End Property
+    '''<summary>Current size of the buffer [byte].</summary>
+    Public ReadOnly Property BufferBytes() As Integer
+        Get
+            If IsNothing(ImgBufferer_UInt16) Then Return 0
+            Return CInt(ImgBufferer_UInt16.LongLength * BytePerSample)
+        End Get
+    End Property
+End Class
+
 '''<summary>Database holding relevant information.</summary>
 Public Class cDB
 
@@ -36,7 +64,7 @@ Public Class cDB
     <ComponentModel.DisplayName("b) Exposure time")>
     <ComponentModel.TypeConverter(GetType(ComponentModelEx.DoublePropertyConverter_s))>
     <ComponentModel.DefaultValue(0.001)>
-    Public Property Capture_ExposureTime As Double = 0.001
+    Public Property Capture_ExposureTime As Double = 0.02
 
     <ComponentModel.Browsable(False)>
     Public ReadOnly Property Capture_ExposureTime_us As Integer
@@ -49,7 +77,7 @@ Public Class cDB
     <ComponentModel.Category(Cat_CaptureControl)>
     <ComponentModel.DisplayName("c) Gain")>
     <ComponentModel.DefaultValue(20)>
-    Public Property Capture_Gain As Integer = 20
+    Public Property Capture_Gain As Integer = 0
 
     '''<summary>Gamma camera.</summary>
     <ComponentModel.Category(Cat_CaptureControl)>
@@ -168,15 +196,15 @@ Public Class cDB
     Public Log_Generic As New Text.StringBuilder
 
     Public Sub EnsureCorrectBuffer()
-        CaptureDB.ImgBufferSize = GetBufferSize(ROISet, MyImgType)
-        If CaptureDB.ImgBufferer_UInt16.LongLength * 2 <> CaptureDB.ImgBufferSize Then
+        Dim RequiredBytes As Long = GetBufferSize(ROISet, MyImgType)
+        If CaptureDB.BufferBytes <> RequiredBytes Then
             If IsNothing(CaptureDB.ImgBuffererPtr) = False Then CaptureDB.Pinner.ForceUnpinAll()
-            ReDim CaptureDB.ImgBufferer_UInt16(ROISet.Height - 1, ROISet.Width - 1)
+            ReDim CaptureDB.ImgBufferer_UInt16((ROISet.Height * ROISet.Width) - 1)
             CaptureDB.ImgBuffererPtr = CaptureDB.Pinner.Pin(CaptureDB.ImgBufferer_UInt16)
         End If
     End Sub
 
-    '''<summary>Calculate the required buffer size.</summary>
+    '''<summary>Calculate the required buffer size [byte].</summary>
     Private Function GetBufferSize(ByVal ROI As Rectangle, ByVal ImgType As ZWO.ASICameraDll.ASI_IMG_TYPE) As Integer
         Dim RetVal As Integer = ROI.Width * ROI.Height
         Select Case ImgType
@@ -191,11 +219,4 @@ Public Class cDB
         End Select
     End Function
 
-End Class
-
-Public Class cCaptureDB
-    Public Pinner As New Ato.cDLLDynCall.cPinHandler
-    Public ImgBufferer_UInt16(,) As UInt16 = {}
-    Public ImgBuffererPtr As IntPtr = Nothing
-    Public ImgBufferSize As Integer = -1
 End Class
