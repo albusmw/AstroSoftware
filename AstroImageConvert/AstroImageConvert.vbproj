@@ -26,8 +26,10 @@
     <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="src\cIntelIPP.vb" />
     <Compile Include="..\..\src\atomics\cLockBitmap.vb" Link="src\cLockBitmap.vb" />
     <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="src\ComponentModelConverter.vb" />
+    <Compile Include="..\..\src\atomics\cOpenCvSharp.vb" Link="src\cOpenCvSharp.vb" />
     <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="src\cStatMultiThread.vb" />
     <Compile Include="..\..\src\atomics\DragDrop.vb" Link="MyLib\DragDrop.vb" />
+    <Compile Include="..\..\src\atomics\Everything.vb" Link="MyLib\Everything.vb" />
     <Compile Include="..\..\src\atomics\ImageProcessing.vb" Link="src\ImageProcessing.vb" />
     <Compile Include="..\..\src\atomics\Utils.vb" Link="src\Utils.vb" />
   </ItemGroup>
@@ -58,7 +60,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="..\..\src\bin\Everything64.dll" Link="Everything64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
+    <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
+    <PackageReference Include="OpenCvSharp4.Extensions" Version="4.10.0.20241108" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.10.0.20241108" />
   </ItemGroup>
 
 </Project>
