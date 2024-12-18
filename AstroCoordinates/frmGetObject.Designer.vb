@@ -30,7 +30,9 @@ Partial Class frmGetObject
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
         scMain = New SplitContainer()
+        scRight = New SplitContainer()
         tbDetails = New TextBox()
+        zgcMain = New ZedGraph.ZedGraphControl()
         tUpdateDetails = New Timer(components)
         msMain = New MenuStrip()
         tsmiData = New ToolStripMenuItem()
@@ -40,25 +42,24 @@ Partial Class frmGetObject
         tsmiData_Accept = New ToolStripMenuItem()
         tsmiTools = New ToolStripMenuItem()
         tsmiTools_InViewDisplay = New ToolStripMenuItem()
-        scRight = New SplitContainer()
-        zgcMain = New ZedGraph.ZedGraphControl()
+        cbCustomOnly = New CheckBox()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
         scMain.Panel2.SuspendLayout()
         scMain.SuspendLayout()
-        msMain.SuspendLayout()
         CType(scRight, ComponentModel.ISupportInitialize).BeginInit()
         scRight.Panel1.SuspendLayout()
         scRight.Panel2.SuspendLayout()
         scRight.SuspendLayout()
+        msMain.SuspendLayout()
         SuspendLayout()
         ' 
         ' tbSearchString
         ' 
         tbSearchString.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbSearchString.Font = New Font("Courier New", 9F)
-        tbSearchString.Location = New Point(93, 27)
+        tbSearchString.Location = New Point(93, 24)
         tbSearchString.Name = "tbSearchString"
         tbSearchString.Size = New Size(1118, 21)
         tbSearchString.TabIndex = 0
@@ -66,7 +67,7 @@ Partial Class frmGetObject
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Location = New Point(12, 30)
+        Label1.Location = New Point(12, 24)
         Label1.Name = "Label1"
         Label1.Size = New Size(75, 15)
         Label1.TabIndex = 1
@@ -80,9 +81,9 @@ Partial Class frmGetObject
         lbResults.HorizontalScrollbar = True
         lbResults.IntegralHeight = False
         lbResults.ItemHeight = 15
-        lbResults.Location = New Point(3, 3)
+        lbResults.Location = New Point(3, 37)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(231, 848)
+        lbResults.Size = New Size(231, 814)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
@@ -110,19 +111,39 @@ Partial Class frmGetObject
         ' 
         scMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         scMain.FixedPanel = FixedPanel.Panel1
-        scMain.Location = New Point(12, 54)
+        scMain.Location = New Point(12, 51)
         scMain.Name = "scMain"
         ' 
         ' scMain.Panel1
         ' 
+        scMain.Panel1.Controls.Add(cbCustomOnly)
         scMain.Panel1.Controls.Add(lbResults)
         ' 
         ' scMain.Panel2
         ' 
         scMain.Panel2.Controls.Add(scRight)
-        scMain.Size = New Size(1199, 854)
+        scMain.Size = New Size(1199, 857)
         scMain.SplitterDistance = 237
         scMain.TabIndex = 4
+        ' 
+        ' scRight
+        ' 
+        scRight.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        scRight.FixedPanel = FixedPanel.Panel1
+        scRight.Location = New Point(3, 3)
+        scRight.Name = "scRight"
+        scRight.Orientation = Orientation.Horizontal
+        ' 
+        ' scRight.Panel1
+        ' 
+        scRight.Panel1.Controls.Add(tbDetails)
+        ' 
+        ' scRight.Panel2
+        ' 
+        scRight.Panel2.Controls.Add(zgcMain)
+        scRight.Size = New Size(952, 851)
+        scRight.SplitterDistance = 130
+        scRight.TabIndex = 1
         ' 
         ' tbDetails
         ' 
@@ -135,6 +156,22 @@ Partial Class frmGetObject
         tbDetails.Size = New Size(946, 124)
         tbDetails.TabIndex = 0
         tbDetails.WordWrap = False
+        ' 
+        ' zgcMain
+        ' 
+        zgcMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        zgcMain.Location = New Point(4, 3)
+        zgcMain.Margin = New Padding(4, 3, 4, 3)
+        zgcMain.Name = "zgcMain"
+        zgcMain.ScrollGrace = 0R
+        zgcMain.ScrollMaxX = 0R
+        zgcMain.ScrollMaxY = 0R
+        zgcMain.ScrollMaxY2 = 0R
+        zgcMain.ScrollMinX = 0R
+        zgcMain.ScrollMinY = 0R
+        zgcMain.ScrollMinY2 = 0R
+        zgcMain.Size = New Size(944, 711)
+        zgcMain.TabIndex = 0
         ' 
         ' tUpdateDetails
         ' 
@@ -184,7 +221,7 @@ Partial Class frmGetObject
         ' 
         tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay})
         tsmiTools.Name = "tsmiTools"
-        tsmiTools.Size = New Size(41, 20)
+        tsmiTools.Size = New Size(42, 20)
         tsmiTools.Text = "Tool"
         ' 
         ' tsmiTools_InViewDisplay
@@ -193,40 +230,15 @@ Partial Class frmGetObject
         tsmiTools_InViewDisplay.Size = New Size(184, 22)
         tsmiTools_InViewDisplay.Text = "Open In View display"
         ' 
-        ' scRight
+        ' cbCustomOnly
         ' 
-        scRight.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        scRight.FixedPanel = FixedPanel.Panel1
-        scRight.Location = New Point(3, 3)
-        scRight.Name = "scRight"
-        scRight.Orientation = Orientation.Horizontal
-        ' 
-        ' scRight.Panel1
-        ' 
-        scRight.Panel1.Controls.Add(tbDetails)
-        ' 
-        ' scRight.Panel2
-        ' 
-        scRight.Panel2.Controls.Add(zgcMain)
-        scRight.Size = New Size(952, 848)
-        scRight.SplitterDistance = 130
-        scRight.TabIndex = 1
-        ' 
-        ' zgcMain
-        ' 
-        zgcMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        zgcMain.Location = New Point(4, 3)
-        zgcMain.Margin = New Padding(4, 3, 4, 3)
-        zgcMain.Name = "zgcMain"
-        zgcMain.ScrollGrace = 0R
-        zgcMain.ScrollMaxX = 0R
-        zgcMain.ScrollMaxY = 0R
-        zgcMain.ScrollMaxY2 = 0R
-        zgcMain.ScrollMinX = 0R
-        zgcMain.ScrollMinY = 0R
-        zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(944, 708)
-        zgcMain.TabIndex = 0
+        cbCustomOnly.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        cbCustomOnly.Location = New Point(3, 8)
+        cbCustomOnly.Name = "cbCustomOnly"
+        cbCustomOnly.Size = New Size(231, 23)
+        cbCustomOnly.TabIndex = 3
+        cbCustomOnly.Text = "Only custom catalog"
+        cbCustomOnly.UseVisualStyleBackColor = True
         ' 
         ' frmGetObject
         ' 
@@ -247,13 +259,13 @@ Partial Class frmGetObject
         scMain.Panel2.ResumeLayout(False)
         CType(scMain, ComponentModel.ISupportInitialize).EndInit()
         scMain.ResumeLayout(False)
-        msMain.ResumeLayout(False)
-        msMain.PerformLayout()
         scRight.Panel1.ResumeLayout(False)
         scRight.Panel1.PerformLayout()
         scRight.Panel2.ResumeLayout(False)
         CType(scRight, ComponentModel.ISupportInitialize).EndInit()
         scRight.ResumeLayout(False)
+        msMain.ResumeLayout(False)
+        msMain.PerformLayout()
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -277,4 +289,5 @@ Partial Class frmGetObject
     Friend WithEvents tsmiData_SetLocation As ToolStripMenuItem
     Friend WithEvents scRight As SplitContainer
     Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
+    Friend WithEvents cbCustomOnly As CheckBox
 End Class

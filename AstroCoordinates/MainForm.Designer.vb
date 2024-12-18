@@ -24,8 +24,6 @@ Partial Class MainForm
     Private Sub InitializeComponent()
         components = New ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(MainForm))
-        Label1 = New Label()
-        Label2 = New Label()
         tbRAParsed = New TextBox()
         tbRAParsedShort = New TextBox()
         tbRAParsedDecimal = New TextBox()
@@ -49,88 +47,70 @@ Partial Class MainForm
         tsmiEnter = New ToolStripMenuItem()
         tsmiEnter_RA = New ToolStripMenuItem()
         tsmiEnter_Dec = New ToolStripMenuItem()
+        ToolStripMenuItem2 = New ToolStripSeparator()
+        tsmiEnter_RADeg = New ToolStripMenuItem()
         tsmiGoTo = New ToolStripMenuItem()
         tsmiGoTo_Object = New ToolStripMenuItem()
         tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
-        ToolStripMenuItem2 = New ToolStripSeparator()
-        tsmiEnter_RADeg = New ToolStripMenuItem()
+        btnRA = New Button()
+        btnDec = New Button()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
-        ' 
-        ' Label1
-        ' 
-        Label1.Dock = DockStyle.Fill
-        Label1.Location = New Point(3, 0)
-        Label1.Name = "Label1"
-        Label1.Size = New Size(121, 43)
-        Label1.TabIndex = 0
-        Label1.Text = "RA (Right ascension)"
-        Label1.TextAlign = ContentAlignment.MiddleLeft
-        ' 
-        ' Label2
-        ' 
-        Label2.Dock = DockStyle.Fill
-        Label2.Location = New Point(3, 43)
-        Label2.Name = "Label2"
-        Label2.Size = New Size(121, 44)
-        Label2.TabIndex = 1
-        Label2.Text = "DEC (Declination)"
-        Label2.TextAlign = ContentAlignment.MiddleLeft
         ' 
         ' tbRAParsed
         ' 
         tbRAParsed.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbRAParsed.Font = New Font("Courier New", 9F)
-        tbRAParsed.Location = New Point(130, 11)
+        tbRAParsed.Location = New Point(130, 16)
         tbRAParsed.Name = "tbRAParsed"
-        tbRAParsed.Size = New Size(166, 21)
+        tbRAParsed.Size = New Size(115, 21)
         tbRAParsed.TabIndex = 4
         ' 
         ' tbRAParsedShort
         ' 
         tbRAParsedShort.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbRAParsedShort.Font = New Font("Courier New", 9F)
-        tbRAParsedShort.Location = New Point(302, 11)
+        tbRAParsedShort.Location = New Point(251, 16)
         tbRAParsedShort.Name = "tbRAParsedShort"
-        tbRAParsedShort.Size = New Size(166, 21)
+        tbRAParsedShort.Size = New Size(115, 21)
         tbRAParsedShort.TabIndex = 5
         ' 
         ' tbRAParsedDecimal
         ' 
         tbRAParsedDecimal.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbRAParsedDecimal.Font = New Font("Courier New", 9F)
-        tbRAParsedDecimal.Location = New Point(474, 11)
+        tbRAParsedDecimal.Location = New Point(372, 16)
         tbRAParsedDecimal.Name = "tbRAParsedDecimal"
-        tbRAParsedDecimal.Size = New Size(167, 21)
+        tbRAParsedDecimal.Size = New Size(117, 21)
         tbRAParsedDecimal.TabIndex = 6
         ' 
         ' tbDecParsed
         ' 
         tbDecParsed.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbDecParsed.Font = New Font("Courier New", 9F)
-        tbDecParsed.Location = New Point(130, 54)
+        tbDecParsed.Location = New Point(130, 69)
         tbDecParsed.Name = "tbDecParsed"
-        tbDecParsed.Size = New Size(166, 21)
+        tbDecParsed.Size = New Size(115, 21)
         tbDecParsed.TabIndex = 7
         ' 
         ' tbDecParsedShort
         ' 
         tbDecParsedShort.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbDecParsedShort.Font = New Font("Courier New", 9F)
-        tbDecParsedShort.Location = New Point(302, 54)
+        tbDecParsedShort.Location = New Point(251, 69)
         tbDecParsedShort.Name = "tbDecParsedShort"
-        tbDecParsedShort.Size = New Size(166, 21)
+        tbDecParsedShort.Size = New Size(115, 21)
         tbDecParsedShort.TabIndex = 8
         ' 
         ' tbDecParsedDecimal
         ' 
         tbDecParsedDecimal.Anchor = AnchorStyles.Left Or AnchorStyles.Right
         tbDecParsedDecimal.Font = New Font("Courier New", 9F)
-        tbDecParsedDecimal.Location = New Point(474, 54)
+        tbDecParsedDecimal.Location = New Point(372, 69)
         tbDecParsedDecimal.Name = "tbDecParsedDecimal"
-        tbDecParsedDecimal.Size = New Size(167, 21)
+        tbDecParsedDecimal.Size = New Size(117, 21)
         tbDecParsedDecimal.TabIndex = 9
         ' 
         ' tlpMain
@@ -142,26 +122,26 @@ Partial Class MainForm
         tlpMain.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 33.3333359F))
         tlpMain.ColumnStyles.Add(New ColumnStyle(SizeType.Percent, 33.3333359F))
         tlpMain.ColumnStyles.Add(New ColumnStyle(SizeType.Absolute, 20F))
-        tlpMain.Controls.Add(Label1, 0, 0)
         tlpMain.Controls.Add(tbRAParsedDecimal, 3, 0)
         tlpMain.Controls.Add(tbRAParsedShort, 2, 0)
         tlpMain.Controls.Add(tbDecParsed, 1, 1)
         tlpMain.Controls.Add(tbDecParsedDecimal, 3, 1)
-        tlpMain.Controls.Add(Label2, 0, 1)
         tlpMain.Controls.Add(tbRAParsed, 1, 0)
         tlpMain.Controls.Add(tbDecParsedShort, 2, 1)
+        tlpMain.Controls.Add(btnRA, 0, 0)
+        tlpMain.Controls.Add(btnDec, 0, 1)
         tlpMain.Location = New Point(8, 27)
         tlpMain.Name = "tlpMain"
         tlpMain.RowCount = 2
         tlpMain.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
         tlpMain.RowStyles.Add(New RowStyle(SizeType.Percent, 50F))
-        tlpMain.Size = New Size(644, 87)
+        tlpMain.Size = New Size(492, 107)
         tlpMain.TabIndex = 10
         ' 
         ' btnGetObject
         ' 
         btnGetObject.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        btnGetObject.Location = New Point(8, 120)
+        btnGetObject.Location = New Point(8, 140)
         btnGetObject.Name = "btnGetObject"
         btnGetObject.Size = New Size(75, 23)
         btnGetObject.TabIndex = 11
@@ -172,16 +152,16 @@ Partial Class MainForm
         ' 
         tbSelected.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         tbSelected.Font = New Font("Courier New", 9F, FontStyle.Bold)
-        tbSelected.Location = New Point(89, 122)
+        tbSelected.Location = New Point(89, 142)
         tbSelected.Name = "tbSelected"
         tbSelected.ReadOnly = True
-        tbSelected.Size = New Size(419, 21)
+        tbSelected.Size = New Size(267, 21)
         tbSelected.TabIndex = 10
         ' 
         ' btnGoTo
         ' 
         btnGoTo.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        btnGoTo.Location = New Point(574, 120)
+        btnGoTo.Location = New Point(422, 140)
         btnGoTo.Name = "btnGoTo"
         btnGoTo.Size = New Size(75, 23)
         btnGoTo.TabIndex = 12
@@ -194,7 +174,7 @@ Partial Class MainForm
         cbJ2000.AutoSize = True
         cbJ2000.Checked = True
         cbJ2000.CheckState = CheckState.Checked
-        cbJ2000.Location = New Point(514, 123)
+        cbJ2000.Location = New Point(362, 143)
         cbJ2000.Name = "cbJ2000"
         cbJ2000.Size = New Size(54, 19)
         cbJ2000.TabIndex = 13
@@ -206,7 +186,7 @@ Partial Class MainForm
         msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(656, 24)
+        msMain.Size = New Size(504, 24)
         msMain.TabIndex = 17
         msMain.Text = "MenuStrip1"
         ' 
@@ -265,6 +245,17 @@ Partial Class MainForm
         tsmiEnter_Dec.Size = New Size(183, 22)
         tsmiEnter_Dec.Text = "DEC (Declination)"
         ' 
+        ' ToolStripMenuItem2
+        ' 
+        ToolStripMenuItem2.Name = "ToolStripMenuItem2"
+        ToolStripMenuItem2.Size = New Size(180, 6)
+        ' 
+        ' tsmiEnter_RADeg
+        ' 
+        tsmiEnter_RADeg.Name = "tsmiEnter_RADeg"
+        tsmiEnter_RADeg.Size = New Size(183, 22)
+        tsmiEnter_RADeg.Text = "RA [°]"
+        ' 
         ' tsmiGoTo
         ' 
         tsmiGoTo.DropDownItems.AddRange(New ToolStripItem() {tsmiGoTo_Object, tsmiGoTo_ZenithAndStop, tsmiGoTo_SunOpposition})
@@ -290,22 +281,31 @@ Partial Class MainForm
         tsmiGoTo_SunOpposition.Size = New Size(206, 22)
         tsmiGoTo_SunOpposition.Text = "Sun opposition and track"
         ' 
-        ' ToolStripMenuItem2
+        ' btnRA
         ' 
-        ToolStripMenuItem2.Name = "ToolStripMenuItem2"
-        ToolStripMenuItem2.Size = New Size(180, 6)
+        btnRA.Dock = DockStyle.Fill
+        btnRA.Location = New Point(3, 3)
+        btnRA.Name = "btnRA"
+        btnRA.Size = New Size(121, 47)
+        btnRA.TabIndex = 10
+        btnRA.Text = "RA" & vbCrLf & "(Right ascension)"
+        btnRA.UseVisualStyleBackColor = True
         ' 
-        ' tsmiEnter_RADeg
+        ' btnDec
         ' 
-        tsmiEnter_RADeg.Name = "tsmiEnter_RADeg"
-        tsmiEnter_RADeg.Size = New Size(183, 22)
-        tsmiEnter_RADeg.Text = "RA [°]"
+        btnDec.Dock = DockStyle.Fill
+        btnDec.Location = New Point(3, 56)
+        btnDec.Name = "btnDec"
+        btnDec.Size = New Size(121, 48)
+        btnDec.TabIndex = 11
+        btnDec.Text = "DEC" & vbCrLf & "(Declination)"
+        btnDec.UseVisualStyleBackColor = True
         ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(656, 150)
+        ClientSize = New Size(504, 170)
         Controls.Add(cbJ2000)
         Controls.Add(btnGoTo)
         Controls.Add(tbSelected)
@@ -323,9 +323,6 @@ Partial Class MainForm
         ResumeLayout(False)
         PerformLayout()
     End Sub
-
-    Friend WithEvents Label1 As Label
-    Friend WithEvents Label2 As Label
     Friend WithEvents tbRAParsed As TextBox
     Friend WithEvents tbRAParsedShort As TextBox
     Friend WithEvents tbRAParsedDecimal As TextBox
@@ -355,4 +352,6 @@ Partial Class MainForm
     Friend WithEvents tsmiFile_AstroBin As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem2 As ToolStripSeparator
     Friend WithEvents tsmiEnter_RADeg As ToolStripMenuItem
+    Friend WithEvents btnRA As Button
+    Friend WithEvents btnDec As Button
 End Class

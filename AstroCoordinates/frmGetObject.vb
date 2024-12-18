@@ -47,26 +47,32 @@ Public Class frmGetObject
 
     End Sub
 
-    Private Sub tbSearchString_TextChanged(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged
+    Private Sub ApplySearchString(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged, cbCustomOnly.CheckStateChanged
         Dim SearchString As String = tbSearchString.Text.Trim.ToUpper
+        Dim Cat_Custom As String = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Custom)
+        Dim Cat_MyOwn As String = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.MyOwn)
         FoundEntries.Clear()
         For Each Entry As cObjectInfo In Objects
             Dim Found As Boolean = False
             'Search name
-            If (Found = False) And Entry.Name.ToUpper.Contains(SearchString) Then
-                FoundEntries.Add(Entry) : Found = True
-            End If
+            If (Found = False) And Entry.Name.ToUpper.Contains(SearchString) Then Found = True
             'Search alias
-            If (Found = False) And Entry.AliasName.ToUpper.Contains(SearchString) Then
-                FoundEntries.Add(Entry) : Found = True
-            End If
+            If (Found = False) And Entry.AliasName.ToUpper.Contains(SearchString) Then Found = True
             'Search HD
-            If (Found = False) And Entry.HD.ToString.Trim.Contains(SearchString) Then
-                FoundEntries.Add(Entry) : Found = True
-            End If
+            If (Found = False) And Entry.HD.ToString.Trim.Contains(SearchString) Then Found = True
             'Search HIP
-            If (Found = False) And Entry.HIP.ToString.Trim.Contains(SearchString) Then
-                FoundEntries.Add(Entry) : Found = True
+            If (Found = False) And Entry.HIP.ToString.Trim.Contains(SearchString) Then Found = True
+            'Remove if not custom and only custom is checked
+            If (Found = True) And (cbCustomOnly.Checked) Then
+                If (Entry.Catalog = Cat_Custom) Or (Entry.Catalog = Cat_MyOwn) Then
+                    Found = True
+                Else
+                    Found = False
+                End If
+            End If
+            'Add if found
+            If Found Then
+                FoundEntries.Add(Entry)
             End If
         Next Entry
         lbResults.Items.Clear()
@@ -189,40 +195,41 @@ Public Class frmGetObject
 
     Private Sub UpdateObjectCurrentInfo()
         Dim LeftWidth As Integer = 18
-        If lbResults.SelectedIndex = -1 Then
+        If IsNothing(SelectedObject) = True Then
             tbDetails.Text = "No object selected ..."
             Exit Sub
+        Else
+            Try
+                'Display selected object information
+                Dim TimeCalc As New cTimeZoneCalc("W. Europe Standard Time", "America/Santiago")
+                Dim ObjectHourAngle As Double = Double.NaN
+                Dim CurrentLocation As New Ato.AstroCalc.sLatLong(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
+                Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec))
+                Dim Details As New List(Of String)
+                Details.Add(SelectedObject.VerboseName & " - Catalog: " & SelectedObject.Catalog)
+                Details.Add("═══════════════════════════════════════════════════════")
+                Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
+                If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
+                If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
+                If SelectedObject.HD > 0 Then Details.Add(" HD".PadLeft(LeftWidth) & ": " & SelectedObject.HD.ToString.Trim)
+                Details.Add("   RA".PadLeft(LeftWidth) & ": " & SelectedObject.RA.ToHMS)
+                Details.Add("   Dec".PadLeft(LeftWidth) & ": " & SelectedObject.Dec.ToDegMinSec)
+                Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Pos.Alt.ToDegMinSec)
+                Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
+                Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
+                Details.Add("═══════════════════════════════════════════════════════")
+                Details.Add("UTC time".PadRight(LeftWidth) & ": " & TimeCalc.UTCNowString)
+                Details.Add("Observatory".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Name)
+                Details.Add("    Time".PadRight(LeftWidth) & ": " & TimeCalc.ObservatoryString)
+                Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Ato.AstroCalc.LST(CurrentUTC, InView.Props.Observatory_Longitude).ValRegIndep)
+                Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, InView.Props.Observatory_Longitude))
+                Details.Add("    Latitude".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Latitude.ToDegMinSec)
+                Details.Add("    Longitude".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Longitude.ToDegMinSec)
+                tbDetails.Text = Join(Details.ToArray, System.Environment.NewLine)
+            Catch ex As Exception
+                tbDetails.Text = "Calculation error: <" & ex.Message & ">"
+            End Try
         End If
-        Try
-            'Display selected object information
-            Dim TimeCalc As New cTimeZoneCalc("W. Europe Standard Time", "America/Santiago")
-            Dim ObjectHourAngle As Double = Double.NaN
-            Dim CurrentLocation As New Ato.AstroCalc.sLatLong(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
-            Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec))
-            Dim Details As New List(Of String)
-            Details.Add(SelectedObject.VerboseName & " - Catalog: " & SelectedObject.Catalog)
-            Details.Add("═══════════════════════════════════════════════════════")
-            Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
-            If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
-            If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
-            If SelectedObject.HD > 0 Then Details.Add(" HD".PadLeft(LeftWidth) & ": " & SelectedObject.HD.ToString.Trim)
-            Details.Add("   RA".PadLeft(LeftWidth) & ": " & SelectedObject.RA.ToHMS)
-            Details.Add("   Dec".PadLeft(LeftWidth) & ": " & SelectedObject.Dec.ToDegMinSec)
-            Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Pos.Alt.ToDegMinSec)
-            Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
-            Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
-            Details.Add("═══════════════════════════════════════════════════════")
-            Details.Add("UTC time".PadRight(LeftWidth) & ": " & TimeCalc.UTCNowString)
-            Details.Add("Observatory".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Name)
-            Details.Add("    Time".PadRight(LeftWidth) & ": " & TimeCalc.ObservatoryString)
-            Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Ato.AstroCalc.LST(CurrentUTC, InView.Props.Observatory_Longitude).ValRegIndep)
-            Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, InView.Props.Observatory_Longitude))
-            Details.Add("    Latitude".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Latitude.ToDegMinSec)
-            Details.Add("    Longitude".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Longitude.ToDegMinSec)
-            tbDetails.Text = Join(Details.ToArray, System.Environment.NewLine)
-        Catch ex As Exception
-            tbDetails.Text = "Calculation error: <" & ex.Message & ">"
-        End Try
     End Sub
 
     '''<summary>Update the InView location.</summary>
