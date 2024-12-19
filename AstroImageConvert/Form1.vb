@@ -79,7 +79,7 @@ Public Class Form1
         Dim ImageOut(,) As Single
         If Config.InitialBinning > 1 Then
             Log("Binning with factor <" & Config.InitialBinning & "> ...")
-            ImageOut = ImageProcessing.Binning.ToSingle_Mean_RemoveOuter(DataContent, Config.InitialBinning, Config.InitialBinning_OuterRemoval)
+            ImageOut = ImageProcessing.Binning.Mean_RemoveOuter_Single(DataContent, Config.InitialBinning, Config.InitialBinning_OuterRemoval)
             Log("  OK")
         Else
             ImageOut = DataContent.CreateCopy
