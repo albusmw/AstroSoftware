@@ -3,13 +3,6 @@ Option Strict On
 
 Public Class MainForm
 
-    Public Shared ReadOnly Property MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-
-    Private PWI4 As New cPWI4("http://localhost:8220")
-
-    'AstroBin V2 search query
-    Private AstrobinAPIV2 As New cAstrobinAPIV2
-
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = GetBuildDateTime.GetMainformTitle
         Me.CenterToScreen()
@@ -56,8 +49,8 @@ Public Class MainForm
 
     Private Sub GotoObject()
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(PWI4.Command.Goto_RaDec(cbJ2000.Checked, tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep))
-        Response = Download.GetResponse(PWI4.Command.Tracking(True))
+        Response = Download.GetResponse(DB.PWI4.Command.Goto_RaDec(cbJ2000.Checked, tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep))
+        Response = Download.GetResponse(DB.PWI4.Command.Tracking(True))
     End Sub
 
     '═════════════════════════════════════════════════════════════════════════════
@@ -73,7 +66,7 @@ Public Class MainForm
     '═════════════════════════════════════════════════════════════════════════════
 
     Private Sub tsmiFile_OpenEXE_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenEXE.Click
-        Process.Start("explorer.exe", MyPath)
+        Process.Start("explorer.exe", DB.MyPath)
     End Sub
 
     Private Sub tsmiEnter_Dec_Click(sender As Object, e As EventArgs) Handles tsmiEnter_Dec.Click, btnDec.Click
@@ -97,8 +90,8 @@ Public Class MainForm
 
     Private Sub tsmiGoTo_ZenithAndStop_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_ZenithAndStop.Click
         Dim Response As String = String.Empty
-        Response = Download.GetResponse(PWI4.Command.Tracking(False))
-        Response = Download.GetResponse(PWI4.Command.Goto_AltAz(90, 0))
+        Response = Download.GetResponse(DB.PWI4.Command.Tracking(False))
+        Response = Download.GetResponse(DB.PWI4.Command.Goto_AltAz(90, 0))
     End Sub
 
     Private Sub tsmiGoTo_SunOpposition_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_SunOpposition.Click
@@ -121,15 +114,15 @@ Public Class MainForm
             Dim Sun_Oppo_Az As Double = SunPos.AzAlt.AZ - 180 : If SunPos.AzAlt.AZ < 0 Then SunPos.AzAlt.AZ += 360
             CalcLog.Add("  Sun Altitude: " & (Sun_Oppo_Alt.ToDegMinSec))
             CalcLog.Add("  Sun Azimuth : " & (Sun_Oppo_Az.ToDegMinSec))
-            Response = Download.GetResponse(PWI4.Command.Goto_AltAz(Sun_Oppo_Alt, Sun_Oppo_Az))
+            Response = Download.GetResponse(DB.PWI4.Command.Goto_AltAz(Sun_Oppo_Alt, Sun_Oppo_Az))
         Else
             Dim Sun_Oppo_Ra As Double = SunPos.RaDec.RA - 180 : If Sun_Oppo_Ra < 0 Then Sun_Oppo_Ra += 360
             Dim Sun_Oppo_Dec As Double = -SunPos.Declination
             CalcLog.Add("  Sun RA      : " & (Sun_Oppo_Ra.ToDegMinSec))
             CalcLog.Add("  Sun Dec     : " & (Sun_Oppo_Dec.ToDegMinSec))
-            Response = Download.GetResponse(PWI4.Command.Goto_RaDec(cbJ2000.Checked, Sun_Oppo_Ra, Sun_Oppo_Dec))
+            Response = Download.GetResponse(DB.PWI4.Command.Goto_RaDec(cbJ2000.Checked, Sun_Oppo_Ra, Sun_Oppo_Dec))
         End If
-        Response = Download.GetResponse(PWI4.Command.Tracking(True))
+        Response = Download.GetResponse(DB.PWI4.Command.Tracking(True))
         Dim X As New frmLogDisplay : X.Show(CalcLog)
     End Sub
 
@@ -158,8 +151,8 @@ Public Class MainForm
         Dim RaMax As Double = tbRAParsedDecimal.Text.ValRegIndep + 1 / 6
         Dim DecMin As Double = tbDecParsedDecimal.Text.ValRegIndep - 0.5
         Dim DecMax As Double = tbDecParsedDecimal.Text.ValRegIndep + 0.5
-        Dim AstroBinQuery As String = AstrobinAPIV2.CreateQuery(RaMin, RaMax, DecMin, DecMax)
-        AstrobinAPIV2.OpenAstroBinURL(AstrobinAPIV2.QueryBase2 & AstrobinAPIV2.EncodeWebPageQuery(AstroBinQuery))
+        Dim AstroBinQuery As String = DB.AstrobinAPIV2.CreateQuery(RaMin, RaMax, DecMin, DecMax, True)
+        DB.AstrobinAPIV2.OpenAstroBinURL(DB.AstrobinAPIV2.QueryBase2 & DB.AstrobinAPIV2.EncodeWebPageQuery(AstroBinQuery))
     End Sub
 
 End Class

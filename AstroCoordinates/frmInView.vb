@@ -1,8 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports System.ComponentModel
-
-
 
 '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 ' Class to display object visibility information as graph and table
@@ -237,6 +234,10 @@ Public Class frmInView
             e.Cancel = True
             Hide()
         End If
+    End Sub
+
+    Private Sub tsmiTime_Recalc_Click(sender As Object, e As EventArgs) Handles tsmiTime_Recalc.Click
+        Recalc()
     End Sub
 
 End Class

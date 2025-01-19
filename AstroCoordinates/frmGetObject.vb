@@ -241,6 +241,11 @@ Public Class frmGetObject
 
     '''<summary>Update location and object in the InView display window and the build-in graph.</summary>
     Private Sub UpdateInView()
+        UpdateInView(False)
+    End Sub
+
+    '''<summary>Update location and object in the InView display window and the build-in graph.</summary>
+    Private Sub UpdateInView(ByVal ForceUpdate As Boolean)
         If IsNothing(SelectedObject) Then Exit Sub
         'Update build-in graph
         Dim Props As New cAstroInView.cProps
@@ -249,9 +254,9 @@ Public Class frmGetObject
             .RightAscension = SelectedObject.RA.ToHMS
             .Declination = SelectedObject.Dec.ToDegMinSec
         End With
-
         If IsNothing(InView) = False Then
-            Dim UpdateRequired As Boolean = False
+            Dim UpdateRequired As Boolean = ForceUpdate
+            If ForceUpdate = True Then UpdateRequired = True
             If InView.Props.ObjectName <> SelectedObject.Name Then
                 InView.Props.ObjectName = SelectedObject.Name
                 UpdateRequired = True
@@ -298,5 +303,9 @@ Public Class frmGetObject
         Return RetVal
 
     End Function
+
+    Private Sub tsmiTools_Recalc_Click(sender As Object, e As EventArgs) Handles tsmiTools_Recalc.Click
+        UpdateInView(True)
+    End Sub
 
 End Class
