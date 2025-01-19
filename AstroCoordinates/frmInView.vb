@@ -1,5 +1,8 @@
 ﻿Option Explicit On
 Option Strict On
+Imports AstroCoordinates.cAstroInView
+
+
 
 '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 ' Class to display object visibility information as graph and table
@@ -26,6 +29,7 @@ Public Class frmInView
     Private TraceStyle_MoonAltitude As New cZEDGraph.sGraphStyle(Color.DarkBlue, cZEDGraph.eCurveMode.Lines)
     Private TraceStyle_MoonIllumination As New cZEDGraph.sGraphStyle(Color.LightBlue, cZEDGraph.eCurveMode.Lines)
     Private TraceStyle_Observable As New cZEDGraph.sGraphStyle(Color.DarkGreen, cZEDGraph.eCurveMode.LinesAndPoints, PlotConfig.ObservableTraceDotSize)
+    Private TraceStyle_Now As New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Lines)
 
     '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     ' Form processing code
@@ -75,6 +79,15 @@ Public Class frmInView
 
     Private Sub pgDispProp_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgDispProp.PropertyValueChanged
         PlotTraces(Plotter)
+    End Sub
+
+    Private Sub tsmiTime_Night_Click(sender As Object, e As EventArgs) Handles tsmiTime_Night.Click
+        Dim NightStart As DateTime = Now.ToUniversalTime
+        Dim NightEnd As DateTime = Now.ToUniversalTime
+        AstroInView.GetNightStartStop(Props, NightStart, NightEnd)
+        Props.UTC_Start = NightStart
+        Props.CalculationRange = NightEnd - NightStart
+        Recalc()
     End Sub
 
     Private Sub tsmiTime_Today_Click(sender As Object, e As EventArgs) Handles tsmiTime_Today.Click
@@ -163,6 +176,7 @@ Public Class frmInView
         'Set x axis caption and data
         Dim PlotXAxis As cAstroInView.sPlotXAxis = AstroInView.GenerateAxis(Vector, PlotConfig, Props)
         Dim XAxis As DateTime() = Vector.UTCTimes.ToArray.Add(PlotXAxis.XAxisTimeOffset)
+        Dim XNow As DateTime = Now.ToUniversalTime.Add(PlotXAxis.XAxisTimeOffset)
 
         'Start plot
         If IsNothing(Graph) = True Then Exit Sub
@@ -175,11 +189,12 @@ Public Class frmInView
         If PlotConfig.Trace_NonObservable Then Graph.PlotXvsT("Object altitude [°]", XAxis, Vector.Object_Altitude, TraceStyle_Object)
         If PlotConfig.Trace_MoonAltitude Then Graph.PlotXvsT("Moon altitude [°]", XAxis, Vector.MoonAltitude, TraceStyle_MoonAltitude)
         If PlotConfig.Trace_MoonIllumination Then Graph.PlotXvsT("Moon illumination [%]", XAxis, Vector.MoonIllumination, TraceStyle_MoonIllumination)
+        Graph.PlotXvsT("Now", New DateTime() {XNow, XNow}, New Double() {PlotConfig.Axis_YMin, PlotConfig.Axis_YMax}, TraceStyle_Now)
 
         Graph.MainGraph.GraphPane.XAxis.Type = ZedGraph.AxisType.Date
         Graph.MainGraph.GraphPane.XAxis.MajorGrid.IsVisible = True
         Graph.MainGraph.GraphPane.YAxis.MajorGrid.IsVisible = True
-        'Graph.ManuallyScaleXAxisLin(TimeLine.First.ToOADate, TimeLine.Last.ToOADate)
+        Graph.ManuallyScaleXAxisLin(XAxis.First.ToOADate, XAxis.Last.ToOADate)
         Graph.ManuallyScaleYAxisLin(PlotConfig.Axis_YMin, PlotConfig.Axis_YMax)
         Graph.ForceUpdate()
 

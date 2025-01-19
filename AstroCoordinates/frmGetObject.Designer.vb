@@ -30,6 +30,7 @@ Partial Class frmGetObject
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
         scMain = New SplitContainer()
+        cbCustomOnly = New CheckBox()
         scRight = New SplitContainer()
         tbDetails = New TextBox()
         zgcMain = New ZedGraph.ZedGraphControl()
@@ -42,7 +43,7 @@ Partial Class frmGetObject
         tsmiData_Accept = New ToolStripMenuItem()
         tsmiTools = New ToolStripMenuItem()
         tsmiTools_InViewDisplay = New ToolStripMenuItem()
-        cbCustomOnly = New CheckBox()
+        tsmiTools_Recalc = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
@@ -61,7 +62,7 @@ Partial Class frmGetObject
         tbSearchString.Font = New Font("Courier New", 9F)
         tbSearchString.Location = New Point(93, 24)
         tbSearchString.Name = "tbSearchString"
-        tbSearchString.Size = New Size(1118, 21)
+        tbSearchString.Size = New Size(1303, 21)
         tbSearchString.TabIndex = 0
         ' 
         ' Label1
@@ -83,15 +84,16 @@ Partial Class frmGetObject
         lbResults.ItemHeight = 15
         lbResults.Location = New Point(3, 37)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(231, 814)
+        lbResults.Size = New Size(231, 1067)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
         ' 
+        ssMain.ImageScalingSize = New Size(20, 20)
         ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength})
-        ssMain.Location = New Point(0, 911)
+        ssMain.Location = New Point(0, 1164)
         ssMain.Name = "ssMain"
-        ssMain.Size = New Size(1223, 22)
+        ssMain.Size = New Size(1408, 22)
         ssMain.TabIndex = 3
         ssMain.Text = "StatusStrip1"
         ' 
@@ -122,9 +124,19 @@ Partial Class frmGetObject
         ' scMain.Panel2
         ' 
         scMain.Panel2.Controls.Add(scRight)
-        scMain.Size = New Size(1199, 857)
+        scMain.Size = New Size(1384, 1110)
         scMain.SplitterDistance = 237
         scMain.TabIndex = 4
+        ' 
+        ' cbCustomOnly
+        ' 
+        cbCustomOnly.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        cbCustomOnly.Location = New Point(3, 8)
+        cbCustomOnly.Name = "cbCustomOnly"
+        cbCustomOnly.Size = New Size(231, 23)
+        cbCustomOnly.TabIndex = 3
+        cbCustomOnly.Text = "Only custom catalog"
+        cbCustomOnly.UseVisualStyleBackColor = True
         ' 
         ' scRight
         ' 
@@ -141,7 +153,7 @@ Partial Class frmGetObject
         ' scRight.Panel2
         ' 
         scRight.Panel2.Controls.Add(zgcMain)
-        scRight.Size = New Size(952, 851)
+        scRight.Size = New Size(1136, 1104)
         scRight.SplitterDistance = 130
         scRight.TabIndex = 1
         ' 
@@ -153,7 +165,7 @@ Partial Class frmGetObject
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(946, 124)
+        tbDetails.Size = New Size(1131, 124)
         tbDetails.TabIndex = 0
         tbDetails.WordWrap = False
         ' 
@@ -170,7 +182,7 @@ Partial Class frmGetObject
         zgcMain.ScrollMinX = 0R
         zgcMain.ScrollMinY = 0R
         zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(944, 711)
+        zgcMain.Size = New Size(1128, 963)
         zgcMain.TabIndex = 0
         ' 
         ' tUpdateDetails
@@ -180,10 +192,11 @@ Partial Class frmGetObject
         ' 
         ' msMain
         ' 
+        msMain.ImageScalingSize = New Size(20, 20)
         msMain.Items.AddRange(New ToolStripItem() {tsmiData, tsmiTools})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(1223, 24)
+        msMain.Size = New Size(1408, 24)
         msMain.TabIndex = 6
         msMain.Text = "MenuStrip1"
         ' 
@@ -219,7 +232,7 @@ Partial Class frmGetObject
         ' 
         ' tsmiTools
         ' 
-        tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay})
+        tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay, tsmiTools_Recalc})
         tsmiTools.Name = "tsmiTools"
         tsmiTools.Size = New Size(42, 20)
         tsmiTools.Text = "Tool"
@@ -230,21 +243,17 @@ Partial Class frmGetObject
         tsmiTools_InViewDisplay.Size = New Size(184, 22)
         tsmiTools_InViewDisplay.Text = "Open In View display"
         ' 
-        ' cbCustomOnly
+        ' tsmiTools_Recalc
         ' 
-        cbCustomOnly.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        cbCustomOnly.Location = New Point(3, 8)
-        cbCustomOnly.Name = "cbCustomOnly"
-        cbCustomOnly.Size = New Size(231, 23)
-        cbCustomOnly.TabIndex = 3
-        cbCustomOnly.Text = "Only custom catalog"
-        cbCustomOnly.UseVisualStyleBackColor = True
+        tsmiTools_Recalc.Name = "tsmiTools_Recalc"
+        tsmiTools_Recalc.Size = New Size(184, 22)
+        tsmiTools_Recalc.Text = "Recalc"
         ' 
         ' frmGetObject
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1223, 933)
+        ClientSize = New Size(1408, 1186)
         Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(msMain)
@@ -290,4 +299,5 @@ Partial Class frmGetObject
     Friend WithEvents scRight As SplitContainer
     Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
     Friend WithEvents cbCustomOnly As CheckBox
+    Friend WithEvents tsmiTools_Recalc As ToolStripMenuItem
 End Class
