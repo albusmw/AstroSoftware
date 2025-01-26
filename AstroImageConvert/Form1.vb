@@ -33,6 +33,7 @@ Public Class Form1
             '.Items.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_09_13 - NGC2024_Fix16.tif")
             .Items.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_09_13 - NGC2024.tif")
             .Items.Add("\\192.168.100.10\dsc\2024_11_23\Capture\05_43_23\processed\Stack_9frames_72s.png")
+            .Items.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_08_26 - NGC6995 (Veil nebula).tif")
             '.Items.Add("\\192.168.100.10\dsc\2024_12_02\Abell 7 (Ancient Planetary Nebula)\Abell 7 (Ancient Planetary Nebula)\Abell 7 (Ancient Planetary Nebula)_00002.fits")
         End With
 
