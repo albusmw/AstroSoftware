@@ -24,16 +24,17 @@ Public Class Form1
         IPP = New cIntelIPP(IPPPath)
         FITSReader = New cFITSReader(IPPPath)
         UInt16Data = New AstroNET.Statistics(IPPPath)
-        With lbExamples
-            .Items.Clear()
-            '.Items.Add("C:\Users\albus\Dropbox\Transfer iPhone\downloads\libtiffpic\pc260001.tif")
-            '.Items.Add("C:\Users\albus\Dropbox\Transfer iPhone\downloads\libtiffpic\quad-jpeg.tif")
-            '.Items.Add("C:\Users\albus\Dropbox\Astro\!Bilder\2020-02 - Königsdorf Orion.tif")
-            '.Items.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_11_29 - NGC371 Ha.tif")
-            '.Items.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_09_13 - NGC2024_Fix16.tif")
-            .Items.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_09_13 - NGC2024.tif")
-            .Items.Add("\\192.168.100.10\dsc\2024_11_23\Capture\05_43_23\processed\Stack_9frames_72s.png")
-            .Items.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_08_26 - NGC6995 (Veil nebula).tif")
+        Dim ListOfExamples As New List(Of String)
+        With ListOfExamples
+            .Clear()
+            '.Add("C:\Users\albus\Dropbox\Transfer iPhone\downloads\libtiffpic\pc260001.tif")
+            '.Add("C:\Users\albus\Dropbox\Transfer iPhone\downloads\libtiffpic\quad-jpeg.tif")
+            '.Add("C:\Users\albus\Dropbox\Astro\!Bilder\2020-02 - Königsdorf Orion.tif")
+            '.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_11_29 - NGC371 Ha.tif")
+            '.Add("\\192.168.100.10\dsc\DSS_Autosave\2024_09_13 - NGC2024_Fix16.tif")
+            .Add("\\192.168.100.10\dsc\DSS_Autosave\2024_09_13 - NGC2024.tif")
+            .Add("\\192.168.100.10\dsc\2024_11_23\Capture\05_43_23\processed\Stack_9frames_72s.png")
+            .Add("\\192.168.100.10\dsc\DSS_Autosave\2024_08_26 - NGC6995 (Veil nebula).tif")
             '.Items.Add("\\192.168.100.10\dsc\2024_12_02\Abell 7 (Ancient Planetary Nebula)\Abell 7 (Ancient Planetary Nebula)\Abell 7 (Ancient Planetary Nebula)_00002.fits")
         End With
 
@@ -125,7 +126,6 @@ Public Class Form1
             ImageOut_Min = Keys.First
         End If
 
-
         'Get the max cut-off
         Keys.Reverse()
         Dim ImageOut_Max As Double = Double.NaN
@@ -142,13 +142,11 @@ Public Class Form1
             ImageOut_Max = Keys.First
         End If
 
-
         ImageOut_Min = (ImageOut_Min - ScaleB) / ScaleA
         ImageOut_Max = (ImageOut_Max - ScaleB) / ScaleA
 
         Log("Data MIN used: " & ImageOut_Min.ValRegIndep)
         Log("Data MAX used: " & ImageOut_Max.ValRegIndep)
-
 
         'TODO:
         'Set data MIN and MAX to x pct / ignore the 1000 pixel with the lower / highest value
@@ -156,7 +154,7 @@ Public Class Form1
 
         'Apply gamma and save
         Select Case Config.Bits
-            Case 8
+            Case cConfig.eBits.Bit8
                 Log("Storing 8 bit ...")
                 Dim FinalImage_8Bit(ImageOut.GetUpperBound(0), ImageOut.GetUpperBound(1)) As Byte
                 For Idx1 As Integer = 0 To ImageOut.GetUpperBound(0)
@@ -170,7 +168,7 @@ Public Class Form1
                 Dim ToStore As System.Windows.Media.Imaging.FormatConvertedBitmap = ImageFileFormatSpecific.GetConvertedBitmap(FinalImage_8Bit)
                 Log("Saving real 8 bit data ...")
                 JPEGSave.Save_8bpp(Config.LastGeneratedFile, ToStore)
-            Case 16
+            Case cConfig.eBits.Bit16
                 Log("Storing 16 bit ...")
                 Dim FinalImage_16Bit(ImageOut.GetUpperBound(0), ImageOut.GetUpperBound(1)) As UInt16
                 For Idx1 As Integer = 0 To ImageOut.GetUpperBound(0)
@@ -179,12 +177,12 @@ Public Class Form1
                     Next Idx2
                 Next Idx1
                 Select Case Config.Format
-                    Case "PNG"
+                    Case cConfig.eOutputFormat.PNG
                         Log("PNG ...")
                         Config.LastGeneratedFile = System.IO.Path.Combine(MyPath, Config.FileName & "Test.png")
                         Dim PNGSave As New ImageFileFormatSpecific.cPNG
                         PNGSave.Save_16bpp(Config.LastGeneratedFile, FinalImage_16Bit)
-                    Case "JPEG"
+                    Case cConfig.eOutputFormat.JPEG
                         Log("JPEG - NOT SUPPORTED -")
                         'Not supported
                 End Select
@@ -220,10 +218,6 @@ Public Class Form1
         Dim ValueZeroToOne As Double = (((Data - DataMin) / (DataMax - DataMin))) ^ Gamma
         Return CType(Byte.MaxValue * ValueZeroToOne, Byte)
     End Function
-
-    Private Sub lbExamples_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbExamples.SelectedIndexChanged
-        tbInputFile.Text = CType(lbExamples.SelectedItem, String)
-    End Sub
 
     Private Sub TIFF_IO_LogInfo(Text As String) Handles TIFF_IO.LogInfo
         Log(Text)

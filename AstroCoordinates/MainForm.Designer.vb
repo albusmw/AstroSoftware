@@ -31,6 +31,8 @@ Partial Class MainForm
         tbDecParsedShort = New TextBox()
         tbDecParsedDecimal = New TextBox()
         tlpMain = New TableLayoutPanel()
+        btnRA = New Button()
+        btnDec = New Button()
         btnGetObject = New Button()
         tbSelected = New TextBox()
         btnGoTo = New Button()
@@ -42,6 +44,7 @@ Partial Class MainForm
         tsmiFile_OpenEXE = New ToolStripMenuItem()
         tsmiFile_LoadVizier = New ToolStripMenuItem()
         tsmiFile_AstroBin = New ToolStripMenuItem()
+        tsmiFile_InTheSky = New ToolStripMenuItem()
         ToolStripMenuItem1 = New ToolStripSeparator()
         tsmiFile_End = New ToolStripMenuItem()
         tsmiEnter = New ToolStripMenuItem()
@@ -53,8 +56,6 @@ Partial Class MainForm
         tsmiGoTo_Object = New ToolStripMenuItem()
         tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
-        btnRA = New Button()
-        btnDec = New Button()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -138,6 +139,26 @@ Partial Class MainForm
         tlpMain.Size = New Size(492, 107)
         tlpMain.TabIndex = 10
         ' 
+        ' btnRA
+        ' 
+        btnRA.Dock = DockStyle.Fill
+        btnRA.Location = New Point(3, 3)
+        btnRA.Name = "btnRA"
+        btnRA.Size = New Size(121, 47)
+        btnRA.TabIndex = 10
+        btnRA.Text = "RA" & vbCrLf & "(Right ascension)"
+        btnRA.UseVisualStyleBackColor = True
+        ' 
+        ' btnDec
+        ' 
+        btnDec.Dock = DockStyle.Fill
+        btnDec.Location = New Point(3, 56)
+        btnDec.Name = "btnDec"
+        btnDec.Size = New Size(121, 48)
+        btnDec.TabIndex = 11
+        btnDec.Text = "DEC" & vbCrLf & "(Declination)"
+        btnDec.UseVisualStyleBackColor = True
+        ' 
         ' btnGetObject
         ' 
         btnGetObject.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
@@ -192,7 +213,7 @@ Partial Class MainForm
         ' 
         ' tsmiFile
         ' 
-        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_LoadVizier, tsmiFile_AstroBin, ToolStripMenuItem1, tsmiFile_End})
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_LoadVizier, tsmiFile_AstroBin, tsmiFile_InTheSky, ToolStripMenuItem1, tsmiFile_End})
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
@@ -200,30 +221,36 @@ Partial Class MainForm
         ' tsmiFile_OpenEXE
         ' 
         tsmiFile_OpenEXE.Name = "tsmiFile_OpenEXE"
-        tsmiFile_OpenEXE.Size = New Size(178, 22)
+        tsmiFile_OpenEXE.Size = New Size(180, 22)
         tsmiFile_OpenEXE.Text = "Open EXE folder"
         ' 
         ' tsmiFile_LoadVizier
         ' 
         tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
-        tsmiFile_LoadVizier.Size = New Size(178, 22)
+        tsmiFile_LoadVizier.Size = New Size(180, 22)
         tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
         ' 
         ' tsmiFile_AstroBin
         ' 
         tsmiFile_AstroBin.Name = "tsmiFile_AstroBin"
-        tsmiFile_AstroBin.Size = New Size(178, 22)
+        tsmiFile_AstroBin.Size = New Size(180, 22)
         tsmiFile_AstroBin.Text = "AstroBin around"
+        ' 
+        ' tsmiFile_InTheSky
+        ' 
+        tsmiFile_InTheSky.Name = "tsmiFile_InTheSky"
+        tsmiFile_InTheSky.Size = New Size(180, 22)
+        tsmiFile_InTheSky.Text = "In the sky"
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(175, 6)
+        ToolStripMenuItem1.Size = New Size(177, 6)
         ' 
         ' tsmiFile_End
         ' 
         tsmiFile_End.Name = "tsmiFile_End"
-        tsmiFile_End.Size = New Size(178, 22)
+        tsmiFile_End.Size = New Size(180, 22)
         tsmiFile_End.Text = "Exit"
         ' 
         ' tsmiEnter
@@ -281,26 +308,6 @@ Partial Class MainForm
         tsmiGoTo_SunOpposition.Size = New Size(206, 22)
         tsmiGoTo_SunOpposition.Text = "Sun opposition and track"
         ' 
-        ' btnRA
-        ' 
-        btnRA.Dock = DockStyle.Fill
-        btnRA.Location = New Point(3, 3)
-        btnRA.Name = "btnRA"
-        btnRA.Size = New Size(121, 47)
-        btnRA.TabIndex = 10
-        btnRA.Text = "RA" & vbCrLf & "(Right ascension)"
-        btnRA.UseVisualStyleBackColor = True
-        ' 
-        ' btnDec
-        ' 
-        btnDec.Dock = DockStyle.Fill
-        btnDec.Location = New Point(3, 56)
-        btnDec.Name = "btnDec"
-        btnDec.Size = New Size(121, 48)
-        btnDec.TabIndex = 11
-        btnDec.Text = "DEC" & vbCrLf & "(Declination)"
-        btnDec.UseVisualStyleBackColor = True
-        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -354,4 +361,5 @@ Partial Class MainForm
     Friend WithEvents tsmiEnter_RADeg As ToolStripMenuItem
     Friend WithEvents btnRA As Button
     Friend WithEvents btnDec As Button
+    Friend WithEvents tsmiFile_InTheSky As ToolStripMenuItem
 End Class

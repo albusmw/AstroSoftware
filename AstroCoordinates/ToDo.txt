@@ -1,0 +1,1 @@
+﻿- Ortsparameter (Koordinaten und Zeit) vom Hauptprogramm her einstellbar machen und dann in die anderen Fenster (GetObject, InView) weiterreichen

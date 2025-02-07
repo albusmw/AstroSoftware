@@ -1,5 +1,6 @@
 ﻿Option Explicit On
 Option Strict On
+Imports System.Reflection
 
 Public Class cConfig
 
@@ -14,6 +15,20 @@ Public Class cConfig
         NoBlur = 0
         Blur3 = 3
         Blur5 = 5
+    End Enum
+
+    Public Enum eBits
+        <ComponentModel.Description("8 Bit")>
+        Bit8 = 8
+        <ComponentModel.Description("16 Bit")>
+        Bit16 = 16
+    End Enum
+
+    Public Enum eOutputFormat
+        <ComponentModel.Description("JPEG")>
+        JPEG
+        <ComponentModel.Description("PNG")>
+        PNG
     End Enum
 
     <System.ComponentModel.Category(Categories.Cat1)>
@@ -56,18 +71,19 @@ Public Class cConfig
 
     <System.ComponentModel.Category(Categories.Cat_Store)>
     <System.ComponentModel.DisplayName("2. File type")>
-    Public Property Format As String = "PNG"
+    <ComponentModel.TypeConverter(GetType(ComponentModelEx.EnumDesciptionConverter))>
+    <ComponentModel.DefaultValue(eOutputFormat.PNG)>
+    Public Property Format As eOutputFormat = eOutputFormat.PNG
 
     <System.ComponentModel.Category(Categories.Cat_Store)>
     <System.ComponentModel.DisplayName("3. File resolution [bit]")>
-    Public Property Bits As Integer = 16
+    <ComponentModel.TypeConverter(GetType(ComponentModelEx.EnumDesciptionConverter))>
+    <ComponentModel.DefaultValue(eBits.Bit16)>
+    Public Property Bits As eBits = eBits.Bit16
 
     <System.ComponentModel.Category(Categories.Cat_Store)>
     <System.ComponentModel.DisplayName("4. Output gamma")>
     Public Property Gamma As Double = 0.2
-
-
-
 
 
     Public Property LastGeneratedFile As String = String.Empty

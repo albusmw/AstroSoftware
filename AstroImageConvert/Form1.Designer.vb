@@ -23,19 +23,23 @@ Partial Class Form1
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         tbInputFile = New TextBox()
-        lbExamples = New ListBox()
         tbLog = New TextBox()
         pgMain = New PropertyGrid()
         msMain = New MenuStrip()
         tsmiFile = New ToolStripMenuItem()
+        tsmiFile_OpenOriginal = New ToolStripMenuItem()
+        ToolStripMenuItem2 = New ToolStripSeparator()
         tsmiFile_Open = New ToolStripMenuItem()
         tsmiFile_FITSWork = New ToolStripMenuItem()
         ToolStripMenuItem1 = New ToolStripSeparator()
         tsmiFile_Exit = New ToolStripMenuItem()
         tsmiProcess = New ToolStripMenuItem()
-        tsmiFile_OpenOriginal = New ToolStripMenuItem()
-        ToolStripMenuItem2 = New ToolStripSeparator()
+        scMain = New SplitContainer()
         msMain.SuspendLayout()
+        CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
+        scMain.Panel1.SuspendLayout()
+        scMain.Panel2.SuspendLayout()
+        scMain.SuspendLayout()
         SuspendLayout()
         ' 
         ' tbInputFile
@@ -43,45 +47,36 @@ Partial Class Form1
         tbInputFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbInputFile.Location = New Point(12, 27)
         tbInputFile.Name = "tbInputFile"
-        tbInputFile.Size = New Size(1173, 23)
+        tbInputFile.Size = New Size(1297, 23)
         tbInputFile.TabIndex = 0
-        ' 
-        ' lbExamples
-        ' 
-        lbExamples.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        lbExamples.FormattingEnabled = True
-        lbExamples.ItemHeight = 15
-        lbExamples.Location = New Point(255, 56)
-        lbExamples.Name = "lbExamples"
-        lbExamples.Size = New Size(930, 184)
-        lbExamples.TabIndex = 2
         ' 
         ' tbLog
         ' 
         tbLog.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         tbLog.Font = New Font("Courier New", 9.75F, FontStyle.Regular, GraphicsUnit.Point, CByte(0))
-        tbLog.Location = New Point(255, 246)
+        tbLog.Location = New Point(3, 3)
         tbLog.Multiline = True
         tbLog.Name = "tbLog"
         tbLog.ScrollBars = ScrollBars.Both
-        tbLog.Size = New Size(930, 634)
+        tbLog.Size = New Size(855, 917)
         tbLog.TabIndex = 3
         tbLog.WordWrap = False
         ' 
         ' pgMain
         ' 
-        pgMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left
-        pgMain.Location = New Point(12, 56)
+        pgMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        pgMain.Location = New Point(3, 3)
         pgMain.Name = "pgMain"
-        pgMain.Size = New Size(237, 824)
+        pgMain.Size = New Size(426, 917)
         pgMain.TabIndex = 5
+        pgMain.ToolbarVisible = False
         ' 
         ' msMain
         ' 
         msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiProcess})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(1197, 24)
+        msMain.Size = New Size(1321, 24)
         msMain.TabIndex = 6
         msMain.Text = "MenuStrip1"
         ' 
@@ -91,6 +86,17 @@ Partial Class Form1
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
+        ' 
+        ' tsmiFile_OpenOriginal
+        ' 
+        tsmiFile_OpenOriginal.Name = "tsmiFile_OpenOriginal"
+        tsmiFile_OpenOriginal.Size = New Size(217, 22)
+        tsmiFile_OpenOriginal.Text = "Open original file"
+        ' 
+        ' ToolStripMenuItem2
+        ' 
+        ToolStripMenuItem2.Name = "ToolStripMenuItem2"
+        ToolStripMenuItem2.Size = New Size(214, 6)
         ' 
         ' tsmiFile_Open
         ' 
@@ -121,25 +127,29 @@ Partial Class Form1
         tsmiProcess.Size = New Size(71, 20)
         tsmiProcess.Text = "Process ..."
         ' 
-        ' tsmiFile_OpenOriginal
+        ' scMain
         ' 
-        tsmiFile_OpenOriginal.Name = "tsmiFile_OpenOriginal"
-        tsmiFile_OpenOriginal.Size = New Size(217, 22)
-        tsmiFile_OpenOriginal.Text = "Open original file"
+        scMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        scMain.Location = New Point(12, 56)
+        scMain.Name = "scMain"
         ' 
-        ' ToolStripMenuItem2
+        ' scMain.Panel1
         ' 
-        ToolStripMenuItem2.Name = "ToolStripMenuItem2"
-        ToolStripMenuItem2.Size = New Size(214, 6)
+        scMain.Panel1.Controls.Add(pgMain)
+        ' 
+        ' scMain.Panel2
+        ' 
+        scMain.Panel2.Controls.Add(tbLog)
+        scMain.Size = New Size(1297, 923)
+        scMain.SplitterDistance = 432
+        scMain.TabIndex = 7
         ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1197, 892)
-        Controls.Add(pgMain)
-        Controls.Add(tbLog)
-        Controls.Add(lbExamples)
+        ClientSize = New Size(1321, 991)
+        Controls.Add(scMain)
         Controls.Add(tbInputFile)
         Controls.Add(msMain)
         MainMenuStrip = msMain
@@ -147,12 +157,16 @@ Partial Class Form1
         Text = "Form1"
         msMain.ResumeLayout(False)
         msMain.PerformLayout()
+        scMain.Panel1.ResumeLayout(False)
+        scMain.Panel2.ResumeLayout(False)
+        scMain.Panel2.PerformLayout()
+        CType(scMain, ComponentModel.ISupportInitialize).EndInit()
+        scMain.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
     End Sub
 
     Friend WithEvents tbInputFile As TextBox
-    Friend WithEvents lbExamples As ListBox
     Friend WithEvents tbLog As TextBox
     Friend WithEvents pgMain As PropertyGrid
     Friend WithEvents msMain As MenuStrip
@@ -164,5 +178,6 @@ Partial Class Form1
     Friend WithEvents tsmiProcess As ToolStripMenuItem
     Friend WithEvents tsmiFile_OpenOriginal As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem2 As ToolStripSeparator
+    Friend WithEvents scMain As SplitContainer
 
 End Class

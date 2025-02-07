@@ -147,12 +147,36 @@ Public Class MainForm
     End Sub
 
     Private Sub tsmiFile_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmiFile_AstroBin.Click
-        Dim RaMin As Double = tbRAParsedDecimal.Text.ValRegIndep - 1 / 6
-        Dim RaMax As Double = tbRAParsedDecimal.Text.ValRegIndep + 1 / 6
-        Dim DecMin As Double = tbDecParsedDecimal.Text.ValRegIndep - 0.5
-        Dim DecMax As Double = tbDecParsedDecimal.Text.ValRegIndep + 0.5
-        Dim AstroBinQuery As String = DB.AstrobinAPIV2.CreateQuery(RaMin, RaMax, DecMin, DecMax, True)
-        DB.AstrobinAPIV2.OpenAstroBinURL(DB.AstrobinAPIV2.QueryBase2 & DB.AstrobinAPIV2.EncodeWebPageQuery(AstroBinQuery))
+        With DB.AstrobinAPIV2
+            .RaMin = tbRAParsedDecimal.Text.ValRegIndep - 1 / 6
+            .RaMax = tbRAParsedDecimal.Text.ValRegIndep + 1 / 6
+            .DecMin = tbDecParsedDecimal.Text.ValRegIndep - 0.5
+            .DecMax = tbDecParsedDecimal.Text.ValRegIndep + 0.5
+            .TopPickOnly = True
+        End With
+        Dim AstroBinQuery As String = DB.AstrobinAPIV2.CreateQuery
+        DB.AstrobinAPIV2.OpenURLInBrowser(DB.AstrobinAPIV2.QueryBase_Images & DB.AstrobinAPIV2.EncodeWebPageQuery(AstroBinQuery))
+    End Sub
+
+    Private Sub tsmiFile_InTheSky_Click(sender As Object, e As EventArgs) Handles tsmiFile_InTheSky.Click
+        'Show the sky chart
+        Dim Location As Ato.AstroCalc.sLatLong = Ato.AstroCalc.KnownLocations.DSC
+        Dim URL As String = "https://in-the-sky.org/staratlas.php?"
+        Dim Parameter As New List(Of String)
+        Parameter.Add("no_cookie=1")
+        Parameter.Add("latitude=" & Location.Latitude.ValRegIndep)
+        Parameter.Add("longitude=" & Location.Longitude.ValRegIndep)
+        Parameter.Add("timezone=0.00")
+        Parameter.Add("year=" & Now.Year.ValRegIndep)
+        Parameter.Add("month=" & Now.Month.ValRegIndep)
+        Parameter.Add("day=" & Now.Day.ValRegIndep)
+        Parameter.Add("hour=" & Now.Hour.ValRegIndep)
+        Parameter.Add("min=" & Now.Minute.ValRegIndep)
+        Parameter.Add("PLlimitmag=2")
+        Parameter.Add("zoom=160")
+        Parameter.Add("ra=" & tbRAParsedDecimal.Text)
+        Parameter.Add("dec=" & tbDecParsedDecimal.Text)
+        DB.AstrobinAPIV2.OpenURLInBrowser(URL & Join(Parameter.ToArray, "&"))
     End Sub
 
 End Class
