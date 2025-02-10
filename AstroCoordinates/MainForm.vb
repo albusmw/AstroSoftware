@@ -3,6 +3,8 @@ Option Strict On
 
 Public Class MainForm
 
+    Private ReadOnly MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+
     Private Sub MainForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         Me.Text = GetBuildDateTime.GetMainformTitle
         Me.CenterToScreen()
@@ -177,6 +179,30 @@ Public Class MainForm
         Parameter.Add("ra=" & tbRAParsedDecimal.Text)
         Parameter.Add("dec=" & tbDecParsedDecimal.Text)
         DB.AstrobinAPIV2.OpenURLInBrowser(URL & Join(Parameter.ToArray, "&"))
+    End Sub
+
+    Private Sub tsmiEnter_ParseClipboard_Click(sender As Object, e As EventArgs) Handles tsmiEnter_ParseClipboard.Click
+        Dim ClipContent As String = Clipboard.GetText(TextDataFormat.UnicodeText)
+        ClipContent = InputBox("Content:", "Content", ClipContent)
+        Dim ClipRa As Double = Double.NaN
+        Dim ClipDec As Double = Double.NaN
+        If ClipContent.ParseCoord(ClipRa, ClipDec) Then
+            UpdateRA(ClipRa)
+            UpdateDec(ClipDec)
+        End If
+    End Sub
+
+    Private Sub tsmiFile_DropBoxCAT_Click(sender As Object, e As EventArgs) Handles tsmiFile_DropBoxCAT.Click
+        Dim DSCShare As String = "https://www.dropbox.com/scl/fo/gdqyke3ifvlfc5o8ucr72/ALSsHL12tDmzghQsNvwTuho?rlkey=50f3tqrl3qtsrprmi3ls6j73e&st=yssp9gwr&dl=1"
+        Dim DBL As New cDropBox(DSCShare)
+        DBL.LoadContent()
+        Dim CatName As String = "CustomCatalog.txt"
+        If DBL.Content.Contains(CatName) Then
+            Dim CustomCat As String = System.IO.Path.Combine(MyPath, CatName)
+            If System.IO.File.Exists(CustomCat) Then System.IO.File.Delete(CustomCat)
+            System.IO.File.WriteAllBytes(CustomCat, DBL.GetContent(CatName))
+            MsgBox("CustomCatalog.txt loaded from dropbox", MsgBoxStyle.Information Or MsgBoxStyle.OkOnly, "Loaded")
+        End If
     End Sub
 
 End Class

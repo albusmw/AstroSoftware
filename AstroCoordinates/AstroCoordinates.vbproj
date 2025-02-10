@@ -13,7 +13,6 @@
 
   <ItemGroup>
     <None Remove="catalogs\messier.txt" />
-    <None Remove="catalogs\MyOwn.txt" />
     <None Remove="catalogs\namedStars.txt" />
     <None Remove="catalogs\ngc2000.txt" />
   </ItemGroup>
@@ -24,6 +23,7 @@
     <Compile Include="..\..\MyLib\AstroObjectInfo.vb" Link="MyLib\AstroObjectInfo.vb" />
     <Compile Include="..\..\MyLib\cAstrobinAPIv2.vb" Link="MyLib\cAstrobinAPIv2.vb" />
     <Compile Include="..\..\MyLib\cAstroInView.vb" Link="MyLib\cAstroInView.vb" />
+    <Compile Include="..\..\MyLib\cDropbox.vb" Link="MyLib\cDropbox.vb" />
     <Compile Include="..\..\MyLib\cLogging.vb" Link="MyLib\cLogging.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
@@ -58,9 +58,6 @@
     <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="MyLib\frmLogDisplay.resx" />
     <EmbeddedResource Include="..\..\MyLib\frmSelectFromList.resx" Link="MyLib\frmSelectFromList.resx" />
     <EmbeddedResource Include="catalogs\messier.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="catalogs\MyOwn.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="catalogs\namedStars.txt">

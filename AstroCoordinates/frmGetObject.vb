@@ -3,6 +3,12 @@ Option Strict On
 
 Public Class frmGetObject
 
+    '''<summary>My executable folder.</summary>
+    Private ReadOnly MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+
+    '''<summary>Catalog where custom entries are located.</summary>
+    Public Property MyCustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
+
     Public SelectedObject As cObjectInfo = Nothing
 
     '''<summary>Display to do calculation and show full properties.</summary>
@@ -17,7 +23,14 @@ Public Class frmGetObject
 
     Dim FoundEntries As New List(Of cObjectInfo)
 
-    Private ReadOnly MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+    Public Property CustomCat As String
+        Get
+            Return MyCustomCat
+        End Get
+        Set(value As String)
+            MyCustomCat = value
+        End Set
+    End Property
 
     Public ReadOnly Property CurrentUTC() As DateTime
         Get
@@ -50,7 +63,6 @@ Public Class frmGetObject
     Private Sub ApplySearchString(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged, cbCustomOnly.CheckStateChanged
         Dim SearchString As String = tbSearchString.Text.Trim.ToUpper
         Dim Cat_Custom As String = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Custom)
-        Dim Cat_MyOwn As String = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.MyOwn)
         FoundEntries.Clear()
         For Each Entry As cObjectInfo In Objects
             Dim Found As Boolean = False
@@ -64,7 +76,7 @@ Public Class frmGetObject
             If (Found = False) And Entry.HIP.ToString.Trim.Contains(SearchString) Then Found = True
             'Remove if not custom and only custom is checked
             If (Found = True) And (cbCustomOnly.Checked) Then
-                If (Entry.Catalog = Cat_Custom) Or (Entry.Catalog = Cat_MyOwn) Then
+                If (Entry.Catalog = Cat_Custom) Then
                     Found = True
                 Else
                     Found = False
@@ -101,14 +113,14 @@ Public Class frmGetObject
     Private Sub tsmiData_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmiData_AstroBin.Click
         'Parse the data from the coordinates given on the AstroBin object page
         Dim ClipContent As String() = Split(Clipboard.GetText, System.Environment.NewLine)
-        Dim RA As Double = Double.NaN
-        Dim Dec As Double = Double.NaN
+        Dim ClipRA As Double = Double.NaN
+        Dim ClipDec As Double = Double.NaN
         For Each Line As String In ClipContent
             If Line.Trim.StartsWith("RA center:") Then
-                RA = Line.Trim.Replace("RA center:", String.Empty).ParseRA
+                ClipRA = Line.Trim.Replace("RA center:", String.Empty).ParseRA
             End If
             If Line.Trim.StartsWith("DEC center:") Then
-                Dec = Line.Trim.Replace("DEC center:", String.Empty).ParseDegree
+                ClipDec = Line.Trim.Replace("DEC center:", String.Empty).ParseDegree
             End If
         Next Line
     End Sub
@@ -143,15 +155,17 @@ Public Class frmGetObject
     Private Function LoadCatalogs() As Integer
 
         Dim DoubleEntries As Integer = 0
-        DoubleEntries += AddToCat(eCatMode.M, GetResourceLines("AstroCoordinates.messier.txt"))
-        DoubleEntries += AddToCat(eCatMode.Stars, GetResourceLines("AstroCoordinates.namedStars.txt"))
-        DoubleEntries += AddToCat(eCatMode.NGC, GetResourceLines("AstroCoordinates.ngc2000.txt"))
-        DoubleEntries += AddToCat(eCatMode.MyOwn, GetResourceLines("AstroCoordinates.MyOwn.txt"), ";")
+        Dim Sep As Char
+
+        Sep = Chr(9)
+        DoubleEntries += AddToCat(eCatMode.M, GetResourceLines("AstroCoordinates.messier.txt"), Sep)
+        DoubleEntries += AddToCat(eCatMode.Stars, GetResourceLines("AstroCoordinates.namedStars.txt"), Sep)
+        DoubleEntries += AddToCat(eCatMode.NGC, GetResourceLines("AstroCoordinates.ngc2000.txt"), Sep)
 
         'Load custom objects
-        Dim CustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
+        Sep = "|"c
         If System.IO.File.Exists(CustomCat) = True Then
-            DoubleEntries += AddToCat(eCatMode.Custom, System.IO.File.ReadAllLines(CustomCat))
+            DoubleEntries += AddToCat(eCatMode.Custom, System.IO.File.ReadAllLines(CustomCat), Sep)
         End If
 
         Return DoubleEntries
@@ -159,21 +173,16 @@ Public Class frmGetObject
     End Function
 
     '''<summary>Load the PixInsight catalog data (tab separated).</summary>
-    '''<param name="FileName">File to load.</param>
+    '''<param name="Mode">Which catalog to use.</param>
+    '''<param name="FileContent">Content of the file.</param>
+    '''<param name="Splitter">Split character.</param>
     '''<returns>Number of double entries.</returns>
-    Private Function AddToCat(ByVal Mode As eCatMode, ByRef FileContent As String()) As Integer
-        Return AddToCat(Mode, FileContent, vbTab)
-    End Function
-
-    '''<summary>Load the PixInsight catalog data (tab separated).</summary>
-    '''<param name="FileName">File to load.</param>
-    '''<returns>Number of double entries.</returns>
-    Private Function AddToCat(ByVal Mode As eCatMode, ByRef FileContent As String(), ByVal Splitter As String) As Integer
+    Private Function AddToCat(ByVal Mode As eCatMode, ByRef FileContent As String(), ByVal Splitter As Char) As Integer
         Dim RetVal As Integer = 0
         For Idx As Integer = 1 To FileContent.GetUpperBound(0)
             Dim FileLine As String = FileContent(Idx).Trim
             If FileLine.Length > 0 Then
-                Dim Splitted As String() = Split(FileLine, Splitter)
+                Dim Splitted As String() = FileLine.Split(Splitter)
                 Dim Key As String = Splitted(0)
                 'Currently no check for double entries
                 Objects.Add(New cObjectInfo(Mode, Splitted))

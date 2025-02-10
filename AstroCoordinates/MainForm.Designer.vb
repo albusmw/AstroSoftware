@@ -52,10 +52,12 @@ Partial Class MainForm
         tsmiEnter_Dec = New ToolStripMenuItem()
         ToolStripMenuItem2 = New ToolStripSeparator()
         tsmiEnter_RADeg = New ToolStripMenuItem()
+        tsmiEnter_ParseClipboard = New ToolStripMenuItem()
         tsmiGoTo = New ToolStripMenuItem()
         tsmiGoTo_Object = New ToolStripMenuItem()
         tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
+        tsmiFile_DropBoxCAT = New ToolStripMenuItem()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -213,7 +215,7 @@ Partial Class MainForm
         ' 
         ' tsmiFile
         ' 
-        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_LoadVizier, tsmiFile_AstroBin, tsmiFile_InTheSky, ToolStripMenuItem1, tsmiFile_End})
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_DropBoxCAT, tsmiFile_LoadVizier, tsmiFile_AstroBin, tsmiFile_InTheSky, ToolStripMenuItem1, tsmiFile_End})
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
@@ -255,7 +257,7 @@ Partial Class MainForm
         ' 
         ' tsmiEnter
         ' 
-        tsmiEnter.DropDownItems.AddRange(New ToolStripItem() {tsmiEnter_RA, tsmiEnter_Dec, ToolStripMenuItem2, tsmiEnter_RADeg})
+        tsmiEnter.DropDownItems.AddRange(New ToolStripItem() {tsmiEnter_RA, tsmiEnter_Dec, ToolStripMenuItem2, tsmiEnter_RADeg, tsmiEnter_ParseClipboard})
         tsmiEnter.Name = "tsmiEnter"
         tsmiEnter.Size = New Size(46, 20)
         tsmiEnter.Text = "Enter"
@@ -283,6 +285,12 @@ Partial Class MainForm
         tsmiEnter_RADeg.Size = New Size(183, 22)
         tsmiEnter_RADeg.Text = "RA [°]"
         ' 
+        ' tsmiEnter_ParseClipboard
+        ' 
+        tsmiEnter_ParseClipboard.Name = "tsmiEnter_ParseClipboard"
+        tsmiEnter_ParseClipboard.Size = New Size(183, 22)
+        tsmiEnter_ParseClipboard.Text = "Parse clipboard"
+        ' 
         ' tsmiGoTo
         ' 
         tsmiGoTo.DropDownItems.AddRange(New ToolStripItem() {tsmiGoTo_Object, tsmiGoTo_ZenithAndStop, tsmiGoTo_SunOpposition})
@@ -307,6 +315,12 @@ Partial Class MainForm
         tsmiGoTo_SunOpposition.Name = "tsmiGoTo_SunOpposition"
         tsmiGoTo_SunOpposition.Size = New Size(206, 22)
         tsmiGoTo_SunOpposition.Text = "Sun opposition and track"
+        ' 
+        ' tsmiFile_DropBoxCAT
+        ' 
+        tsmiFile_DropBoxCAT.Name = "tsmiFile_DropBoxCAT"
+        tsmiFile_DropBoxCAT.Size = New Size(180, 22)
+        tsmiFile_DropBoxCAT.Text = "Load Dropbox CAT"
         ' 
         ' MainForm
         ' 
@@ -362,4 +376,6 @@ Partial Class MainForm
     Friend WithEvents btnRA As Button
     Friend WithEvents btnDec As Button
     Friend WithEvents tsmiFile_InTheSky As ToolStripMenuItem
+    Friend WithEvents tsmiEnter_ParseClipboard As ToolStripMenuItem
+    Friend WithEvents tsmiFile_DropBoxCAT As ToolStripMenuItem
 End Class
