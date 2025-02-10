@@ -194,7 +194,7 @@ Public Class frmInView
         Graph.MainGraph.GraphPane.XAxis.Type = ZedGraph.AxisType.Date
         Graph.MainGraph.GraphPane.XAxis.MajorGrid.IsVisible = True
         Graph.MainGraph.GraphPane.YAxis.MajorGrid.IsVisible = True
-        Graph.ManuallyScaleXAxisLin(XAxis.First.ToOADate, XAxis.Last.ToOADate)
+        Graph.ManuallyScaleXAxisLin(XAxis.First, XAxis.Last)
         Graph.ManuallyScaleYAxisLin(PlotConfig.Axis_YMin, PlotConfig.Axis_YMax)
         Graph.ForceUpdate()
 
