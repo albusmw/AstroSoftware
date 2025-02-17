@@ -134,7 +134,7 @@ Public Class frmImage
         End If
 
         'Generate display image
-        ImageFromData.GenerateDisplayImage(ImgData, ROI, ImgStat, DB.IPP)
+        ImageFromData.GenerateDisplayImage(ImgData.DataProcessor_UInt16.ImageData(0).Data, ROI, ImgStat, DB.IPP)
 
         'Display image
         ImageFromData.OutputImage.UnlockBits()

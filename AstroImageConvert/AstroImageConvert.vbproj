@@ -10,24 +10,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="MyLib\AstroStatistics.vb" />
+    <Compile Include="..\..\MyLib\cColorMaps.vb" Link="MyLib\cColorMaps.vb" />
+    <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
     <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\MyLib\cImageFromData.vb" Link="MyLib\cImageFromData.vb" />
+    <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="MyLib\cIntelIPP.vb" />
+    <Compile Include="..\..\MyLib\cLockBitmap.vb" Link="MyLib\cLockBitmap.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\ComponentModelConverter.vb" Link="MyLib\ComponentModelConverter.vb" />
+    <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="MyLib\cStatMultiThread.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\ImageFileFormatSpecific.vb" Link="MyLib\ImageFileFormatSpecific.vb" />
-    <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="src\AstroStatistics.vb" />
-    <Compile Include="..\..\src\atomics\cColorMaps.vb" Link="src\cColorMaps.vb" />
-    <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="src\cDLLDynCall.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="src\cFITSHeaderChanger.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="src\cFITSHeaderParser.vb" />
     <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="src\cFITSReader.vb" />
     <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
-    <Compile Include="..\..\src\atomics\cImageFromData.vb" Link="src\cImageFromData.vb" />
-    <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="src\cIntelIPP.vb" />
-    <Compile Include="..\..\src\atomics\cLockBitmap.vb" Link="src\cLockBitmap.vb" />
-    <Compile Include="..\..\src\atomics\ComponentModelConverter.vb" Link="src\ComponentModelConverter.vb" />
     <Compile Include="..\..\src\atomics\cOpenCvSharp.vb" Link="src\cOpenCvSharp.vb" />
-    <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="src\cStatMultiThread.vb" />
     <Compile Include="..\..\src\atomics\DragDrop.vb" Link="MyLib\DragDrop.vb" />
     <Compile Include="..\..\src\atomics\Everything.vb" Link="MyLib\Everything.vb" />
     <Compile Include="..\..\src\atomics\ImageProcessing.vb" Link="src\ImageProcessing.vb" />
@@ -66,7 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
+    <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.660" />
     <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
     <PackageReference Include="OpenCvSharp4.Extensions" Version="4.10.0.20241108" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />

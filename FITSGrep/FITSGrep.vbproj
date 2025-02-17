@@ -24,6 +24,7 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\MyLib\cCreateSlideShow.vb" Link="MyLib\cCreateSlideShow.vb" />
     <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb">
       <Link>MyLib\cFITSHeaderKeywords.vb</Link>
     </Compile>
