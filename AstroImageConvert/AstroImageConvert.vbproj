@@ -20,8 +20,10 @@
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\ComponentModelConverter.vb" Link="MyLib\ComponentModelConverter.vb" />
     <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="MyLib\cStatMultiThread.vb" />
+    <Compile Include="..\..\MyLib\Everything.vb" Link="MyLib\Everything.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\ImageFileFormatSpecific.vb" Link="MyLib\ImageFileFormatSpecific.vb" />
+    <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="src\cFITSHeaderChanger.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="src\cFITSHeaderParser.vb" />
@@ -29,9 +31,7 @@
     <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
     <Compile Include="..\..\src\atomics\cOpenCvSharp.vb" Link="src\cOpenCvSharp.vb" />
     <Compile Include="..\..\src\atomics\DragDrop.vb" Link="MyLib\DragDrop.vb" />
-    <Compile Include="..\..\src\atomics\Everything.vb" Link="MyLib\Everything.vb" />
     <Compile Include="..\..\src\atomics\ImageProcessing.vb" Link="src\ImageProcessing.vb" />
-    <Compile Include="..\..\src\atomics\Utils.vb" Link="src\Utils.vb" />
   </ItemGroup>
 
   <ItemGroup>

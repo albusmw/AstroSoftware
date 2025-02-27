@@ -238,7 +238,7 @@ Public Class Form1
     Private Sub tsmiFile_FITSWork_Click(sender As Object, e As EventArgs) Handles tsmiFile_FITSWork.Click
         If System.IO.File.Exists(Config.LastGeneratedFile) Then
             If String.IsNullOrEmpty(Config.FITSViewer) = True Then
-                Ato.Utils.StartWithItsEXE(Config.LastGeneratedFile)
+                Utils.StartWithItsEXE(Config.LastGeneratedFile)
             Else
                 Process.Start(Config.FITSViewer, Config.LastGeneratedFile)
             End If
@@ -247,7 +247,7 @@ Public Class Form1
 
     Private Sub tsmiFile_Open_Click(sender As Object, e As EventArgs) Handles tsmiFile_Open.Click
         If System.IO.File.Exists(Config.LastGeneratedFile) Then
-            Ato.Utils.StartWithItsEXE(Config.LastGeneratedFile)
+            Utils.StartWithItsEXE(Config.LastGeneratedFile)
         End If
     End Sub
 
@@ -257,7 +257,7 @@ Public Class Form1
 
     Private Sub tsmiFile_OpenOriginal_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenOriginal.Click
         If System.IO.File.Exists(tbInputFile.Text) Then
-            Ato.Utils.StartWithItsEXE(tbInputFile.Text)
+            Utils.StartWithItsEXE(tbInputFile.Text)
         End If
     End Sub
 

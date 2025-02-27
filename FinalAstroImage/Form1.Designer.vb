@@ -27,6 +27,7 @@ Partial Class Form1
         UcChannel3 = New ucChannel()
         msMain = New MenuStrip()
         tsmiFile = New ToolStripMenuItem()
+        tsmiFile_Exit = New ToolStripMenuItem()
         tsmiAction = New ToolStripMenuItem()
         tsmiAction_Recalc = New ToolStripMenuItem()
         tcMain = New TabControl()
@@ -46,35 +47,38 @@ Partial Class Form1
         ' 
         ' UcChannel1
         ' 
-        UcChannel1.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        UcChannel1.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         UcChannel1.ChannelName = "Channel 1"
         UcChannel1.FileName = "\\192.168.100.10\dsc\DSS_Autosave\2024_07_10 - NGC2070 Ha 1.tif"
         UcChannel1.FileStatus = SystemColors.Window
         UcChannel1.Location = New Point(6, 6)
+        UcChannel1.LogContent = ""
         UcChannel1.Name = "UcChannel1"
-        UcChannel1.Size = New Size(483, 32)
+        UcChannel1.Size = New Size(483, 816)
         UcChannel1.TabIndex = 0
         ' 
         ' UcChannel2
         ' 
-        UcChannel2.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        UcChannel2.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         UcChannel2.ChannelName = "Channel 2"
         UcChannel2.FileName = "\\192.168.100.10\dsc\DSS_Autosave\2024_07_12 - NGC2070 O-III 1.tif"
         UcChannel2.FileStatus = SystemColors.Window
         UcChannel2.Location = New Point(6, 6)
+        UcChannel2.LogContent = ""
         UcChannel2.Name = "UcChannel2"
-        UcChannel2.Size = New Size(406, 32)
+        UcChannel2.Size = New Size(483, 816)
         UcChannel2.TabIndex = 1
         ' 
         ' UcChannel3
         ' 
-        UcChannel3.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        UcChannel3.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         UcChannel3.ChannelName = "Channel 3"
         UcChannel3.FileName = "\\192.168.100.10\dsc\DSS_Autosave\2024_07_13 - NGC2070 S-II.tif"
         UcChannel3.FileStatus = SystemColors.Window
         UcChannel3.Location = New Point(6, 6)
+        UcChannel3.LogContent = ""
         UcChannel3.Name = "UcChannel3"
-        UcChannel3.Size = New Size(406, 32)
+        UcChannel3.Size = New Size(483, 816)
         UcChannel3.TabIndex = 2
         ' 
         ' msMain
@@ -88,9 +92,16 @@ Partial Class Form1
         ' 
         ' tsmiFile
         ' 
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_Exit})
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
+        ' 
+        ' tsmiFile_Exit
+        ' 
+        tsmiFile_Exit.Name = "tsmiFile_Exit"
+        tsmiFile_Exit.Size = New Size(92, 22)
+        tsmiFile_Exit.Text = "Exit"
         ' 
         ' tsmiAction
         ' 
@@ -134,7 +145,7 @@ Partial Class Form1
         tp2.Location = New Point(4, 24)
         tp2.Name = "tp2"
         tp2.Padding = New Padding(3)
-        tp2.Size = New Size(418, 828)
+        tp2.Size = New Size(495, 828)
         tp2.TabIndex = 1
         tp2.Text = "Channel 2"
         tp2.UseVisualStyleBackColor = True
@@ -145,7 +156,7 @@ Partial Class Form1
         tp3.Location = New Point(4, 24)
         tp3.Name = "tp3"
         tp3.Padding = New Padding(3)
-        tp3.Size = New Size(418, 828)
+        tp3.Size = New Size(495, 828)
         tp3.TabIndex = 2
         tp3.Text = "Channel 3"
         tp3.UseVisualStyleBackColor = True
@@ -198,5 +209,6 @@ Partial Class Form1
     Friend WithEvents tp2 As TabPage
     Friend WithEvents tp3 As TabPage
     Friend WithEvents scMain As SplitContainer
+    Friend WithEvents tsmiFile_Exit As ToolStripMenuItem
 
 End Class

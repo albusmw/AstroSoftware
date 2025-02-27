@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="MyLib\AstroStatistics.vb" />
+    <Compile Include="..\..\MyLib\cAstroImageProcessing.vb" Link="MyLib\cAstroImageProcessing.vb" />
     <Compile Include="..\..\MyLib\cColorMaps.vb" Link="MyLib\cColorMaps.vb" />
     <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
     <Compile Include="..\..\MyLib\cImageFromData.vb" Link="MyLib\cImageFromData.vb" />
@@ -20,9 +21,11 @@
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\ComponentModelConverter.vb" Link="MyLib\ComponentModelConverter.vb" />
     <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="MyLib\cStatMultiThread.vb" />
+    <Compile Include="..\..\MyLib\Everything.vb" Link="MyLib\Everything.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\ImageFileFormatSpecific.vb" Link="MyLib\ImageFileFormatSpecific.vb" />
     <Compile Include="..\..\MyLib\PictureBoxEx.vb" Link="MyLib\PictureBoxEx.vb" />
+    <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,6 +51,12 @@
 
   <ItemGroup>
     <Folder Include="MyLib\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\src\bin\Everything64.dll" Link="Everything64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>

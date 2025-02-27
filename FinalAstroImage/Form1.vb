@@ -26,6 +26,29 @@ Public Class Form1
         ReProcess()
     End Sub
 
+    Private Sub UcChannel1_FileAction(sender As Object, Action As ucChannel.eFileAction) Handles UcChannel1.FileAction, UcChannel2.FileAction, UcChannel3.FileAction
+        Dim FileName As String = CType(sender, ucChannel).FileName
+        Select Case Action
+            Case ucChannel.eFileAction.OpenFolder
+                Dim FolderName As String = System.IO.Path.GetDirectoryName(FileName)
+                Utils.StartWithItsEXE(FolderName)
+            Case ucChannel.eFileAction.OpenFileDefault
+                Utils.StartWithItsEXE(FileName)
+            Case ucChannel.eFileAction.OpenFileFITSWork
+                If String.IsNullOrEmpty(DB.FITSWork) = True Then
+                    Utils.StartWithItsEXE(FileName)
+                Else
+                    Process.Start(DB.FITSWork, Chr(34) & FileName & Chr(34))
+                End If
+            Case ucChannel.eFileAction.OpenFileIrfanView
+                If String.IsNullOrEmpty(DB.IrfanView) = True Then
+                    Utils.StartWithItsEXE(FileName)
+                Else
+                    Process.Start(DB.IrfanView, FileName)
+                End If
+        End Select
+    End Sub
+
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
     ' Main processor
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -37,6 +60,18 @@ Public Class Form1
         LoadFile(1, UcChannel2)
         LoadFile(2, UcChannel3)
 
+        'Calculate the common ROI
+        Dim CommonROI As New cAstroImageProcessing.cROICombiner
+        For ChannelIndex As Integer = 0 To 2
+            Dim NAXIS1 As Integer = DB.Channels(ChannelIndex).Data.GetUpperBound(0) + 1
+            Dim NAXIS2 As Integer = DB.Channels(ChannelIndex).Data.GetUpperBound(1) + 1
+            CommonROI.Files.Add(ChannelIndex.ToString.Trim, New cAstroImageProcessing.cROICombiner.cFileSpecifics(NAXIS1, NAXIS2, 0, 0))
+        Next ChannelIndex
+        CommonROI.Calculate()
+
+        'Generate the image - just RGB ...
+        DB.ImageFromData.GenerateDisplayImageRGB(DB.Channels(0).Data, DB.Channels(1).Data, DB.Channels(2).Data, DB.IPP)
+
         'Display the combined image
         DB.ImageFromData.OutputImage.UnlockBits()
         pbMain.Image = DB.ImageFromData.OutputImage.BitmapToProcess
@@ -45,30 +80,36 @@ Public Class Form1
 
     '''<summary>Load the file to the corresponding channel.</summary>
     '''<param name="ChannelIndex">Channel to load.</param>
-    '''<param name="tb">Text box containing the file name.</param>
+    '''<param name="ucC">Channel box containing the file name.</param>
     '''<returns>TRUE if channel contains valid data, FALSE else.</returns>
-    Private Function LoadFile(ByVal ChannelIndex As Integer, ByVal tb As ucChannel) As Boolean
-        If System.IO.File.Exists(tb.FileName) Then
+    Private Function LoadFile(ByVal ChannelIndex As Integer, ByVal ucC As ucChannel) As Boolean
+        ucC.LogContent = String.Empty
+        If System.IO.File.Exists(ucC.FileName) Then
             'Load the file if it requires loading
-            If DB.Channels(ChannelIndex).FileName <> tb.FileName Then
+            If DB.Channels(ChannelIndex).FileName <> ucC.FileName Then
                 'Load and store filename as indication for loaded
-                tb.FileStatus = Color.Orange : De()
-                DB.Channels(ChannelIndex).Data = DB.TIFF_IO.LoadToDouble(tb.FileName)
-                DB.Channels(ChannelIndex).FileName = tb.FileName
+                ucC.FileStatus = Color.Orange : De()
+                DB.Channels(ChannelIndex).Data = DB.TIFF_IO.LoadToDouble(ucC.FileName)
+                DB.Channels(ChannelIndex).FileName = ucC.FileName
+                ucC.LogContent = (DB.Channels(ChannelIndex).Data.GetUpperBound(0) + 1).ValRegIndep & "x" & (DB.Channels(ChannelIndex).Data.GetUpperBound(1) + 1).ValRegIndep
             End If
             'Indicate as loaded
-            tb.FileStatus = Color.LimeGreen : De()
+            ucC.FileStatus = Color.LimeGreen : De()
             Return True
         Else
             'File does NOT exist -> no channel data
             DB.Channels(ChannelIndex) = New cDB.cChannel
-            tb.FileStatus = Color.Red : De()
+            ucC.FileStatus = Color.Red : De()
             Return False
         End If
     End Function
 
     Public Sub De()
         System.Windows.Forms.Application.DoEvents()
+    End Sub
+
+    Private Sub tsmiFile_Exit_Click(sender As Object, e As EventArgs) Handles tsmiFile_Exit.Click
+        End
     End Sub
 
 End Class
