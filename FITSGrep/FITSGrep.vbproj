@@ -29,11 +29,13 @@
       <Link>MyLib\cFITSHeaderKeywords.vb</Link>
     </Compile>
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\Everything.vb" Link="MyLib\Everything.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb">
       <Link>MyLib\Extensions.vb</Link>
     </Compile>
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
+    <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
     <Compile Include="..\..\src\atomics\cFITSGrepper.vb">
       <Link>cFITSGrepper.vb</Link>
     </Compile>
@@ -46,16 +48,12 @@
     <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb">
       <Link>cFITSHeaderParser.vb</Link>
     </Compile>
-    <Compile Include="..\..\src\atomics\Everything.vb">
-      <Link>Everything.vb</Link>
-    </Compile>
     <Compile Include="..\..\src\atomics\RecursiveDirScan.vb">
       <Link>RecursiveDirScan.vb</Link>
     </Compile>
     <Compile Include="..\..\src\atomics\SQLT.vb">
       <Link>SQLT.vb</Link>
     </Compile>
-    <Compile Include="..\..\src\atomics\Utils.vb" Link="atomics\Utils.vb" />
     <Compile Include="..\..\src\Forms\frmFITSGrep.Designer.vb" Link="frmFITSGrep.Designer.vb" />
     <Compile Include="..\..\src\Forms\frmFITSGrep.vb" Link="frmFITSGrep.vb" />
     <Compile Update="My Project\Application.Designer.vb">
@@ -100,8 +98,5 @@
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.119" />
     <PackageReference Include="System.Drawing.Common" Version="9.0.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="atomics\" />
   </ItemGroup>
 </Project>

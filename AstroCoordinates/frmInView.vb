@@ -1,6 +1,6 @@
 ﻿Option Explicit On
 Option Strict On
-Imports AstroCoordinates.cAstroInView
+Imports System.ComponentModel
 
 
 
@@ -234,10 +234,8 @@ Public Class frmInView
             '4) Save and open
             Dim FileToGenerate As String = IO.Path.Combine(MyPath, "ObjectPos.xlsx")
             workbook.SaveAs(FileToGenerate)
-            Ato.Utils.StartWithItsEXE(FileToGenerate)
-
+            Utils.StartWithItsEXE(FileToGenerate)
         End Using
-
     End Sub
 
     Private Sub AstroInView_CalcProgress(Message As String) Handles AstroInView.CalcProgress
@@ -253,6 +251,74 @@ Public Class frmInView
 
     Private Sub tsmiTime_Recalc_Click(sender As Object, e As EventArgs) Handles tsmiTime_Recalc.Click
         Recalc()
+    End Sub
+
+    Private Sub tsmiGenerate_ExcelExportSun_Click(sender As Object, e As EventArgs) Handles tsmiGenerate_ExcelExportSun.Click
+
+        'Get time zone difference to UTC
+        Dim CalcTZ As GeoTimeZone.TimeZoneResult = GeoTimeZone.TimeZoneLookup.GetTimeZone(Props.GetLocation.Latitude_deg, Props.GetLocation.Longitude_deg)
+        Dim TZI As TimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(CalcTZ.Result)
+        Dim NoUTCOffset As New TimeSpan(0)
+
+        'Calculate sun movement
+        Dim IsUTC As DateTimeKind = DateTimeKind.Utc
+        Dim UTCStart As New DateTime(Now.Year, 1, 1, 0, 0, 0, IsUTC)   '1. Januar of this year
+        Dim UTCEnd As DateTime = UTCStart.Add(cAstroInView.TimeSpans.OneYear)
+        Dim CalcStepping As TimeSpan = 5 * cAstroInView.TimeSpans.OneMinute
+
+        'Debug - one day at summer-winter-timechange
+        'UTCStart = New DateTime(2025, 4, 5, 0, 0, 0, IsUTC)
+        'UTCEnd = New DateTime(2025, 4, 7, 0, 0, 0, IsUTC)
+
+        Dim UTCTimes As List(Of DateTime) = Props.GetUTCVector(UTCStart, CalcStepping, UTCEnd)
+        Dim PosVec As Double() = AstroCalc.NET.Sun.SunAlt(UTCTimes, Props.GetLocation.Longitude_deg, Props.GetLocation.Latitude_deg)
+
+        'Calculate sun raise and set times for UTC time
+        Dim RaiseSetEvents As New List(Of AstroCalc.NET.Sun.eRaiseSetEvent)
+        Dim RaiseSetMoment As New List(Of DateTime)
+        Dim EV As AstroCalc.NET.Sun.eRaiseSetEvent
+        Dim Moment As DateTime
+        For Idx As Integer = 0 To PosVec.Count - 2
+            If AstroCalc.NET.Sun.CheckRaiseSetEvent(UTCTimes(Idx), PosVec(Idx), UTCTimes(Idx + 1), PosVec(Idx + 1), EV, Moment) = True Then
+                RaiseSetEvents.Add(EV)
+                RaiseSetMoment.Add(Moment)
+            End If
+        Next Idx
+
+        'Store values as EXCEL table
+        Using workbook As New ClosedXML.Excel.XLWorkbook
+            Dim worksheet1 As ClosedXML.Excel.IXLWorksheet = workbook.Worksheets.Add("SUN")
+            Dim Headers As New List(Of String)
+            Headers.Add("UTC")
+            Headers.Add("Offset")
+            Headers.Add("Local")
+            Headers.Add("Event")
+            worksheet1.Cell(1, 1).InsertData(Headers, True)
+            worksheet1.Row(1).Style.Alignment.Horizontal = ClosedXML.Excel.XLAlignmentHorizontalValues.Center
+            worksheet1.Row(1).Style.Alignment.Vertical = ClosedXML.Excel.XLAlignmentVerticalValues.Center
+            worksheet1.Row(1).Style.Font.Bold = True
+            For Idx As Integer = 0 To RaiseSetMoment.Count - 1
+                Dim Results As New List(Of Object)
+                'Build the EXCEL result row
+                Results.Add(RaiseSetMoment(Idx))
+                Results.Add(TZI.GetUtcOffset(RaiseSetMoment(Idx)).TotalHours)
+                Results.Add(RaiseSetMoment(Idx).Add(TZI.GetUtcOffset(RaiseSetMoment(Idx))))
+                Results.Add(ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(RaiseSetEvents(Idx)))
+                worksheet1.Cell(Idx + 2, 1).InsertData(Results, True)
+            Next Idx
+
+            For Each col In worksheet1.ColumnsUsed
+                col.AdjustToContents()
+            Next col
+
+            'Save and open
+            Dim FileToGenerate As String = IO.Path.Combine(MyPath, "SunRaiseAndSet.xlsx")
+            If System.IO.File.Exists(FileToGenerate) Then System.IO.File.Delete(FileToGenerate)
+            workbook.SaveAs(FileToGenerate)
+            Utils.StartWithItsEXE(FileToGenerate)
+
+        End Using
+
     End Sub
 
 End Class

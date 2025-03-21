@@ -29,6 +29,7 @@ Partial Class frmInView
         tsslMain = New ToolStripStatusLabel()
         msMain = New MenuStrip()
         tsmiTime = New ToolStripMenuItem()
+        tsmiTime_Night = New ToolStripMenuItem()
         tsmiTime_Today = New ToolStripMenuItem()
         tsmiTime_ThisMonth = New ToolStripMenuItem()
         tsmiTime_Next365Days = New ToolStripMenuItem()
@@ -39,9 +40,9 @@ Partial Class frmInView
         tsmiGenerate = New ToolStripMenuItem()
         tsmiGenerate_VisImage = New ToolStripMenuItem()
         tsmiGenerate_ExcelExport = New ToolStripMenuItem()
+        tsmiGenerate_ExcelExportSun = New ToolStripMenuItem()
         scMain = New SplitContainer()
         pgDispProp = New PropertyGrid()
-        tsmiTime_Night = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         msMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
@@ -107,6 +108,12 @@ Partial Class frmInView
         tsmiTime.Size = New Size(86, 20)
         tsmiTime.Text = "Time presets"
         ' 
+        ' tsmiTime_Night
+        ' 
+        tsmiTime_Night.Name = "tsmiTime_Night"
+        tsmiTime_Night.Size = New Size(184, 22)
+        tsmiTime_Night.Text = "This / next night"
+        ' 
         ' tsmiTime_Today
         ' 
         tsmiTime_Today.Name = "tsmiTime_Today"
@@ -152,7 +159,7 @@ Partial Class frmInView
         ' 
         ' tsmiGenerate
         ' 
-        tsmiGenerate.DropDownItems.AddRange(New ToolStripItem() {tsmiGenerate_VisImage, tsmiGenerate_ExcelExport})
+        tsmiGenerate.DropDownItems.AddRange(New ToolStripItem() {tsmiGenerate_VisImage, tsmiGenerate_ExcelExport, tsmiGenerate_ExcelExportSun})
         tsmiGenerate.Name = "tsmiGenerate"
         tsmiGenerate.Size = New Size(66, 20)
         tsmiGenerate.Text = "Generate"
@@ -160,14 +167,20 @@ Partial Class frmInView
         ' tsmiGenerate_VisImage
         ' 
         tsmiGenerate_VisImage.Name = "tsmiGenerate_VisImage"
-        tsmiGenerate_VisImage.Size = New Size(154, 22)
+        tsmiGenerate_VisImage.Size = New Size(193, 22)
         tsmiGenerate_VisImage.Text = "Visibility image"
         ' 
         ' tsmiGenerate_ExcelExport
         ' 
         tsmiGenerate_ExcelExport.Name = "tsmiGenerate_ExcelExport"
-        tsmiGenerate_ExcelExport.Size = New Size(154, 22)
+        tsmiGenerate_ExcelExport.Size = New Size(193, 22)
         tsmiGenerate_ExcelExport.Text = "Excel export"
+        ' 
+        ' tsmiGenerate_ExcelExportSun
+        ' 
+        tsmiGenerate_ExcelExportSun.Name = "tsmiGenerate_ExcelExportSun"
+        tsmiGenerate_ExcelExportSun.Size = New Size(193, 22)
+        tsmiGenerate_ExcelExportSun.Text = "Excel export - Sun only"
         ' 
         ' scMain
         ' 
@@ -194,12 +207,6 @@ Partial Class frmInView
         pgDispProp.Name = "pgDispProp"
         pgDispProp.Size = New Size(303, 340)
         pgDispProp.TabIndex = 5
-        ' 
-        ' tsmiTime_Night
-        ' 
-        tsmiTime_Night.Name = "tsmiTime_Night"
-        tsmiTime_Night.Size = New Size(184, 22)
-        tsmiTime_Night.Text = "This / next night"
         ' 
         ' frmInView
         ' 
@@ -244,4 +251,5 @@ Partial Class frmInView
     Friend WithEvents ToolStripMenuItem1 As ToolStripSeparator
     Friend WithEvents tsmiTime_Recalc As ToolStripMenuItem
     Friend WithEvents tsmiTime_Night As ToolStripMenuItem
+    Friend WithEvents tsmiGenerate_ExcelExportSun As ToolStripMenuItem
 End Class

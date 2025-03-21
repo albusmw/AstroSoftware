@@ -210,7 +210,9 @@ Public Class frmGetObject
         Else
             Try
                 'Display selected object information
-                Dim TimeCalc As New cTimeZoneCalc("W. Europe Standard Time", "America/Santiago")
+                Dim ObservatoryTZ As GeoTimeZone.TimeZoneResult = GeoTimeZone.TimeZoneLookup.GetTimeZone(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
+                Dim TZI As TimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ObservatoryTZ.Result)
+                Dim TimeCalc As New cTimeZoneCalc("W. Europe Standard Time", TZI.Id)
                 Dim ObjectHourAngle As Double = Double.NaN
                 Dim CurrentLocation As New Ato.AstroCalc.sLatLong(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
                 Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec))

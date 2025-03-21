@@ -108,7 +108,7 @@ Public Class MainForm
         CalcLog.Add("  Sun Altitude: " & (SunPos.AzAlt.Alt.ToDegMinSec))
         CalcLog.Add("  Sun Azimuth : " & (SunPos.AzAlt.AZ.ToDegMinSec))
         CalcLog.Add("  Sun RA      : " & (SunPos.RaDec.RA.ToDegMinSec))
-        CalcLog.Add("  Sun Dec     : " & (SunPos.Declination.ToDegMinSec))
+        CalcLog.Add("  Sun Dec     : " & (SunPos.RaDec.DEC.ToDegMinSec))
         CalcLog.Add("Sun opposition:")
         Dim UseAltAz As Boolean = False
         If UseAltAz Then
@@ -119,7 +119,7 @@ Public Class MainForm
             Response = Download.GetResponse(DB.PWI4.Command.Goto_AltAz(Sun_Oppo_Alt, Sun_Oppo_Az))
         Else
             Dim Sun_Oppo_Ra As Double = SunPos.RaDec.RA - 180 : If Sun_Oppo_Ra < 0 Then Sun_Oppo_Ra += 360
-            Dim Sun_Oppo_Dec As Double = -SunPos.Declination
+            Dim Sun_Oppo_Dec As Double = -SunPos.RaDec.DEC_deg
             CalcLog.Add("  Sun RA      : " & (Sun_Oppo_Ra.ToDegMinSec))
             CalcLog.Add("  Sun Dec     : " & (Sun_Oppo_Dec.ToDegMinSec))
             Response = Download.GetResponse(DB.PWI4.Command.Goto_RaDec(cbJ2000.Checked, Sun_Oppo_Ra, Sun_Oppo_Dec))
