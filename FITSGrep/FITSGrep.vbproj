@@ -89,6 +89,7 @@
     <EmbeddedResource Include="..\..\src\Forms\frmFITSGrep.resx" Link="frmFITSGrep.resx" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="DG.AdvancedDataGridView" Version="1.2.30115.18" />
     <PackageReference Include="PDFsharp" Version="6.1.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
@@ -97,6 +98,6 @@
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.119" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.1" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.3" />
   </ItemGroup>
 </Project>
