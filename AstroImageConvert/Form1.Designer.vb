@@ -35,6 +35,8 @@ Partial Class Form1
         tsmiFile_Exit = New ToolStripMenuItem()
         tsmiProcess = New ToolStripMenuItem()
         scMain = New SplitContainer()
+        tsmiPreset = New ToolStripMenuItem()
+        tsmiProcess_QHY600Overscan = New ToolStripMenuItem()
         msMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
@@ -73,7 +75,7 @@ Partial Class Form1
         ' 
         ' msMain
         ' 
-        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiProcess})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiProcess, tsmiPreset})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
         msMain.Size = New Size(1321, 24)
@@ -144,6 +146,19 @@ Partial Class Form1
         scMain.SplitterDistance = 432
         scMain.TabIndex = 7
         ' 
+        ' tsmiPreset
+        ' 
+        tsmiPreset.DropDownItems.AddRange(New ToolStripItem() {tsmiProcess_QHY600Overscan})
+        tsmiPreset.Name = "tsmiPreset"
+        tsmiPreset.Size = New Size(56, 20)
+        tsmiPreset.Text = "Presets"
+        ' 
+        ' tsmiProcess_QHY600Overscan
+        ' 
+        tsmiProcess_QHY600Overscan.Name = "tsmiProcess_QHY600Overscan"
+        tsmiProcess_QHY600Overscan.Size = New Size(180, 22)
+        tsmiProcess_QHY600Overscan.Text = "QHY600 Overscan"
+        ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -179,5 +194,7 @@ Partial Class Form1
     Friend WithEvents tsmiFile_OpenOriginal As ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem2 As ToolStripSeparator
     Friend WithEvents scMain As SplitContainer
+    Friend WithEvents tsmiPreset As ToolStripMenuItem
+    Friend WithEvents tsmiProcess_QHY600Overscan As ToolStripMenuItem
 
 End Class

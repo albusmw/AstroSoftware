@@ -1,0 +1,3 @@
+﻿- Beim Einlesen CROP mit einbauen (für QHY600 Black Area)
+- Klären warum bei 16-Bit PNG das Histogramm immer link der Mitte quasi 0 ist
+  -> Randbereiche des Stackings; hier vielleicht Zeilen- und Spaltenstatistik rechnen und automatisch die "defekten" Bereiche entfernen

@@ -63,7 +63,16 @@ Public Class Form1
             Dim Extension As String = System.IO.Path.GetExtension(FileToLoad).Trim("."c).ToUpper
             Select Case Extension
                 Case "TIF", "TIFF"
-                    TIFF_IO.Load(FileToLoad, DataContent)
+                    'Load tags and get a rectangle to read if specified
+                    TIFF_IO.LoadAllTags(FileToLoad)
+                    If Config.IsCrop = False Then
+                        TIFF_IO.Load(FileToLoad, DataContent)
+                    Else
+                        Dim ReadWidth As Integer = TIFF_IO.IMAGEWIDTH - Config.CropLeft - Config.CropRight
+                        Dim ReadHeigth As Integer = TIFF_IO.IMAGELENGTH - Config.CropTop - Config.CropBottom
+                        Dim ReadRect As New Rectangle(Config.CropLeft, Config.CropTop, ReadWidth, ReadHeigth)
+                        DataContent = TIFF_IO.LoadToSingle(FileToLoad, ReadRect)
+                    End If
                 Case "PNG"
                     PNG_IO.Load(FileToLoad, DataContent)
                 Case "FIT", "FITS"
@@ -259,6 +268,14 @@ Public Class Form1
         If System.IO.File.Exists(tbInputFile.Text) Then
             Utils.StartWithItsEXE(tbInputFile.Text)
         End If
+    End Sub
+
+    Private Sub tsmiProcess_QHY600Overscan_Click(sender As Object, e As EventArgs) Handles tsmiProcess_QHY600Overscan.Click
+        With Config
+            .CropBottom = 34
+            .CropRight = 24
+        End With
+        pgMain.SelectedObject = Config
     End Sub
 
 End Class
