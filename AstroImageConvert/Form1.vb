@@ -3,9 +3,12 @@ Option Strict On
 
 Public Class Form1
 
-    Private Config As New cConfig
+    Private Enum eViewerTool
+        [Default]
+        FITSView
+    End Enum
 
-    Public Shared MyPath As String = IO.Path.GetDirectoryName(Reflection.Assembly.GetEntryAssembly.Location)
+    Private Config As New cConfig
 
     Private WithEvents TIFF_IO As New ImageFileFormatSpecific.cTIFF
     Private WithEvents PNG_IO As New ImageFileFormatSpecific.cPNG
@@ -19,7 +22,7 @@ Public Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Dim DD1 As New Ato.DragDrop(tbInputFile, True)
+        Dim DD1 As New Ato.DragDrop(lbInputFiles, True)
         IPPPath = cIntelIPP.SearchDLLToUse
         IPP = New cIntelIPP(IPPPath)
         FITSReader = New cFITSReader(IPPPath)
@@ -49,9 +52,16 @@ Public Class Form1
     End Sub
 
     Private Sub tsmiProcess_Click(sender As Object, e As EventArgs) Handles tsmiProcess.Click
+        For Each File As String In lbInputFiles.Items
+            Convert(File)
+        Next File
+    End Sub
 
-        Dim FileToLoad As String = tbInputFile.Text
+    Public Sub Convert(ByVal FileToLoad As String)
+
+        'Prepare
         tbLog.Text = String.Empty
+        Config.LastGeneratedFile = String.Empty
 
         '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
         'Read file
@@ -76,9 +86,18 @@ Public Class Form1
                 Case "PNG"
                     PNG_IO.Load(FileToLoad, DataContent)
                 Case "FIT", "FITS"
+                    'Decide which part to read
                     Dim DataStartPos As Integer = -1
                     FITSHeader = New cFITSHeaderParser(cFITSHeaderChanger.ParseHeader(FileToLoad, DataStartPos))
-                    FITSReader.ReadIn(FileToLoad, DataContent)
+                    If Config.IsCrop = False Then
+                        FITSReader.ReadIn(FileToLoad, DataContent)
+                    Else
+                        Dim ROIWidth As Integer = FITSHeader.Width - Config.CropLeft - Config.CropRight
+                        Dim ROIHeigth As Integer = FITSHeader.Height - Config.CropTop - Config.CropBottom
+                        Dim ROI As New Rectangle(Config.CropLeft, Config.CropTop, ROIWidth, ROIHeigth)
+                        DataContent = FITSReader.ReadInUInt16(FileToLoad, True, ROI, True).ToSingle
+                    End If
+
                 Case Else
                     Log("File extension <" & Extension & "> NOT SUPPORTED!")
             End Select
@@ -171,7 +190,7 @@ Public Class Form1
                         FinalImage_8Bit(Idx1, Idx2) = GetFinalValue8Bit(ImageOut(Idx1, Idx2), ImageOut_Min, ImageOut_Max, Config.Gamma)
                     Next Idx2
                 Next Idx1
-                Config.LastGeneratedFile = System.IO.Path.Combine(MyPath, Config.FileName & ".jpeg")
+                Config.LastGeneratedFile = GetFileToGenerate(FileToLoad)
                 Dim JPEGSave As New ImageFileFormatSpecific.cJPEG
                 Log("Getting real 8 bit data ...")
                 Dim ToStore As System.Windows.Media.Imaging.FormatConvertedBitmap = ImageFileFormatSpecific.GetConvertedBitmap(FinalImage_8Bit)
@@ -188,7 +207,7 @@ Public Class Form1
                 Select Case Config.Format
                     Case cConfig.eOutputFormat.PNG
                         Log("PNG ...")
-                        Config.LastGeneratedFile = System.IO.Path.Combine(MyPath, Config.FileName & "Test.png")
+                        Config.LastGeneratedFile = GetFileToGenerate(FileToLoad)
                         Dim PNGSave As New ImageFileFormatSpecific.cPNG
                         PNGSave.Save_16bpp(Config.LastGeneratedFile, FinalImage_16Bit)
                     Case cConfig.eOutputFormat.JPEG
@@ -205,6 +224,15 @@ Public Class Form1
         'X.OutputImage.BitmapToProcess.Save("C:\Test.png")
 
     End Sub
+
+    Private Function GetFileToGenerate(ByVal File As String) As String
+        Select Case Config.Format
+            Case cConfig.eOutputFormat.JPEG
+                Return System.IO.Path.Combine(Config.Store_OutputPath, System.IO.Path.GetFileNameWithoutExtension(File)) & ".jpeg"
+            Case cConfig.eOutputFormat.PNG
+                Return System.IO.Path.Combine(Config.Store_OutputPath, System.IO.Path.GetFileNameWithoutExtension(File)) & ".png"
+        End Select
+    End Function
 
     Private Function ValDictPixel(ByRef ValDict As SortedDictionary(Of Double, Integer)) As Integer
         Dim RetVal As Integer = 0
@@ -244,38 +272,78 @@ Public Class Form1
         System.Windows.Forms.Application.DoEvents()
     End Sub
 
-    Private Sub tsmiFile_FITSWork_Click(sender As Object, e As EventArgs) Handles tsmiFile_FITSWork.Click
-        If System.IO.File.Exists(Config.LastGeneratedFile) Then
-            If String.IsNullOrEmpty(Config.FITSViewer) = True Then
-                Utils.StartWithItsEXE(Config.LastGeneratedFile)
-            Else
-                Process.Start(Config.FITSViewer, Config.LastGeneratedFile)
-            End If
-        End If
-    End Sub
-
-    Private Sub tsmiFile_Open_Click(sender As Object, e As EventArgs) Handles tsmiFile_Open.Click
-        If System.IO.File.Exists(Config.LastGeneratedFile) Then
-            Utils.StartWithItsEXE(Config.LastGeneratedFile)
-        End If
-    End Sub
-
-    Private Sub tsmiFile_Exit_Click(sender As Object, e As EventArgs) Handles tsmiFile_Exit.Click
-        End
-    End Sub
-
-    Private Sub tsmiFile_OpenOriginal_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenOriginal.Click
-        If System.IO.File.Exists(tbInputFile.Text) Then
-            Utils.StartWithItsEXE(tbInputFile.Text)
-        End If
-    End Sub
-
     Private Sub tsmiProcess_QHY600Overscan_Click(sender As Object, e As EventArgs) Handles tsmiProcess_QHY600Overscan.Click
         With Config
             .CropBottom = 34
             .CropRight = 24
         End With
         pgMain.SelectedObject = Config
+    End Sub
+
+    Private Sub EqualCropToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles EqualCropToolStripMenuItem.Click
+        Dim Crop As Integer = -1
+        Try
+            Crop = CInt(InputBox("Equal crop [pixel]:", "Pixel crop", "0"))
+        Catch ex As Exception
+            Crop = -1
+        End Try
+        If Crop > -1 Then
+            With Config
+                .CropLeft = Crop
+                .CropRight = Crop
+                .CropTop = Crop
+                .CropBottom = Crop
+            End With
+        End If
+        pgMain.SelectedObject = Config
+    End Sub
+
+    Private Sub tsmiFile_OpenOriginal_Default_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenOriginal_Default.Click
+        OpenFile(lbInputFiles.SelectedItem.ToString, eViewerTool.Default)
+    End Sub
+
+    Private Sub tsmiFile_OpenOriginal_FITSWork_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenOriginal_FITSWork.Click
+        OpenFile(lbInputFiles.SelectedItem.ToString, eViewerTool.FITSView)
+    End Sub
+
+    Private Sub tsmiFile_OpenOutput_Default_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenOutput_Default.Click
+        OpenFile(Config.LastGeneratedFile, eViewerTool.Default)
+    End Sub
+
+    Private Sub tsmiFile_OpenOutput_FITSWork_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenOutput_FITSWork.Click
+        OpenFile(Config.LastGeneratedFile, eViewerTool.FITSView)
+    End Sub
+
+    Private Sub tsmiFile_ExploreOutput_Click(sender As Object, e As EventArgs) Handles tsmiFile_ExploreOutput.Click
+        Utils.StartWithItsEXE(Config.Store_OutputPath)
+    End Sub
+
+    Private Sub tsmiFile_Exit_Click(sender As Object, e As EventArgs) Handles tsmiFile_Exit.Click
+        End
+    End Sub
+
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    ' Functions
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    '''<summary>Open file with a dedicated tool.</summary>
+    '''<param name="FileName">File to open.</param>
+    '''<param name="Tool">Tool to use.</param>
+    Private Sub OpenFile(ByVal FileName As String, ByVal Tool As eViewerTool)
+        If System.IO.File.Exists(FileName) Then
+            Select Case Tool
+                Case eViewerTool.Default
+                    Utils.StartWithItsEXE(FileName)
+                Case eViewerTool.FITSView
+                    If String.IsNullOrEmpty(Config.FITSViewer) = False Then
+                        Process.Start(Config.FITSViewer, Chr(34) & FileName & Chr(34))
+                    Else
+                        MsgBox("FITSWork not found under <" & Config.FITSViewer & ">!", MsgBoxStyle.Exclamation Or MsgBoxStyle.OkOnly, "FITSWork not found")
+                    End If
+            End Select
+        Else
+            MsgBox("File <" & FileName & "> does not exist!", MsgBoxStyle.Exclamation Or MsgBoxStyle.OkOnly, "File not found")
+        End If
     End Sub
 
 End Class
