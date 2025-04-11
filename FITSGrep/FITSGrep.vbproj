@@ -49,6 +49,7 @@
     <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb">
       <Link>cFITSHeaderParser.vb</Link>
     </Compile>
+    <Compile Include="..\..\src\atomics\DragDrop.vb" Link="DragDrop.vb" />
     <Compile Include="..\..\src\atomics\RecursiveDirScan.vb">
       <Link>RecursiveDirScan.vb</Link>
     </Compile>

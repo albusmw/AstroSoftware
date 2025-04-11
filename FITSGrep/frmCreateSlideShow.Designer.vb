@@ -26,15 +26,21 @@ Partial Class frmCreateSlideShow
         msMain = New MenuStrip()
         tsmiFile = New ToolStripMenuItem()
         tsmiFile_Create = New ToolStripMenuItem()
+        scMain = New SplitContainer()
+        lbFiles = New ListBox()
         msMain.SuspendLayout()
+        CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
+        scMain.Panel1.SuspendLayout()
+        scMain.Panel2.SuspendLayout()
+        scMain.SuspendLayout()
         SuspendLayout()
         ' 
         ' pgMain
         ' 
         pgMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        pgMain.Location = New Point(12, 27)
+        pgMain.Location = New Point(3, 3)
         pgMain.Name = "pgMain"
-        pgMain.Size = New Size(771, 730)
+        pgMain.Size = New Size(394, 749)
         pgMain.TabIndex = 0
         ' 
         ' msMain
@@ -42,7 +48,7 @@ Partial Class frmCreateSlideShow
         msMain.Items.AddRange(New ToolStripItem() {tsmiFile})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(795, 24)
+        msMain.Size = New Size(1224, 24)
         msMain.TabIndex = 1
         msMain.Text = "MenuStrip1"
         ' 
@@ -56,21 +62,54 @@ Partial Class frmCreateSlideShow
         ' tsmiFile_Create
         ' 
         tsmiFile_Create.Name = "tsmiFile_Create"
-        tsmiFile_Create.Size = New Size(180, 22)
+        tsmiFile_Create.Size = New Size(108, 22)
         tsmiFile_Create.Text = "Create"
+        ' 
+        ' scMain
+        ' 
+        scMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        scMain.Location = New Point(12, 27)
+        scMain.Name = "scMain"
+        ' 
+        ' scMain.Panel1
+        ' 
+        scMain.Panel1.Controls.Add(pgMain)
+        ' 
+        ' scMain.Panel2
+        ' 
+        scMain.Panel2.Controls.Add(lbFiles)
+        scMain.Size = New Size(1200, 755)
+        scMain.SplitterDistance = 400
+        scMain.TabIndex = 2
+        ' 
+        ' lbFiles
+        ' 
+        lbFiles.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        lbFiles.FormattingEnabled = True
+        lbFiles.IntegralHeight = False
+        lbFiles.ItemHeight = 15
+        lbFiles.Location = New Point(3, 3)
+        lbFiles.Name = "lbFiles"
+        lbFiles.ScrollAlwaysVisible = True
+        lbFiles.Size = New Size(790, 749)
+        lbFiles.TabIndex = 0
         ' 
         ' frmCreateSlideShow
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(795, 769)
-        Controls.Add(pgMain)
+        ClientSize = New Size(1224, 794)
+        Controls.Add(scMain)
         Controls.Add(msMain)
         MainMenuStrip = msMain
         Name = "frmCreateSlideShow"
         Text = "Slide Show Creator"
         msMain.ResumeLayout(False)
         msMain.PerformLayout()
+        scMain.Panel1.ResumeLayout(False)
+        scMain.Panel2.ResumeLayout(False)
+        CType(scMain, ComponentModel.ISupportInitialize).EndInit()
+        scMain.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
     End Sub
@@ -79,4 +118,6 @@ Partial Class frmCreateSlideShow
     Friend WithEvents msMain As MenuStrip
     Friend WithEvents tsmiFile As ToolStripMenuItem
     Friend WithEvents tsmiFile_Create As ToolStripMenuItem
+    Friend WithEvents scMain As SplitContainer
+    Friend WithEvents lbFiles As ListBox
 End Class
