@@ -135,15 +135,18 @@ Public Class MainForm
     Private Sub tsmiFile_LoadVizier_Click(sender As Object, e As EventArgs) Handles tsmiFile_LoadVizier.Click
         Dim Vizier As New cVizier
         Dim Log As New List(Of String)
+        Log.Add("GetCatList_DAT")
+        Vizier.GetCatList_DAT
+        Log.Add("'════════════════════════════════════════════════════════════════════════")
         Log.Add("DownloadCatalogs")
         Log.AddRange(Vizier.DownloadCatalogs())
-        Log.Add("'══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════")
+        Log.Add("'════════════════════════════════════════════════════════════════════════")
         Log.Add("UncompressCatalogs")
         Log.AddRange(Vizier.UncompressCatalogs())
-        Log.Add("'══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════")
+        Log.Add("'════════════════════════════════════════════════════════════════════════")
         Log.Add("InspectCatalog")
         Log.AddRange(Vizier.InspectCatalog())
-        Log.Add("'══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════")
+        Log.Add("'════════════════════════════════════════════════════════════════════════")
         Dim X As New frmLogDisplay
         X.Show(Log)
     End Sub
