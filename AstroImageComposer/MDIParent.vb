@@ -130,7 +130,7 @@ Public Class MDIParent
     Private Sub tsmiNew_Browser_Click(sender As Object, e As EventArgs) Handles tsmiNew_Browser.Click
 
         'Create a new browser window
-        Dim Browser As New frmBrowser
+        Dim Browser As New frmFITSBrowser
         Browser.Show(dpMain, WeifenLuo.WinFormsUI.Docking.DockState.Float)
 
         'Create a new image window for this browser window
