@@ -32,7 +32,7 @@ Public Class MainForm
         tbDecParsedDecimal.Text = Format(Dec, "00.000000").Replace(",", ".")
     End Sub
 
-    Private Sub tbRAParsed_Click(sender As Object, e As EventArgs) Handles tbRAParsed.Click, tbDecParsed.Click, tbRAParsedDecimal.Click, tbDecParsedDecimal.Click, tbRAParsedShort.Click, tbDecParsedShort.Click, tbSelected.Click
+    Private Sub CoordinateClick(sender As Object, e As EventArgs) Handles tbRAParsed.Click, tbDecParsed.Click, tbRAParsedDecimal.Click, tbDecParsedDecimal.Click, tbRAParsedShort.Click, tbDecParsedShort.Click, tbSelected.Click
         tbRAParsed.BackColor = Color.White
         tbRAParsedDecimal.BackColor = Color.White
         tbRAParsedShort.BackColor = Color.White
@@ -204,7 +204,8 @@ Public Class MainForm
             Dim CustomCat As String = System.IO.Path.Combine(MyPath, CatName)
             If System.IO.File.Exists(CustomCat) Then System.IO.File.Delete(CustomCat)
             System.IO.File.WriteAllBytes(CustomCat, DBL.GetContent(CatName))
-            MsgBox("CustomCatalog.txt loaded from dropbox", MsgBoxStyle.Information Or MsgBoxStyle.OkOnly, "Loaded")
+            Dim Lines As Integer = System.IO.File.ReadAllLines(CustomCat).Count
+            MsgBox("CustomCatalog.txt with <" & Lines.ValRegIndep & "> lines loaded from dropbox", MsgBoxStyle.Information Or MsgBoxStyle.OkOnly, "Loaded")
         End If
     End Sub
 

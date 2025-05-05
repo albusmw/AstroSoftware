@@ -84,7 +84,7 @@ Partial Class frmGetObject
         lbResults.ItemHeight = 15
         lbResults.Location = New Point(3, 37)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(231, 1067)
+        lbResults.Size = New Size(315, 1067)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
@@ -125,7 +125,7 @@ Partial Class frmGetObject
         ' 
         scMain.Panel2.Controls.Add(scRight)
         scMain.Size = New Size(1384, 1110)
-        scMain.SplitterDistance = 237
+        scMain.SplitterDistance = 321
         scMain.TabIndex = 4
         ' 
         ' cbCustomOnly
@@ -133,7 +133,7 @@ Partial Class frmGetObject
         cbCustomOnly.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         cbCustomOnly.Location = New Point(3, 8)
         cbCustomOnly.Name = "cbCustomOnly"
-        cbCustomOnly.Size = New Size(231, 23)
+        cbCustomOnly.Size = New Size(315, 23)
         cbCustomOnly.TabIndex = 3
         cbCustomOnly.Text = "Only custom catalog"
         cbCustomOnly.UseVisualStyleBackColor = True
@@ -153,8 +153,8 @@ Partial Class frmGetObject
         ' scRight.Panel2
         ' 
         scRight.Panel2.Controls.Add(zgcMain)
-        scRight.Size = New Size(1136, 1104)
-        scRight.SplitterDistance = 130
+        scRight.Size = New Size(1052, 1104)
+        scRight.SplitterDistance = 281
         scRight.TabIndex = 1
         ' 
         ' tbDetails
@@ -165,7 +165,7 @@ Partial Class frmGetObject
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(1131, 124)
+        tbDetails.Size = New Size(1047, 275)
         tbDetails.TabIndex = 0
         tbDetails.WordWrap = False
         ' 
@@ -182,7 +182,7 @@ Partial Class frmGetObject
         zgcMain.ScrollMinX = 0R
         zgcMain.ScrollMinY = 0R
         zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(1128, 963)
+        zgcMain.Size = New Size(1044, 812)
         zgcMain.TabIndex = 0
         ' 
         ' tUpdateDetails

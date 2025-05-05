@@ -86,12 +86,12 @@ Public Class cConfig
     <System.ComponentModel.Category(Categories.Cat_RangeCompression)>
     <System.ComponentModel.DisplayName("1. Number of low samples to cut")>
     <System.ComponentModel.DefaultValue(5000)>
-    Public Property RangeCut_Low As Integer = 5000
+    Public Property RangeCut_Low As ULong = 5000
 
     <System.ComponentModel.Category(Categories.Cat_RangeCompression)>
     <System.ComponentModel.DisplayName("2. Number of high samples to cut")>
     <System.ComponentModel.DefaultValue(5000)>
-    Public Property RangeCut_High As Integer = 5000
+    Public Property RangeCut_High As ULong = 5000
 
     '──────────────────────────────────────────────────────────────────────────────────────────────
 

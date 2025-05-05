@@ -17,8 +17,9 @@ Public Class Form1
 
     Private IPP As cIntelIPP
     Private IPPPath As String = String.Empty
-    Private DataContent(,) As Single = {}
+    Private RawFileData(,) As Single = {}
     Private UInt16Data As AstroNET.Statistics
+    Private AstroProcessing As New cAstroProcessing
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -76,26 +77,26 @@ Public Class Form1
                     'Load tags and get a rectangle to read if specified
                     TIFF_IO.LoadAllTags(FileToLoad)
                     If Config.IsCrop = False Then
-                        TIFF_IO.Load(FileToLoad, DataContent)
+                        TIFF_IO.Load(FileToLoad, RawFileData)
                     Else
                         Dim ReadWidth As Integer = TIFF_IO.IMAGEWIDTH - Config.CropLeft - Config.CropRight
                         Dim ReadHeigth As Integer = TIFF_IO.IMAGELENGTH - Config.CropTop - Config.CropBottom
                         Dim ReadRect As New Rectangle(Config.CropLeft, Config.CropTop, ReadWidth, ReadHeigth)
-                        DataContent = TIFF_IO.LoadToSingle(FileToLoad, ReadRect)
+                        RawFileData = TIFF_IO.LoadToSingle(FileToLoad, ReadRect)
                     End If
                 Case "PNG"
-                    PNG_IO.Load(FileToLoad, DataContent)
+                    PNG_IO.Load(FileToLoad, RawFileData)
                 Case "FIT", "FITS"
                     'Decide which part to read
                     Dim DataStartPos As Integer = -1
                     FITSHeader = New cFITSHeaderParser(cFITSHeaderChanger.ParseHeader(FileToLoad, DataStartPos))
                     If Config.IsCrop = False Then
-                        FITSReader.ReadIn(FileToLoad, DataContent)
+                        FITSReader.ReadIn(FileToLoad, RawFileData)
                     Else
                         Dim ROIWidth As Integer = FITSHeader.Width - Config.CropLeft - Config.CropRight
                         Dim ROIHeigth As Integer = FITSHeader.Height - Config.CropTop - Config.CropBottom
                         Dim ROI As New Rectangle(Config.CropLeft, Config.CropTop, ROIWidth, ROIHeigth)
-                        DataContent = FITSReader.ReadInUInt16(FileToLoad, True, ROI, True).ToSingle
+                        RawFileData = FITSReader.ReadInUInt16(FileToLoad, True, ROI, True).ToSingle
                     End If
 
                 Case Else
@@ -109,17 +110,17 @@ Public Class Form1
         Dim ImageOut(,) As Single
         If Config.InitialBinning > 1 Then
             Log("Binning with factor <" & Config.InitialBinning & "> ...")
-            ImageOut = ImageProcessing.Binning.Mean_RemoveOuter_Single(DataContent, Config.InitialBinning, Config.InitialBinning_OuterRemoval)
+            ImageOut = ImageProcessing.Binning.Mean_RemoveOuter_Single(RawFileData, Config.InitialBinning, Config.InitialBinning_OuterRemoval)
             Log("  OK")
         Else
-            ImageOut = DataContent.CreateCopy
+            ImageOut = RawFileData.CreateCopy
         End If
 
         '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
         'Sharpen
         If Config.Sharpen_KernelSize > 0 Then
             Log("Sharpen ...")
-            Dim ReturnCode As String = cOpenCvSharp.Sharpen(DataContent, Config.Sharpen_Sigma, Config.Sharpen_Strength, Config.Sharpen_KernelSize)
+            Dim ReturnCode As String = cOpenCvSharp.Sharpen(RawFileData, Config.Sharpen_Sigma, Config.Sharpen_Strength, Config.Sharpen_KernelSize)
             Log("  -> " & ReturnCode)
         End If
 
@@ -136,39 +137,12 @@ Public Class Form1
         UInt16Data.DataProcessor_UInt16.LoadImageData(ImageOut.ToUInt16(ScaleA, ScaleB))
         Dim UInt16Stat As New AstroNET.Statistics(IPPPath)
         Dim Stat As AstroNET.Statistics.sStatistics = UInt16Data.ImageStatistics()
-        Dim Keys As List(Of Long) = Stat.MonochromHistogram_Int.KeyList
-        Keys.Sort()
 
         'Get the min cut-off
-        Dim ImageOut_Min As Double = Double.NaN
-        Dim PixelMin As ULong = 0
-        If Config.RangeCut_High > 0 Then
-            For Idx As Integer = 0 To Keys.Count - 1
-                PixelMin += Stat.MonochromHistogram_Int(Keys(Idx))
-                If PixelMin > Config.RangeCut_Low Then
-                    ImageOut_Min = Keys(Idx)
-                    Exit For
-                End If
-            Next Idx
-        Else
-            ImageOut_Min = Keys.First
-        End If
+        Dim ImageOut_Min As Double = AstroProcessing.GetCutOff(Stat.MonochromHistogram_Int, False, Config.RangeCut_Low)
 
         'Get the max cut-off
-        Keys.Reverse()
-        Dim ImageOut_Max As Double = Double.NaN
-        Dim PixelMax As ULong = 0
-        If Config.RangeCut_High > 0 Then
-            For Idx As Integer = 0 To Keys.Count - 1
-                PixelMax += Stat.MonochromHistogram_Int(Keys(Idx))
-                If PixelMax > Config.RangeCut_High Then
-                    ImageOut_Max = Keys(Idx)
-                    Exit For
-                End If
-            Next Idx
-        Else
-            ImageOut_Max = Keys.First
-        End If
+        Dim ImageOut_Max As Double = AstroProcessing.GetCutOff(Stat.MonochromHistogram_Int, True, Config.RangeCut_High)
 
         ImageOut_Min = (ImageOut_Min - ScaleB) / ScaleA
         ImageOut_Max = (ImageOut_Max - ScaleB) / ScaleA
@@ -187,7 +161,7 @@ Public Class Form1
                 Dim FinalImage_8Bit(ImageOut.GetUpperBound(0), ImageOut.GetUpperBound(1)) As Byte
                 For Idx1 As Integer = 0 To ImageOut.GetUpperBound(0)
                     For Idx2 As Integer = 0 To ImageOut.GetUpperBound(1)
-                        FinalImage_8Bit(Idx1, Idx2) = GetFinalValue8Bit(ImageOut(Idx1, Idx2), ImageOut_Min, ImageOut_Max, Config.Gamma)
+                        FinalImage_8Bit(Idx1, Idx2) = AstroProcessing.GetPixelValue8Bit(ImageOut(Idx1, Idx2), ImageOut_Min, ImageOut_Max, Config.Gamma)
                     Next Idx2
                 Next Idx1
                 Config.LastGeneratedFile = GetFileToGenerate(FileToLoad)
@@ -201,7 +175,7 @@ Public Class Form1
                 Dim FinalImage_16Bit(ImageOut.GetUpperBound(0), ImageOut.GetUpperBound(1)) As UInt16
                 For Idx1 As Integer = 0 To ImageOut.GetUpperBound(0)
                     For Idx2 As Integer = 0 To ImageOut.GetUpperBound(1)
-                        FinalImage_16Bit(Idx1, Idx2) = GetFinalValue16Bit(ImageOut(Idx1, Idx2), ImageOut_Min, ImageOut_Max, Config.Gamma)
+                        FinalImage_16Bit(Idx1, Idx2) = AstroProcessing.GetPixelValue16Bit(ImageOut(Idx1, Idx2), ImageOut_Min, ImageOut_Max, Config.Gamma)
                     Next Idx2
                 Next Idx1
                 Select Case Config.Format
@@ -240,20 +214,6 @@ Public Class Form1
             RetVal += ValDict(Entry)
         Next Entry
         Return RetVal
-    End Function
-
-    Private Function GetFinalValue16Bit(ByVal Data As Double, ByVal DataMin As Double, ByVal DataMax As Double, ByVal Gamma As Double) As UInt16
-        If Data < DataMin Then Data = DataMin
-        If Data > DataMax Then Data = DataMax
-        Dim ValueZeroToOne As Double = (((Data - DataMin) / (DataMax - DataMin))) ^ Gamma
-        Return CType(UInt16.MaxValue * ValueZeroToOne, UInt16)
-    End Function
-
-    Private Function GetFinalValue8Bit(ByVal Data As Double, ByVal DataMin As Double, ByVal DataMax As Double, ByVal Gamma As Double) As Byte
-        If Data < DataMin Then Data = DataMin
-        If Data > DataMax Then Data = DataMax
-        Dim ValueZeroToOne As Double = (((Data - DataMin) / (DataMax - DataMin))) ^ Gamma
-        Return CType(Byte.MaxValue * ValueZeroToOne, Byte)
     End Function
 
     Private Sub TIFF_IO_LogInfo(Text As String) Handles TIFF_IO.LogInfo
