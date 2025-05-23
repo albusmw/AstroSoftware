@@ -42,6 +42,7 @@ Partial Class MainForm
         msMain = New MenuStrip()
         tsmiFile = New ToolStripMenuItem()
         tsmiFile_OpenEXE = New ToolStripMenuItem()
+        tsmiFile_DropBoxCAT = New ToolStripMenuItem()
         tsmiFile_LoadVizier = New ToolStripMenuItem()
         tsmiFile_AstroBin = New ToolStripMenuItem()
         tsmiFile_InTheSky = New ToolStripMenuItem()
@@ -57,7 +58,7 @@ Partial Class MainForm
         tsmiGoTo_Object = New ToolStripMenuItem()
         tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
-        tsmiFile_DropBoxCAT = New ToolStripMenuItem()
+        RawGotoCommandToolStripMenuItem = New ToolStripMenuItem()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -223,36 +224,42 @@ Partial Class MainForm
         ' tsmiFile_OpenEXE
         ' 
         tsmiFile_OpenEXE.Name = "tsmiFile_OpenEXE"
-        tsmiFile_OpenEXE.Size = New Size(180, 22)
+        tsmiFile_OpenEXE.Size = New Size(178, 22)
         tsmiFile_OpenEXE.Text = "Open EXE folder"
+        ' 
+        ' tsmiFile_DropBoxCAT
+        ' 
+        tsmiFile_DropBoxCAT.Name = "tsmiFile_DropBoxCAT"
+        tsmiFile_DropBoxCAT.Size = New Size(178, 22)
+        tsmiFile_DropBoxCAT.Text = "Load Dropbox CAT"
         ' 
         ' tsmiFile_LoadVizier
         ' 
         tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
-        tsmiFile_LoadVizier.Size = New Size(180, 22)
+        tsmiFile_LoadVizier.Size = New Size(178, 22)
         tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
         ' 
         ' tsmiFile_AstroBin
         ' 
         tsmiFile_AstroBin.Name = "tsmiFile_AstroBin"
-        tsmiFile_AstroBin.Size = New Size(180, 22)
+        tsmiFile_AstroBin.Size = New Size(178, 22)
         tsmiFile_AstroBin.Text = "AstroBin around"
         ' 
         ' tsmiFile_InTheSky
         ' 
         tsmiFile_InTheSky.Name = "tsmiFile_InTheSky"
-        tsmiFile_InTheSky.Size = New Size(180, 22)
+        tsmiFile_InTheSky.Size = New Size(178, 22)
         tsmiFile_InTheSky.Text = "In the sky"
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(177, 6)
+        ToolStripMenuItem1.Size = New Size(175, 6)
         ' 
         ' tsmiFile_End
         ' 
         tsmiFile_End.Name = "tsmiFile_End"
-        tsmiFile_End.Size = New Size(180, 22)
+        tsmiFile_End.Size = New Size(178, 22)
         tsmiFile_End.Text = "Exit"
         ' 
         ' tsmiEnter
@@ -293,7 +300,7 @@ Partial Class MainForm
         ' 
         ' tsmiGoTo
         ' 
-        tsmiGoTo.DropDownItems.AddRange(New ToolStripItem() {tsmiGoTo_Object, tsmiGoTo_ZenithAndStop, tsmiGoTo_SunOpposition})
+        tsmiGoTo.DropDownItems.AddRange(New ToolStripItem() {tsmiGoTo_Object, tsmiGoTo_ZenithAndStop, tsmiGoTo_SunOpposition, RawGotoCommandToolStripMenuItem})
         tsmiGoTo.Name = "tsmiGoTo"
         tsmiGoTo.Size = New Size(45, 20)
         tsmiGoTo.Text = "Goto"
@@ -316,11 +323,11 @@ Partial Class MainForm
         tsmiGoTo_SunOpposition.Size = New Size(206, 22)
         tsmiGoTo_SunOpposition.Text = "Sun opposition and track"
         ' 
-        ' tsmiFile_DropBoxCAT
+        ' RawGotoCommandToolStripMenuItem
         ' 
-        tsmiFile_DropBoxCAT.Name = "tsmiFile_DropBoxCAT"
-        tsmiFile_DropBoxCAT.Size = New Size(180, 22)
-        tsmiFile_DropBoxCAT.Text = "Load Dropbox CAT"
+        RawGotoCommandToolStripMenuItem.Name = "RawGotoCommandToolStripMenuItem"
+        RawGotoCommandToolStripMenuItem.Size = New Size(206, 22)
+        RawGotoCommandToolStripMenuItem.Text = "Raw goto command ..."
         ' 
         ' MainForm
         ' 
@@ -378,4 +385,5 @@ Partial Class MainForm
     Friend WithEvents tsmiFile_InTheSky As ToolStripMenuItem
     Friend WithEvents tsmiEnter_ParseClipboard As ToolStripMenuItem
     Friend WithEvents tsmiFile_DropBoxCAT As ToolStripMenuItem
+    Friend WithEvents RawGotoCommandToolStripMenuItem As ToolStripMenuItem
 End Class

@@ -24,11 +24,13 @@
     <Compile Include="..\..\MyLib\cAstrobinAPIv2.vb" Link="MyLib\cAstrobinAPIv2.vb" />
     <Compile Include="..\..\MyLib\cAstroInView.vb" Link="MyLib\cAstroInView.vb" />
     <Compile Include="..\..\MyLib\cDropbox.vb" Link="MyLib\cDropbox.vb" />
+    <Compile Include="..\..\MyLib\cHardwareState.vb" Link="MyLib\cHardwareState.vb" />
     <Compile Include="..\..\MyLib\cLockBitmap.vb" Link="MyLib\cLockBitmap.vb" />
     <Compile Include="..\..\MyLib\cLogging.vb" Link="MyLib\cLogging.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
     <Compile Include="..\..\MyLib\ComponentModelConverter.vb" Link="MyLib\ComponentModelConverter.vb" />
+    <Compile Include="..\..\MyLib\cPWI4.vb" Link="MyLib\cPWI4.vb" />
     <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
     <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
@@ -44,9 +46,19 @@
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
-    <Compile Include="..\..\src\atomics\cHardwareState.vb" Link="common\cHardwareState.vb" />
-    <Compile Include="..\..\src\atomics\cPWI4.vb" Link="common\cPWI4.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="Shell32">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
 
   <ItemGroup>

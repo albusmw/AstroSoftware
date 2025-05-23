@@ -209,4 +209,9 @@ Public Class MainForm
         End If
     End Sub
 
+    Private Sub RawGotoCommandToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles RawGotoCommandToolStripMenuItem.Click
+        Dim X As New frmLMountRawGoTo
+        X.Show()
+    End Sub
+
 End Class
