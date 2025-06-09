@@ -5,7 +5,7 @@ Option Strict On
 
 Public Class frmCreateSlideShow
 
-    Public WithEvents DD1 As Ato.DragDrop
+    Public WithEvents DD1 As cDragDrop
     Public SlideShow As New cCreateSlideShow
     Public Files As New List(Of String)
 
@@ -24,7 +24,7 @@ Public Class frmCreateSlideShow
 
     Private Sub frmCreateSlideShow_Load(sender As Object, e As EventArgs) Handles Me.Load
         pgMain.SelectedObject = SlideShow
-        DD1 = New Ato.DragDrop(lbFiles, False)
+        DD1 = New cDragDrop(lbFiles, False)
         lbFiles.DataSource = Files
     End Sub
 

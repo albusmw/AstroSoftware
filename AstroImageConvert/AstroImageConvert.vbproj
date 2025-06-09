@@ -14,6 +14,7 @@
     <Compile Include="..\..\MyLib\cAstroProcessing.vb" Link="MyLib\cAstroProcessing.vb" />
     <Compile Include="..\..\MyLib\cColorMaps.vb" Link="MyLib\cColorMaps.vb" />
     <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
+    <Compile Include="..\..\MyLib\cDragDrop.vb" Link="MyLib\cDragDrop.vb" />
     <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
     <Compile Include="..\..\MyLib\cImageFromData.vb" Link="MyLib\cImageFromData.vb" />
     <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="MyLib\cIntelIPP.vb" />
@@ -31,8 +32,19 @@
     <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="src\cFITSReader.vb" />
     <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
     <Compile Include="..\..\src\atomics\cOpenCvSharp.vb" Link="src\cOpenCvSharp.vb" />
-    <Compile Include="..\..\src\atomics\DragDrop.vb" Link="MyLib\DragDrop.vb" />
     <Compile Include="..\..\src\atomics\ImageProcessing.vb" Link="src\ImageProcessing.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="Shell32">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
 
   <ItemGroup>

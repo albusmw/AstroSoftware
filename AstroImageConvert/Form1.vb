@@ -23,7 +23,7 @@ Public Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
-        Dim DD1 As New Ato.DragDrop(lbInputFiles, True)
+        Dim DD1 As New cDragDrop(lbInputFiles, True)
         IPPPath = cIntelIPP.SearchDLLToUse
         IPP = New cIntelIPP(IPPPath)
         FITSReader = New cFITSReader(IPPPath)
@@ -76,6 +76,9 @@ Public Class Form1
                 Case "TIF", "TIFF"
                     'Load tags and get a rectangle to read if specified
                     TIFF_IO.LoadAllTags(FileToLoad)
+                    For Each Entry As String In TIFF_IO.ReportAllTags
+                        Log(Entry)
+                    Next Entry
                     If Config.IsCrop = False Then
                         TIFF_IO.Load(FileToLoad, RawFileData)
                     Else
