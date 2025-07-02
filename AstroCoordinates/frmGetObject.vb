@@ -136,14 +136,16 @@ Public Class frmGetObject
     End Sub
 
     Private Sub tsmiData_SetLocation_Click(sender As Object, e As EventArgs) Handles tsmiData_SetLocation.Click
-        Dim LocationSelector As New frmSelectFromList({Ato.AstroCalc.KnownLocations.DSC.Name, Ato.AstroCalc.KnownLocations.Holzkirchen.Name}, {InView.Props.Observatory_Name})
+        Dim LocationSelector As New frmSelectFromList({Ato.AstroCalc.KnownLocations.DSC.Name, Ato.AstroCalc.KnownLocations.Holzkirchen.Name, Ato.AstroCalc.KnownLocations.LaPalma.Name}, {InView.Props.Observatory_Name})
         If LocationSelector.ShowDialog <> DialogResult.OK Then Exit Sub
         InView.Props.Observatory_Name = LocationSelector.Selected.First
         Select Case InView.Props.Observatory_Name
-            Case "Deep Sky Chile"
+            Case Ato.AstroCalc.KnownLocations.DSC.Name
                 InView.Props.SetObservatory(Ato.AstroCalc.KnownLocations.DSC)
-            Case "Holzkirchen"
+            Case Ato.AstroCalc.KnownLocations.Holzkirchen.Name
                 InView.Props.SetObservatory(Ato.AstroCalc.KnownLocations.Holzkirchen)
+            Case Ato.AstroCalc.KnownLocations.LaPalma.Name
+                InView.Props.SetObservatory(Ato.AstroCalc.KnownLocations.LaPalma)
         End Select
         UpdateInViewLocation()
     End Sub

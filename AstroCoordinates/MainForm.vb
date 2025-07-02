@@ -152,15 +152,20 @@ Public Class MainForm
     End Sub
 
     Private Sub tsmiFile_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmiFile_AstroBin.Click
-        With DB.AstrobinAPIV2
-            .RaMin = tbRAParsedDecimal.Text.ValRegIndep - 1 / 6
-            .RaMax = tbRAParsedDecimal.Text.ValRegIndep + 1 / 6
-            .DecMin = tbDecParsedDecimal.Text.ValRegIndep - 0.5
-            .DecMax = tbDecParsedDecimal.Text.ValRegIndep + 0.5
+        Dim ABS As New frmAstroBinSearch
+        ABS.Show()
+        Dim SearchRadius As Double = InputBox("Search radius [°]", "Search radius", "1").ValRegIndep
+        Dim SearchRadiusRad As Double = SearchRadius * (24 / 360)
+        With ABS
+            .RaMin = tbRAParsedDecimal.Text.ValRegIndep - (SearchRadiusRad / 2)
+            .RaMax = tbRAParsedDecimal.Text.ValRegIndep + (SearchRadiusRad / 2)
+            .DecMin = tbDecParsedDecimal.Text.ValRegIndep - (SearchRadius / 2)
+            .DecMax = tbDecParsedDecimal.Text.ValRegIndep + (SearchRadius / 2)
+            .FieldRadiusMin = 0
+            .FieldRadiusMax = SearchRadius
             .TopPickOnly = True
         End With
-        Dim AstroBinQuery As String = DB.AstrobinAPIV2.CreateQuery
-        DB.AstrobinAPIV2.OpenURLInBrowser(DB.AstrobinAPIV2.QueryBase_Images & DB.AstrobinAPIV2.EncodeWebPageQuery(AstroBinQuery))
+
     End Sub
 
     Private Sub tsmiFile_InTheSky_Click(sender As Object, e As EventArgs) Handles tsmiFile_InTheSky.Click
@@ -181,7 +186,7 @@ Public Class MainForm
         Parameter.Add("zoom=160")
         Parameter.Add("ra=" & tbRAParsedDecimal.Text)
         Parameter.Add("dec=" & tbDecParsedDecimal.Text)
-        DB.AstrobinAPIV2.OpenURLInBrowser(URL & Join(Parameter.ToArray, "&"))
+        cAstrobinAPIV2.OpenURLInBrowser(URL & Join(Parameter.ToArray, "&"))
     End Sub
 
     Private Sub tsmiEnter_ParseClipboard_Click(sender As Object, e As EventArgs) Handles tsmiEnter_ParseClipboard.Click

@@ -25,6 +25,7 @@
     <Compile Include="..\..\MyLib\cAstroInView.vb" Link="MyLib\cAstroInView.vb" />
     <Compile Include="..\..\MyLib\cDropbox.vb" Link="MyLib\cDropbox.vb" />
     <Compile Include="..\..\MyLib\cHardwareState.vb" Link="MyLib\cHardwareState.vb" />
+    <Compile Include="..\..\MyLib\cINI.vb" Link="MyLib\cINI.vb" />
     <Compile Include="..\..\MyLib\cLockBitmap.vb" Link="MyLib\cLockBitmap.vb" />
     <Compile Include="..\..\MyLib\cLogging.vb" Link="MyLib\cLogging.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
@@ -35,6 +36,8 @@
     <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.Designer.vb" Link="MyLib\frmAstroBinSearch.Designer.vb" />
+    <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.vb" Link="MyLib\frmAstroBinSearch.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
     <Compile Include="..\..\MyLib\frmSelectFromList.Designer.vb" Link="MyLib\frmSelectFromList.Designer.vb" />
@@ -46,6 +49,7 @@
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
+    <Compile Include="..\..\src\atomics\cLogTextBox.vb" Link="common\cLogTextBox.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
   </ItemGroup>
 
@@ -66,6 +70,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.resx" Link="MyLib\frmAstroBinSearch.resx" />
     <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="MyLib\frmLogDisplay.resx" />
     <EmbeddedResource Include="..\..\MyLib\frmSelectFromList.resx" Link="MyLib\frmSelectFromList.resx" />
     <EmbeddedResource Include="catalogs\messier.txt">
@@ -107,11 +112,12 @@
 
   <ItemGroup>
     <PackageReference Include="AstroAlgo" Version="2.3.1" />
-    <PackageReference Include="ClosedXML" Version="0.104.2" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="FastLZMA2Net" Version="1.0.0" />
     <PackageReference Include="GeoTimeZone" Version="6.0.0" />
-    <PackageReference Include="MessagePack" Version="3.1.3" />
-    <PackageReference Include="SharpCompress" Version="0.39.0" />
+    <PackageReference Include="MessagePack" Version="3.1.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SharpCompress" Version="0.40.0" />
     <PackageReference Include="VSOP87.NET" Version="1.2.1" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows7.0</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <StartupObject>InView.My.MyApplication</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
@@ -19,24 +19,37 @@
     <Compile Include="..\..\MyLib\Astro.vb" Link="MyLib\Astro.vb" />
     <Compile Include="..\..\MyLib\AstroDSP.vb" Link="MyLib\AstroDSP.vb" />
     <Compile Include="..\..\MyLib\AstroObjectInfo.vb" Link="MyLib\AstroObjectInfo.vb" />
+    <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="atomics\AstroStatistics.vb" />
     <Compile Include="..\..\MyLib\cCCDGuide.vb" Link="MyLib\cCCDGuide.vb" />
+    <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="atomics\cDLLDynCall.vb" />
+    <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="atomics\cIntelIPP.vb" />
     <Compile Include="..\..\MyLib\ClosedXML.vb" Link="MyLib\ClosedXML.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
+    <Compile Include="..\..\MyLib\ComponentModelConverter.vb" Link="MyLib\ComponentModelConverter.vb" />
+    <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="atomics\cStatMultiThread.vb" />
     <Compile Include="..\..\MyLib\cVizier.vb" Link="MyLib\cVizier.vb" />
     <Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
     <Compile Include="..\..\MyLib\Download.vb" Link="MyLib\Download.vb" />
     <Compile Include="..\..\MyLib\DSSFileParser.vb" Link="MyLib\DSSFileParser.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\TimeZoneCalc.vb" Link="MyLib\TimeZoneCalc.vb" />
-    <Compile Include="..\..\MyLib\Util.vb" Link="MyLib\Util.vb" />
+    <Compile Include="..\..\MyLib\Utils.vb" Link="atomics\Utils.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="atomics\AstroCalc.vb" />
-    <Compile Include="..\..\src\atomics\AstroStatistics.vb" Link="atomics\AstroStatistics.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="atomics\cAstroParser.vb" />
-    <Compile Include="..\..\src\atomics\cDLLDynCall.vb" Link="atomics\cDLLDynCall.vb" />
-    <Compile Include="..\..\src\atomics\cIntelIPP.vb" Link="atomics\cIntelIPP.vb" />
-    <Compile Include="..\..\src\atomics\cStatMultiThread.vb" Link="atomics\cStatMultiThread.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="atomics\Sun.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="Shell32">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -73,8 +86,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ASCOM.Tools" Version="1.0.111" />
-    <PackageReference Include="ClosedXML" Version="0.102.2" />
+    <PackageReference Include="ASCOM.Tools" Version="2.1.0" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
 
