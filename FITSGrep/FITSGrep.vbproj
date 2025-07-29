@@ -29,6 +29,7 @@
     <Compile Include="..\..\MyLib\cAstroProcessing.vb" Link="MyLib\cAstroProcessing.vb" />
     <Compile Include="..\..\MyLib\cColorMaps.vb" Link="MyLib\cColorMaps.vb" />
     <Compile Include="..\..\MyLib\cCreateSlideShow.vb" Link="MyLib\cCreateSlideShow.vb" />
+    <Compile Include="..\..\MyLib\cDeepSkyStacker.vb" Link="MyLib\cDeepSkyStacker.vb" />
     <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
     <Compile Include="..\..\MyLib\cDragDrop.vb" Link="MyLib\cDragDrop.vb" />
     <Compile Include="..\..\MyLib\cFITSDisplay.vb" Link="MyLib\cFITSDisplay.vb" />
@@ -50,6 +51,8 @@
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
     <Compile Include="..\..\MyLib\PictureBoxEx.vb" Link="MyLib\PictureBoxEx.vb" />
+    <Compile Include="..\..\MyLib\RecursiveDirScan.vb" Link="MyLib\RecursiveDirScan.vb" />
+    <Compile Include="..\..\MyLib\SQLT.vb" Link="MyLib\SQLT.vb" />
     <Compile Include="..\..\MyLib\ucAstroImageControl.Designer.vb" Link="MyLib\ucAstroImageControl.Designer.vb" />
     <Compile Include="..\..\MyLib\ucAstroImageControl.vb" Link="MyLib\ucAstroImageControl.vb" />
     <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
@@ -66,12 +69,6 @@
       <Link>cFITSHeaderParser.vb</Link>
     </Compile>
     <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="MyLib\cFITSReader.vb" />
-    <Compile Include="..\..\src\atomics\RecursiveDirScan.vb">
-      <Link>RecursiveDirScan.vb</Link>
-    </Compile>
-    <Compile Include="..\..\src\atomics\SQLT.vb">
-      <Link>SQLT.vb</Link>
-    </Compile>
     <Compile Include="..\..\src\Forms\frmFITSGrep.Designer.vb" Link="frmFITSGrep.Designer.vb" />
     <Compile Include="..\..\src\Forms\frmFITSGrep.vb" Link="frmFITSGrep.vb" />
     <COMReference Include="Shell32">
@@ -119,16 +116,16 @@
     <EmbeddedResource Include="..\..\src\Forms\frmFITSGrep.resx" Link="frmFITSGrep.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.104.2" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="DG.AdvancedDataGridView" Version="1.2.30115.18" />
     <PackageReference Include="DockPanelSuite" Version="3.1.1" />
-    <PackageReference Include="PDFsharp" Version="6.1.1" />
+    <PackageReference Include="PDFsharp" Version="6.2.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
     <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.119" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.4" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
   </ItemGroup>
 </Project>

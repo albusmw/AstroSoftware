@@ -30,6 +30,7 @@ Partial Class frmGetObject
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
         scMain = New SplitContainer()
+        cbOptimumOnly = New CheckBox()
         cbCustomOnly = New CheckBox()
         scRight = New SplitContainer()
         tbDetails = New TextBox()
@@ -44,6 +45,8 @@ Partial Class frmGetObject
         tsmiTools = New ToolStripMenuItem()
         tsmiTools_InViewDisplay = New ToolStripMenuItem()
         tsmiTools_Recalc = New ToolStripMenuItem()
+        tsmiTools_GetBestObjects = New ToolStripMenuItem()
+        tsslObsCalcResult = New ToolStripStatusLabel()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
@@ -82,15 +85,15 @@ Partial Class frmGetObject
         lbResults.HorizontalScrollbar = True
         lbResults.IntegralHeight = False
         lbResults.ItemHeight = 15
-        lbResults.Location = New Point(3, 37)
+        lbResults.Location = New Point(3, 73)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(315, 1067)
+        lbResults.Size = New Size(315, 1031)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
         ' 
         ssMain.ImageScalingSize = New Size(20, 20)
-        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength})
+        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength, tsslObsCalcResult})
         ssMain.Location = New Point(0, 1164)
         ssMain.Name = "ssMain"
         ssMain.Size = New Size(1408, 22)
@@ -118,6 +121,7 @@ Partial Class frmGetObject
         ' 
         ' scMain.Panel1
         ' 
+        scMain.Panel1.Controls.Add(cbOptimumOnly)
         scMain.Panel1.Controls.Add(cbCustomOnly)
         scMain.Panel1.Controls.Add(lbResults)
         ' 
@@ -127,6 +131,16 @@ Partial Class frmGetObject
         scMain.Size = New Size(1384, 1110)
         scMain.SplitterDistance = 321
         scMain.TabIndex = 4
+        ' 
+        ' cbOptimumOnly
+        ' 
+        cbOptimumOnly.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        cbOptimumOnly.Location = New Point(3, 37)
+        cbOptimumOnly.Name = "cbOptimumOnly"
+        cbOptimumOnly.Size = New Size(315, 23)
+        cbOptimumOnly.TabIndex = 4
+        cbOptimumOnly.Text = "Only optimum objects"
+        cbOptimumOnly.UseVisualStyleBackColor = True
         ' 
         ' cbCustomOnly
         ' 
@@ -232,7 +246,7 @@ Partial Class frmGetObject
         ' 
         ' tsmiTools
         ' 
-        tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay, tsmiTools_Recalc})
+        tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay, tsmiTools_Recalc, tsmiTools_GetBestObjects})
         tsmiTools.Name = "tsmiTools"
         tsmiTools.Size = New Size(42, 20)
         tsmiTools.Text = "Tool"
@@ -248,6 +262,18 @@ Partial Class frmGetObject
         tsmiTools_Recalc.Name = "tsmiTools_Recalc"
         tsmiTools_Recalc.Size = New Size(184, 22)
         tsmiTools_Recalc.Text = "Recalc"
+        ' 
+        ' tsmiTools_GetBestObjects
+        ' 
+        tsmiTools_GetBestObjects.Name = "tsmiTools_GetBestObjects"
+        tsmiTools_GetBestObjects.Size = New Size(184, 22)
+        tsmiTools_GetBestObjects.Text = "Get best objects"
+        ' 
+        ' tsslObsCalcResult
+        ' 
+        tsslObsCalcResult.DisplayStyle = ToolStripItemDisplayStyle.Text
+        tsslObsCalcResult.Name = "tsslObsCalcResult"
+        tsslObsCalcResult.Size = New Size(0, 17)
         ' 
         ' frmGetObject
         ' 
@@ -300,4 +326,7 @@ Partial Class frmGetObject
     Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
     Friend WithEvents cbCustomOnly As CheckBox
     Friend WithEvents tsmiTools_Recalc As ToolStripMenuItem
+    Friend WithEvents tsmiTools_GetBestObjects As ToolStripMenuItem
+    Friend WithEvents cbOptimumOnly As CheckBox
+    Friend WithEvents tsslObsCalcResult As ToolStripStatusLabel
 End Class

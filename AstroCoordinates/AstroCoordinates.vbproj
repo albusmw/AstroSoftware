@@ -28,6 +28,7 @@
     <Compile Include="..\..\MyLib\cINI.vb" Link="MyLib\cINI.vb" />
     <Compile Include="..\..\MyLib\cLockBitmap.vb" Link="MyLib\cLockBitmap.vb" />
     <Compile Include="..\..\MyLib\cLogging.vb" Link="MyLib\cLogging.vb" />
+    <Compile Include="..\..\MyLib\cLogTextBox.vb" Link="MyLib\cLogTextBox.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\COMInterop.vb" Link="MyLib\COMInterop.vb" />
     <Compile Include="..\..\MyLib\ComponentModelConverter.vb" Link="MyLib\ComponentModelConverter.vb" />
@@ -49,7 +50,6 @@
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
-    <Compile Include="..\..\src\atomics\cLogTextBox.vb" Link="common\cLogTextBox.vb" />
     <Compile Include="..\..\src\atomics\Sun.vb" Link="common\Sun.vb" />
   </ItemGroup>
 

@@ -1,8 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports System.ComponentModel
-
-
 
 '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 ' Class to display object visibility information as graph and table
@@ -60,9 +57,9 @@ Public Class frmInView
                 CurrentValue += 10 / 60 * Math.Sign(e.Delta)
                 Props.Observatory_Longitude = CurrentValue
             Case "UTC_Start"
-                Props.UTC_Start = Props.UTC_Start.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
+                Props.TimeVector_UTC_Start = Props.TimeVector_UTC_Start.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
             Case "UTC_Range"
-                Props.CalculationRange = Props.CalculationRange.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
+                Props.TimeVector_Range = Props.TimeVector_Range.Add(New TimeSpan(OneHour * Math.Sign(e.Delta), 0, 0))
             Case "Limit_ObjectMinHeigth"
                 PlotConfig.Limit_ObjectMinHeigth = PlotConfig.Limit_ObjectMinHeigth + 1 * Math.Sign(e.Delta)
             Case "Limit_SunMaxHeigth"
@@ -85,52 +82,52 @@ Public Class frmInView
         Dim NightStart As DateTime = Now.ToUniversalTime
         Dim NightEnd As DateTime = Now.ToUniversalTime
         AstroInView.GetNightStartStop(Props, NightStart, NightEnd)
-        Props.UTC_Start = NightStart
-        Props.CalculationRange = NightEnd - NightStart
+        Props.TimeVector_UTC_Start = NightStart
+        Props.TimeVector_Range = NightEnd - NightStart
         Recalc()
     End Sub
 
     Private Sub tsmiTime_Today_Click(sender As Object, e As EventArgs) Handles tsmiTime_Today.Click
         With Props
-            .CalculationRange = cAstroInView.TimeSpans.OneDay
-            .UTC_Start = Now.ToUniversalTime
-            .Stepping = cAstroInView.TimeSpans.OneMinute
+            .TimeVector_Range = cAstroInView.TimeSpans.OneDay
+            .TimeVector_UTC_Start = Now.ToUniversalTime
+            .TimeVector_Stepping = cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_ThisMonth_Click(sender As Object, e As EventArgs) Handles tsmiTime_ThisMonth.Click
         With Props
-            .CalculationRange = cAstroInView.TimeSpans.OneMonth
-            .UTC_Start = Now.ToUniversalTime
-            .Stepping = cAstroInView.TimeSpans.OneMinute
+            .TimeVector_Range = cAstroInView.TimeSpans.OneMonth
+            .TimeVector_UTC_Start = Now.ToUniversalTime
+            .TimeVector_Stepping = cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_Next365Days_Click(sender As Object, e As EventArgs) Handles tsmiTime_Next365Days.Click
         With Props
-            .CalculationRange = cAstroInView.TimeSpans.OneYear
-            .UTC_Start = Now.ToUniversalTime
-            .Stepping = 10 * cAstroInView.TimeSpans.OneMinute
+            .TimeVector_Range = cAstroInView.TimeSpans.OneYear
+            .TimeVector_UTC_Start = Now.ToUniversalTime
+            .TimeVector_Stepping = 10 * cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_NextDay_Click(sender As Object, e As EventArgs) Handles tsmiTime_NextDay.Click
         With Props
-            .CalculationRange = cAstroInView.TimeSpans.OneDay
-            .UTC_Start = .UTC_Start.Add(cAstroInView.TimeSpans.OneDay)
-            .Stepping = cAstroInView.TimeSpans.OneMinute
+            .TimeVector_Range = cAstroInView.TimeSpans.OneDay
+            .TimeVector_UTC_Start = .TimeVector_UTC_Start.Add(cAstroInView.TimeSpans.OneDay)
+            .TimeVector_Stepping = cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
 
     Private Sub tsmiTime_PrevDay_Click(sender As Object, e As EventArgs) Handles tsmiTime_PrevDay.Click
         With Props
-            .CalculationRange = cAstroInView.TimeSpans.OneDay
-            .UTC_Start = .UTC_Start.Subtract(cAstroInView.TimeSpans.OneDay)
-            .Stepping = cAstroInView.TimeSpans.OneMinute
+            .TimeVector_Range = cAstroInView.TimeSpans.OneDay
+            .TimeVector_UTC_Start = .TimeVector_UTC_Start.Subtract(cAstroInView.TimeSpans.OneDay)
+            .TimeVector_Stepping = cAstroInView.TimeSpans.OneMinute
         End With
         Recalc()
     End Sub
@@ -152,8 +149,8 @@ Public Class frmInView
 
         'Exit on invalid conditions
         Dim ErrorText As String = String.Empty
-        If Props.Stepping = TimeSpan.Zero Then ErrorText = "Stepping zero"
-        If Props.CalculationRange = TimeSpan.Zero Then ErrorText = "Range zero"
+        If Props.TimeVector_Stepping = TimeSpan.Zero Then ErrorText = "Stepping zero"
+        If Props.TimeVector_Range = TimeSpan.Zero Then ErrorText = "Range zero"
         If String.IsNullOrEmpty(ErrorText) = False Then
             tsslMain.Text = "ERROR: <" & ErrorText & ">" : De()
             Exit Sub
@@ -161,7 +158,7 @@ Public Class frmInView
 
         'Calculate
         tsslMain.Text = "Calculating ..." : De()
-        Vector = AstroInView.CalculateBaseVectors(Props)
+        AstroInView.CalculateVectors(Props, Vector)
         tsslMain.Text = "Calculated." : De()
 
         'TimingLog.ShowLog()
@@ -171,7 +168,7 @@ Public Class frmInView
     Public Sub PlotTraces(ByRef Graph As cZEDGraph)
 
         'Update the observable trace
-        AstroInView.UpdateObservable(Vector, PlotConfig)
+        Dim Object_Observable() As Double = AstroInView.CalcObservable(Vector, PlotConfig)
 
         'Set x axis caption and data
         Dim PlotXAxis As cAstroInView.sPlotXAxis = AstroInView.GenerateAxis(Vector, PlotConfig, Props)
@@ -184,11 +181,11 @@ Public Class frmInView
         Graph.SetCaptions("Object " & Props.ObjectName, PlotXAxis.XAxisCaption, "Object altitude [°]")
 
         'Plot traces
-        If PlotConfig.Trace_Observable Then Graph.PlotXvsT("Observable [°]", XAxis, Vector.Object_Observable, TraceStyle_Observable)
+        If PlotConfig.Trace_Observable Then Graph.PlotXvsT("Observable [°]", XAxis, Object_Observable, TraceStyle_Observable)
         If PlotConfig.Trace_Sun Then Graph.PlotXvsT("Sun altiude [°]", XAxis, Vector.Sun_Altitude, TraceStyle_Sun)
-        If PlotConfig.Trace_NonObservable Then Graph.PlotXvsT("Object altitude [°]", XAxis, Vector.Object_Altitude, TraceStyle_Object)
-        If PlotConfig.Trace_MoonAltitude Then Graph.PlotXvsT("Moon altitude [°]", XAxis, Vector.MoonAltitude, TraceStyle_MoonAltitude)
-        If PlotConfig.Trace_MoonIllumination Then Graph.PlotXvsT("Moon illumination [%]", XAxis, Vector.MoonIllumination, TraceStyle_MoonIllumination)
+        If PlotConfig.Trace_NonObservable Then Graph.PlotXvsT("Object altitude [°]", XAxis, Vector.Object_Alt, TraceStyle_Object)
+        If PlotConfig.Trace_MoonAltitude Then Graph.PlotXvsT("Moon altitude [°]", XAxis, Vector.Moon_Alt, TraceStyle_MoonAltitude)
+        If PlotConfig.Trace_MoonIllumination Then Graph.PlotXvsT("Moon illumination [%]", XAxis, Vector.Moon_Illumination, TraceStyle_MoonIllumination)
         Graph.PlotXvsT("Now", New DateTime() {XNow, XNow}, New Double() {PlotConfig.Axis_YMin, PlotConfig.Axis_YMax}, TraceStyle_Now)
 
         Graph.MainGraph.GraphPane.XAxis.Type = ZedGraph.AxisType.Date
@@ -220,9 +217,9 @@ Public Class frmInView
                 'Build the EXCEL result row
                 Results.Add(Vector.UTCTimes(Idx))
                 Results.Add(Vector.JD(Idx))
-                Results.Add(Vector.ObjectPosition(Idx).ALT_deg)
-                Results.Add(Vector.ObjectPosition(Idx).AZ_deg)
-                Results.Add(Vector.SunPosition(Idx).AzAlt.Alt)
+                Results.Add(Vector.Object_Alt(Idx))
+                Results.Add(Vector.Object_Az(Idx))
+                Results.Add(Vector.Sun_Altitude(Idx))
                 Results.Add(Ato.AstroCalc.LST(Vector.UTCTimes(Idx), Props.Observatory_Longitude))
                 worksheet1.Cell(Idx + 2, 1).InsertData(Results, True)
             Next Idx
@@ -256,7 +253,7 @@ Public Class frmInView
     Private Sub tsmiGenerate_ExcelExportSun_Click(sender As Object, e As EventArgs) Handles tsmiGenerate_ExcelExportSun.Click
 
         'Get time zone difference to UTC
-        Dim CalcTZ As GeoTimeZone.TimeZoneResult = GeoTimeZone.TimeZoneLookup.GetTimeZone(Props.GetLocation.Latitude_deg, Props.GetLocation.Longitude_deg)
+        Dim CalcTZ As GeoTimeZone.TimeZoneResult = GeoTimeZone.TimeZoneLookup.GetTimeZone(Props.GetLocation.Latitude, Props.GetLocation.Longitude)
         Dim TZI As TimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(CalcTZ.Result)
         Dim NoUTCOffset As New TimeSpan(0)
 
@@ -271,7 +268,7 @@ Public Class frmInView
         'UTCEnd = New DateTime(2025, 4, 7, 0, 0, 0, IsUTC)
 
         Dim UTCTimes As List(Of DateTime) = Props.GetUTCVector(UTCStart, CalcStepping, UTCEnd)
-        Dim PosVec As Double() = AstroCalc.NET.Sun.SunAlt(UTCTimes, Props.GetLocation.Longitude_deg, Props.GetLocation.Latitude_deg)
+        Dim PosVec As Double() = AstroCalc.NET.Sun.SunAlt(UTCTimes, Props.GetLocation.Longitude, Props.GetLocation.Latitude)
 
         'Calculate sun raise and set times for UTC time
         Dim RaiseSetEvents As New List(Of AstroCalc.NET.Sun.eRaiseSetEvent)
