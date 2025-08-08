@@ -147,6 +147,9 @@ Public Class MainForm
         Log.Add("InspectCatalog")
         Log.AddRange(Vizier.InspectCatalog())
         Log.Add("'════════════════════════════════════════════════════════════════════════")
+        Vizier.Debug_AllFormats.Sort()
+        Vizier.Debug_AllUnits.Sort()
+        Vizier.Debug_AllLabels.Sort()
         Dim X As New frmLogDisplay
         X.Show(Log)
     End Sub
