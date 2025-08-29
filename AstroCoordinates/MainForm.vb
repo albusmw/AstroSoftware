@@ -135,6 +135,7 @@ Public Class MainForm
     Private Sub tsmiFile_LoadVizier_Click(sender As Object, e As EventArgs) Handles tsmiFile_LoadVizier.Click
         Dim Vizier As New cVizier
         Dim Log As New List(Of String)
+        Dim RawOutput As Boolean = False
         Log.Add("GetCatList_DAT")
         Vizier.GetCatList_DAT
         Log.Add("'════════════════════════════════════════════════════════════════════════")
@@ -145,7 +146,10 @@ Public Class MainForm
         Log.AddRange(Vizier.UncompressCatalogs())
         Log.Add("'════════════════════════════════════════════════════════════════════════")
         Log.Add("InspectCatalog")
-        Log.AddRange(Vizier.InspectCatalog())
+        Log.AddRange(Vizier.InspectCatalog(RawOutput))
+        Log.Add("'════════════════════════════════════════════════════════════════════════")
+        Log.Add("GetCommonLabels")
+        Log.AddRange(Vizier.GetCommonLabels())
         Log.Add("'════════════════════════════════════════════════════════════════════════")
         Vizier.Debug_AllFormats.Sort()
         Vizier.Debug_AllUnits.Sort()
