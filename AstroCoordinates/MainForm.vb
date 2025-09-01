@@ -136,8 +136,8 @@ Public Class MainForm
         Dim Vizier As New cVizier
         Dim Log As New List(Of String)
         Dim RawOutput As Boolean = False
-        Log.Add("GetCatList_DAT")
-        Vizier.GetCatList_DAT
+        Log.Add("GetVizierCats")
+        Vizier.GetVizierCats()
         Log.Add("'════════════════════════════════════════════════════════════════════════")
         Log.Add("DownloadCatalogs")
         Log.AddRange(Vizier.DownloadCatalogs())
@@ -150,6 +150,9 @@ Public Class MainForm
         Log.Add("'════════════════════════════════════════════════════════════════════════")
         Log.Add("GetCommonLabels")
         Log.AddRange(Vizier.GetCommonLabels())
+        Log.Add("'════════════════════════════════════════════════════════════════════════")
+        Log.Add("GetCatData")
+        Dim CatData As Dictionary(Of String, List(Of cVizier.sCatEntry)) = Vizier.GetCatData()
         Log.Add("'════════════════════════════════════════════════════════════════════════")
         Vizier.Debug_AllFormats.Sort()
         Vizier.Debug_AllUnits.Sort()
