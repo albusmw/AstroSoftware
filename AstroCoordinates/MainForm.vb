@@ -14,7 +14,7 @@ Public Class MainForm
         Dim SelectionForm As New frmGetObject
         SelectionForm.SelectedObject = New cObjectInfo("Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
         If SelectionForm.ShowDialog() = DialogResult.OK Then
-            tbSelected.Text = SelectionForm.SelectedObject.VerboseName
+            tbSelected.Text = SelectionForm.SelectedObject.FullName(True)
             UpdateRA(SelectionForm.SelectedObject.RA)
             UpdateDec(SelectionForm.SelectedObject.Dec)
         End If
@@ -133,7 +133,7 @@ Public Class MainForm
     End Sub
 
     Private Sub tsmiFile_LoadVizier_Click(sender As Object, e As EventArgs) Handles tsmiFile_LoadVizier.Click
-        Dim Vizier As New cVizier
+        Dim Vizier As New cVizier("C:\!AstroCat")
         Dim Log As New List(Of String)
         Dim RawOutput As Boolean = False
         Log.Add("GetVizierCats")
@@ -148,12 +148,11 @@ Public Class MainForm
         Log.Add("InspectCatalog")
         Log.AddRange(Vizier.InspectCatalog(RawOutput))
         Log.Add("'════════════════════════════════════════════════════════════════════════")
-        Log.Add("GetCommonLabels")
-        Log.AddRange(Vizier.GetCommonLabels())
-        Log.Add("'════════════════════════════════════════════════════════════════════════")
         Log.Add("GetCatData")
-        Dim CatData As Dictionary(Of String, List(Of cVizier.sCatEntry)) = Vizier.GetCatData()
+        Dim CatData As Dictionary(Of String, List(Of cObjectInfo)) = Vizier.GetCatData()
         Log.Add("'════════════════════════════════════════════════════════════════════════")
+        'Log.Add("GetCommonLabels")
+        'Log.AddRange(Vizier.GetCommonLabels())
         Vizier.Debug_AllFormats.Sort()
         Vizier.Debug_AllUnits.Sort()
         Vizier.Debug_AllLabels.Sort()

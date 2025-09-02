@@ -10,9 +10,6 @@ Public Class frmGetObject
     '''<summary>My executable folder.</summary>
     Private ReadOnly MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
 
-    '''<summary>Catalog where custom entries are located.</summary>
-    Public Property MyCustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
-
     Public SelectedObject As cObjectInfo = Nothing
 
     Public ObjectAvailability As New Dictionary(Of Tuple(Of Integer, Integer), Double)
@@ -25,18 +22,12 @@ Public Class frmGetObject
     Private TimeCalc As cTimeZoneCalc
 
     '''<summary>All present objects loaded from catalogs.</summary>
-    Dim Objects As New List(Of cObjectInfo)
+    Dim AllObjects As New List(Of cObjectInfo)
 
     Dim FoundEntries As New List(Of cObjectInfo)
 
-    Public Property CustomCat As String
-        Get
-            Return MyCustomCat
-        End Get
-        Set(value As String)
-            MyCustomCat = value
-        End Set
-    End Property
+    '''<summary>Catalog where custom entries are located.</summary>
+    Public Property CustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
 
     Public ReadOnly Property CurrentUTC() As DateTime
         Get
@@ -58,7 +49,7 @@ Public Class frmGetObject
         Dim DoubleEntries As Integer = LoadCatalogs()
 
         'Display info on loaded objects
-        tsslLoaded.Text = Objects.Count.ToString.Trim & " objects loaded, " & DoubleEntries.ToString.Trim & " double enties"
+        tsslLoaded.Text = AllObjects.Count.ToString.Trim & " objects loaded, " & DoubleEntries.ToString.Trim & " double enties"
 
         'Set default location
         InView.Props.SetObservatory(Ato.AstroCalc.KnownLocations.DSC)
@@ -72,10 +63,10 @@ Public Class frmGetObject
         Dim Cat_Custom = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Custom)
         FoundEntries.Clear()
 
-        For Each Entry In Objects
+        For Each Entry In AllObjects
             Dim DisplayItem = False
             'Search name
-            If DisplayItem = False And Entry.Name.ToUpper.Contains(SearchString) Then DisplayItem = True
+            If DisplayItem = False And Entry.FullName(True).ToUpper.Contains(SearchString) Then DisplayItem = True
             'Search alias
             If DisplayItem = False And Entry.AliasName.ToUpper.Contains(SearchString) Then DisplayItem = True
             'Search HD
@@ -110,12 +101,12 @@ Public Class frmGetObject
         lbResults.Items.Clear()
         Dim NewlbResultsContent As New List(Of String)
         For Each Item In FoundEntries
-            NewlbResultsContent.Add(Item.VerboseName)
+            NewlbResultsContent.Add(Item.FullName(True))
         Next Item
         lbResults.Items.AddRange(NewlbResultsContent.ToArray)
         'If there is only 1 entry, auto-select it and update the calculation
         If lbResults.Items.Count = 1 Then lbResults.SelectedIndex = 0
-        tsslSelectionLength.Text = FoundEntries.Count.ToString.Trim & " entries filtered (" & (Objects.Count - FoundEntries.Count).ToString.Trim & " entries removed"
+        tsslSelectionLength.Text = FoundEntries.Count.ToString.Trim & " entries filtered (" & (AllObjects.Count - FoundEntries.Count).ToString.Trim & " entries removed"
     End Sub
 
     Private Sub lbResults_DoubleClick(sender As Object, e As EventArgs) Handles lbResults.DoubleClick
@@ -178,12 +169,23 @@ Public Class frmGetObject
     Private Function LoadCatalogs() As Integer
 
         Dim DoubleEntries As Integer = 0
-        Dim Sep As Char
+        Dim Sep As Char = Chr(9)
 
-        Sep = Chr(9)
+        'Load all build-in catalogs
         DoubleEntries += AddToCat(eCatMode.M, GetResourceLines("AstroCoordinates.messier.txt"), Sep)
         DoubleEntries += AddToCat(eCatMode.Stars, GetResourceLines("AstroCoordinates.namedStars.txt"), Sep)
         DoubleEntries += AddToCat(eCatMode.NGC, GetResourceLines("AstroCoordinates.ngc2000.txt"), Sep)
+
+        'Load all VizierR catalogs
+        Dim Vizier As New cVizier("C:\!AstroCat")
+        Vizier.InspectCatalog(False)
+        Dim CatData As Dictionary(Of String, List(Of cObjectInfo)) = Vizier.GetCatData()
+        For Each Catalog As String In CatData.Keys
+            For Each Obj As cObjectInfo In CatData(Catalog)
+                'Not finished!
+                AllObjects.Add(New cObjectInfo("VIZ:" & Obj.FullName(False), Obj.RA, Obj.Dec))
+            Next Obj
+        Next Catalog
 
         'Load custom objects
         Sep = "|"c
@@ -208,7 +210,7 @@ Public Class frmGetObject
                 Dim Splitted As String() = FileLine.Split(Splitter)
                 Dim Key As String = Splitted(0)
                 'Currently no check for double entries
-                Objects.Add(New cObjectInfo(Mode, Splitted))
+                AllObjects.Add(New cObjectInfo(Mode, Splitted))
             End If
         Next Idx
         Return RetVal
@@ -240,7 +242,7 @@ Public Class frmGetObject
                 Dim CurrentLocation As New Ato.AstroCalc.sLatLong(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
                 Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec))
                 Dim Details As New List(Of String)
-                Details.Add(SelectedObject.VerboseName & " - Catalog: " & SelectedObject.Catalog)
+                Details.Add(SelectedObject.FullName(True) & " - Catalog: " & SelectedObject.Catalog)
                 Details.Add("══════════════════════════════════════════════════")
                 Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
                 If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
