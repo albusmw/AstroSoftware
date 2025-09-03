@@ -57,42 +57,43 @@ Public Class frmGetObject
 
     End Sub
 
-    Private Sub ApplySearchString(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged, cbCustomOnly.CheckStateChanged, cbOptimumOnly.CheckedChanged
+    Private Sub ApplySearchString(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged, tsmiOptions_FilterUnavailable.CheckedChanged
 
         Dim SearchString = tbSearchString.Text.Trim.ToUpper
         Dim Cat_Custom = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Custom)
         FoundEntries.Clear()
 
         For Each Entry In AllObjects
-            Dim DisplayItem = False
-            'Search name
-            If DisplayItem = False And Entry.FullName(True).ToUpper.Contains(SearchString) Then DisplayItem = True
-            'Search alias
-            If DisplayItem = False And Entry.AliasName.ToUpper.Contains(SearchString) Then DisplayItem = True
-            'Search HD
-            If DisplayItem = False And Entry.HD.ToString.Trim.Contains(SearchString) Then DisplayItem = True
-            'Search HIP
-            If DisplayItem = False And Entry.HIP.ToString.Trim.Contains(SearchString) Then DisplayItem = True
-            'Remove if not custom and only custom is checked
-            If DisplayItem = True And cbCustomOnly.Checked Then
+
+            'Search all name fields
+            Dim ObjectFound As Boolean = False
+            If Entry.FullName(True).ToUpper.Contains(SearchString) Then ObjectFound = True
+            If Entry.AliasName.ToUpper.Contains(SearchString) Then ObjectFound = True
+            If Entry.HD.ToString.Trim.Contains(SearchString) Then ObjectFound = True
+            If Entry.HIP.ToString.Trim.Contains(SearchString) Then ObjectFound = True
+
+            'Decide if object should be displayed
+            Dim DisplayItem As Boolean = False
+            If ObjectFound Then
                 If Entry.Catalog = Cat_Custom Then
-                    DisplayItem = True
+                    DisplayItem = True                          'always display custom catalog items
                 Else
-                    DisplayItem = False
-                End If
-            End If
-            'Remove if not available
-            If cbOptimumOnly.Checked Then
-                Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(Entry.RA), CInt(Entry.Dec))
-                If ObjectAvailability.ContainsKey(TuppleToSearch) Then
-                    Dim VisibleHours As Double = ObjectAvailability(TuppleToSearch)
-                    If VisibleHours <= MinVisibleHours Then
-                        DisplayItem = False
+                    If tsmiOptions_FilterUnavailable.Checked = False Then
+                        DisplayItem = True                      'do not judge availability
                     Else
-                        DisplayItem = True
+                        Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(Entry.RA), CInt(Entry.Dec))
+                        If ObjectAvailability.ContainsKey(TuppleToSearch) = False Then
+                            DisplayItem = True                  'availability not judgable -> default is show
+                        Else
+                            Dim VisibleHours = ObjectAvailability(TuppleToSearch)
+                            If VisibleHours >= MinVisibleHours Then
+                                DisplayItem = True
+                            End If
+                        End If
                     End If
                 End If
             End If
+
             'Add if found
             If DisplayItem Then
                 FoundEntries.Add(Entry)
@@ -229,6 +230,7 @@ Public Class frmGetObject
 
     Private Sub UpdateObjectCurrentInfo()
         Dim LeftWidth As Integer = 18
+        Dim Sep As String = "══════════════════════════════════════════════"
         If IsNothing(SelectedObject) = True Then
             tbDetails.Text = "No object selected ..."
             Exit Sub
@@ -243,7 +245,7 @@ Public Class frmGetObject
                 Dim Pos As Ato.AstroCalc.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, New Ato.AstroCalc.sRADec(SelectedObject.RA, SelectedObject.Dec))
                 Dim Details As New List(Of String)
                 Details.Add(SelectedObject.FullName(True) & " - Catalog: " & SelectedObject.Catalog)
-                Details.Add("══════════════════════════════════════════════════")
+                Details.Add(Sep)
                 Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
                 If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
                 If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
@@ -253,7 +255,7 @@ Public Class frmGetObject
                 Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Pos.Alt.ToDegMinSec)
                 Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
                 Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
-                Details.Add("══════════════════════════════════════════════════")
+                Details.Add(Sep)
                 Details.Add("UTC time".PadRight(LeftWidth) & ": " & TimeCalc.UTCNowString)
                 Details.Add("Observatory".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Name)
                 Details.Add("    Time".PadRight(LeftWidth) & ": " & TimeCalc.ObservatoryString)
@@ -378,11 +380,17 @@ Public Class frmGetObject
         InView.Props.ObjectName = "Visibility test"
 
         ObjectAvailability = New Dictionary(Of Tuple(Of Integer, Integer), Double)
+        tspgMain.Maximum = (24 * 180) + 1
+        tspgMain.Value = 0
 
-        For RA As Integer = 0 To 24
+        For RA As Integer = 0 To 23
             'For RA As Integer = 7 To 9                                  'test range
             For Dec As Integer = -90 To 90
                 'For Dec As Integer = -7 To -5                           'test range
+
+                If tspgMain.Value < tspgMain.Maximum Then
+                    tspgMain.Value += 1 : De()
+                End If
 
                 'Set the object properties
                 InView.Props.RightAscension = CDbl(RA).ToHMS
@@ -427,24 +435,28 @@ Public Class frmGetObject
                 End If
 
                 'Test code
-                If (RA = 8) And (Dec = -6) Then
-                    MsgBox("!!!")
-                End If
+                'If (RA = 8) And (Dec = -6) Then
+                '    MsgBox("!!!")
+                'End If
 
                 'Do not calculate sun and moon any more
                 InView.Props.Calc_Sun = False
                 InView.Props.Calc_Moon = False
 
             Next Dec
-            Next RA
+        Next RA
 
-            'Re-store settings
-            InView.Props.Calc_Moon = Old_Calc_Moon
+        'Re-store settings
+        InView.Props.Calc_Moon = Old_Calc_Moon
         InView.Props.Calc_Sun = Old_Calc_Sun
         InView.Props.ObjectName = Old_ObjectName
 
-        MsgBox("OK")
+        tspgMain.Value = 0
 
+    End Sub
+
+    Private Sub De()
+        System.Windows.Forms.Application.DoEvents()
     End Sub
 
 End Class

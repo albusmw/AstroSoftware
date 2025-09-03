@@ -29,10 +29,10 @@ Partial Class frmGetObject
         ssMain = New StatusStrip()
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
+        tsslObsCalcResult = New ToolStripStatusLabel()
+        tspgMain = New ToolStripProgressBar()
         scMain = New SplitContainer()
-        cbOptimumOnly = New CheckBox()
-        cbCustomOnly = New CheckBox()
-        scRight = New SplitContainer()
+        scLeft = New SplitContainer()
         tbDetails = New TextBox()
         zgcMain = New ZedGraph.ZedGraphControl()
         tUpdateDetails = New Timer(components)
@@ -46,16 +46,17 @@ Partial Class frmGetObject
         tsmiTools_InViewDisplay = New ToolStripMenuItem()
         tsmiTools_Recalc = New ToolStripMenuItem()
         tsmiTools_GetBestObjects = New ToolStripMenuItem()
-        tsslObsCalcResult = New ToolStripStatusLabel()
+        tsmiOptions = New ToolStripMenuItem()
+        tsmiOptions_FilterUnavailable = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
         scMain.Panel2.SuspendLayout()
         scMain.SuspendLayout()
-        CType(scRight, ComponentModel.ISupportInitialize).BeginInit()
-        scRight.Panel1.SuspendLayout()
-        scRight.Panel2.SuspendLayout()
-        scRight.SuspendLayout()
+        CType(scLeft, ComponentModel.ISupportInitialize).BeginInit()
+        scLeft.Panel1.SuspendLayout()
+        scLeft.Panel2.SuspendLayout()
+        scLeft.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
         ' 
@@ -63,131 +64,126 @@ Partial Class frmGetObject
         ' 
         tbSearchString.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbSearchString.Font = New Font("Courier New", 9F)
-        tbSearchString.Location = New Point(93, 24)
+        tbSearchString.Location = New Point(107, 34)
+        tbSearchString.Margin = New Padding(3, 4, 3, 4)
         tbSearchString.Name = "tbSearchString"
-        tbSearchString.Size = New Size(1303, 21)
+        tbSearchString.Size = New Size(1513, 24)
         tbSearchString.TabIndex = 0
         ' 
         ' Label1
         ' 
         Label1.AutoSize = True
-        Label1.Location = New Point(12, 24)
+        Label1.Location = New Point(7, 38)
         Label1.Name = "Label1"
-        Label1.Size = New Size(75, 15)
+        Label1.Size = New Size(94, 20)
         Label1.TabIndex = 1
         Label1.Text = "Search string"
         ' 
         ' lbResults
         ' 
-        lbResults.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        lbResults.Dock = DockStyle.Fill
         lbResults.Font = New Font("Courier New", 9F)
         lbResults.FormattingEnabled = True
         lbResults.HorizontalScrollbar = True
         lbResults.IntegralHeight = False
-        lbResults.ItemHeight = 15
-        lbResults.Location = New Point(3, 73)
+        lbResults.ItemHeight = 17
+        lbResults.Location = New Point(0, 0)
+        lbResults.Margin = New Padding(3, 4, 3, 4)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(315, 1031)
+        lbResults.Size = New Size(404, 609)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
         ' 
         ssMain.ImageScalingSize = New Size(20, 20)
-        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength, tsslObsCalcResult})
-        ssMain.Location = New Point(0, 1164)
+        ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength, tsslObsCalcResult, tspgMain})
+        ssMain.Location = New Point(0, 1056)
         ssMain.Name = "ssMain"
-        ssMain.Size = New Size(1408, 22)
+        ssMain.Padding = New Padding(1, 0, 16, 0)
+        ssMain.Size = New Size(1633, 26)
         ssMain.TabIndex = 3
         ssMain.Text = "StatusStrip1"
         ' 
         ' tsslLoaded
         ' 
         tsslLoaded.Name = "tsslLoaded"
-        tsslLoaded.Size = New Size(22, 17)
+        tsslLoaded.Size = New Size(27, 20)
         tsslLoaded.Text = "---"
         ' 
         ' tsslSelectionLength
         ' 
         tsslSelectionLength.Name = "tsslSelectionLength"
-        tsslSelectionLength.Size = New Size(22, 17)
+        tsslSelectionLength.Size = New Size(27, 20)
         tsslSelectionLength.Text = "---"
+        ' 
+        ' tsslObsCalcResult
+        ' 
+        tsslObsCalcResult.DisplayStyle = ToolStripItemDisplayStyle.Text
+        tsslObsCalcResult.Name = "tsslObsCalcResult"
+        tsslObsCalcResult.Size = New Size(0, 20)
+        ' 
+        ' tspgMain
+        ' 
+        tspgMain.Name = "tspgMain"
+        tspgMain.Size = New Size(200, 18)
+        tspgMain.Style = ProgressBarStyle.Continuous
         ' 
         ' scMain
         ' 
         scMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         scMain.FixedPanel = FixedPanel.Panel1
-        scMain.Location = New Point(12, 51)
+        scMain.Location = New Point(12, 76)
+        scMain.Margin = New Padding(3, 4, 3, 4)
         scMain.Name = "scMain"
         ' 
         ' scMain.Panel1
         ' 
-        scMain.Panel1.Controls.Add(cbOptimumOnly)
-        scMain.Panel1.Controls.Add(cbCustomOnly)
-        scMain.Panel1.Controls.Add(lbResults)
+        scMain.Panel1.Controls.Add(scLeft)
         ' 
         ' scMain.Panel2
         ' 
-        scMain.Panel2.Controls.Add(scRight)
-        scMain.Size = New Size(1384, 1110)
-        scMain.SplitterDistance = 321
+        scMain.Panel2.Controls.Add(zgcMain)
+        scMain.Size = New Size(1608, 965)
+        scMain.SplitterDistance = 404
+        scMain.SplitterWidth = 5
         scMain.TabIndex = 4
         ' 
-        ' cbOptimumOnly
+        ' scLeft
         ' 
-        cbOptimumOnly.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        cbOptimumOnly.Location = New Point(3, 37)
-        cbOptimumOnly.Name = "cbOptimumOnly"
-        cbOptimumOnly.Size = New Size(315, 23)
-        cbOptimumOnly.TabIndex = 4
-        cbOptimumOnly.Text = "Only optimum objects"
-        cbOptimumOnly.UseVisualStyleBackColor = True
+        scLeft.Dock = DockStyle.Fill
+        scLeft.Location = New Point(0, 0)
+        scLeft.Name = "scLeft"
+        scLeft.Orientation = Orientation.Horizontal
         ' 
-        ' cbCustomOnly
+        ' scLeft.Panel1
         ' 
-        cbCustomOnly.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
-        cbCustomOnly.Location = New Point(3, 8)
-        cbCustomOnly.Name = "cbCustomOnly"
-        cbCustomOnly.Size = New Size(315, 23)
-        cbCustomOnly.TabIndex = 3
-        cbCustomOnly.Text = "Only custom catalog"
-        cbCustomOnly.UseVisualStyleBackColor = True
+        scLeft.Panel1.Controls.Add(lbResults)
         ' 
-        ' scRight
+        ' scLeft.Panel2
         ' 
-        scRight.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        scRight.FixedPanel = FixedPanel.Panel1
-        scRight.Location = New Point(3, 3)
-        scRight.Name = "scRight"
-        scRight.Orientation = Orientation.Horizontal
-        ' 
-        ' scRight.Panel1
-        ' 
-        scRight.Panel1.Controls.Add(tbDetails)
-        ' 
-        ' scRight.Panel2
-        ' 
-        scRight.Panel2.Controls.Add(zgcMain)
-        scRight.Size = New Size(1052, 1104)
-        scRight.SplitterDistance = 281
-        scRight.TabIndex = 1
+        scLeft.Panel2.Controls.Add(tbDetails)
+        scLeft.Size = New Size(404, 965)
+        scLeft.SplitterDistance = 609
+        scLeft.TabIndex = 3
         ' 
         ' tbDetails
         ' 
-        tbDetails.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        tbDetails.Dock = DockStyle.Fill
         tbDetails.Font = New Font("Courier New", 9F)
-        tbDetails.Location = New Point(3, 3)
+        tbDetails.Location = New Point(0, 0)
+        tbDetails.Margin = New Padding(3, 4, 3, 4)
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(1047, 275)
-        tbDetails.TabIndex = 0
+        tbDetails.Size = New Size(404, 352)
+        tbDetails.TabIndex = 5
         tbDetails.WordWrap = False
         ' 
         ' zgcMain
         ' 
-        zgcMain.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        zgcMain.Location = New Point(4, 3)
-        zgcMain.Margin = New Padding(4, 3, 4, 3)
+        zgcMain.Dock = DockStyle.Fill
+        zgcMain.Location = New Point(0, 0)
+        zgcMain.Margin = New Padding(5, 4, 5, 4)
         zgcMain.Name = "zgcMain"
         zgcMain.ScrollGrace = 0R
         zgcMain.ScrollMaxX = 0R
@@ -196,8 +192,8 @@ Partial Class frmGetObject
         zgcMain.ScrollMinX = 0R
         zgcMain.ScrollMinY = 0R
         zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(1044, 812)
-        zgcMain.TabIndex = 0
+        zgcMain.Size = New Size(1199, 965)
+        zgcMain.TabIndex = 1
         ' 
         ' tUpdateDetails
         ' 
@@ -207,10 +203,11 @@ Partial Class frmGetObject
         ' msMain
         ' 
         msMain.ImageScalingSize = New Size(20, 20)
-        msMain.Items.AddRange(New ToolStripItem() {tsmiData, tsmiTools})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiData, tsmiTools, tsmiOptions})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(1408, 24)
+        msMain.Padding = New Padding(7, 3, 0, 3)
+        msMain.Size = New Size(1633, 30)
         msMain.TabIndex = 6
         msMain.Text = "MenuStrip1"
         ' 
@@ -218,74 +215,83 @@ Partial Class frmGetObject
         ' 
         tsmiData.DropDownItems.AddRange(New ToolStripItem() {tsmiData_AstroBin, tsmiData_SetLocation, ToolStripMenuItem1, tsmiData_Accept})
         tsmiData.Name = "tsmiData"
-        tsmiData.Size = New Size(43, 20)
+        tsmiData.Size = New Size(55, 24)
         tsmiData.Text = "Data"
         ' 
         ' tsmiData_AstroBin
         ' 
         tsmiData_AstroBin.Name = "tsmiData_AstroBin"
-        tsmiData_AstroBin.Size = New Size(203, 22)
+        tsmiData_AstroBin.Size = New Size(254, 26)
         tsmiData_AstroBin.Text = "Parse AstroBin clipboard"
         ' 
         ' tsmiData_SetLocation
         ' 
         tsmiData_SetLocation.Name = "tsmiData_SetLocation"
-        tsmiData_SetLocation.Size = New Size(203, 22)
+        tsmiData_SetLocation.Size = New Size(254, 26)
         tsmiData_SetLocation.Text = "Set location"
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(200, 6)
+        ToolStripMenuItem1.Size = New Size(251, 6)
         ' 
         ' tsmiData_Accept
         ' 
         tsmiData_Accept.Name = "tsmiData_Accept"
-        tsmiData_Accept.Size = New Size(203, 22)
+        tsmiData_Accept.Size = New Size(254, 26)
         tsmiData_Accept.Text = "Accept and close"
         ' 
         ' tsmiTools
         ' 
         tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay, tsmiTools_Recalc, tsmiTools_GetBestObjects})
         tsmiTools.Name = "tsmiTools"
-        tsmiTools.Size = New Size(42, 20)
+        tsmiTools.Size = New Size(52, 24)
         tsmiTools.Text = "Tool"
         ' 
         ' tsmiTools_InViewDisplay
         ' 
         tsmiTools_InViewDisplay.Name = "tsmiTools_InViewDisplay"
-        tsmiTools_InViewDisplay.Size = New Size(184, 22)
+        tsmiTools_InViewDisplay.Size = New Size(231, 26)
         tsmiTools_InViewDisplay.Text = "Open In View display"
         ' 
         ' tsmiTools_Recalc
         ' 
         tsmiTools_Recalc.Name = "tsmiTools_Recalc"
-        tsmiTools_Recalc.Size = New Size(184, 22)
+        tsmiTools_Recalc.Size = New Size(231, 26)
         tsmiTools_Recalc.Text = "Recalc"
         ' 
         ' tsmiTools_GetBestObjects
         ' 
         tsmiTools_GetBestObjects.Name = "tsmiTools_GetBestObjects"
-        tsmiTools_GetBestObjects.Size = New Size(184, 22)
+        tsmiTools_GetBestObjects.Size = New Size(231, 26)
         tsmiTools_GetBestObjects.Text = "Get best objects"
         ' 
-        ' tsslObsCalcResult
+        ' tsmiOptions
         ' 
-        tsslObsCalcResult.DisplayStyle = ToolStripItemDisplayStyle.Text
-        tsslObsCalcResult.Name = "tsslObsCalcResult"
-        tsslObsCalcResult.Size = New Size(0, 17)
+        tsmiOptions.DropDownItems.AddRange(New ToolStripItem() {tsmiOptions_FilterUnavailable})
+        tsmiOptions.Name = "tsmiOptions"
+        tsmiOptions.Size = New Size(75, 24)
+        tsmiOptions.Text = "Options"
+        ' 
+        ' tsmiOptions_FilterUnavailable
+        ' 
+        tsmiOptions_FilterUnavailable.CheckOnClick = True
+        tsmiOptions_FilterUnavailable.Name = "tsmiOptions_FilterUnavailable"
+        tsmiOptions_FilterUnavailable.Size = New Size(257, 26)
+        tsmiOptions_FilterUnavailable.Text = "Filter unavailable objects"
         ' 
         ' frmGetObject
         ' 
-        AutoScaleDimensions = New SizeF(7F, 15F)
+        AutoScaleDimensions = New SizeF(8F, 20F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1408, 1186)
+        ClientSize = New Size(1633, 1082)
         Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(msMain)
         Controls.Add(Label1)
         Controls.Add(tbSearchString)
         MainMenuStrip = msMain
+        Margin = New Padding(3, 4, 3, 4)
         Name = "frmGetObject"
         Text = "Object search"
         ssMain.ResumeLayout(False)
@@ -294,11 +300,11 @@ Partial Class frmGetObject
         scMain.Panel2.ResumeLayout(False)
         CType(scMain, ComponentModel.ISupportInitialize).EndInit()
         scMain.ResumeLayout(False)
-        scRight.Panel1.ResumeLayout(False)
-        scRight.Panel1.PerformLayout()
-        scRight.Panel2.ResumeLayout(False)
-        CType(scRight, ComponentModel.ISupportInitialize).EndInit()
-        scRight.ResumeLayout(False)
+        scLeft.Panel1.ResumeLayout(False)
+        scLeft.Panel2.ResumeLayout(False)
+        scLeft.Panel2.PerformLayout()
+        CType(scLeft, ComponentModel.ISupportInitialize).EndInit()
+        scLeft.ResumeLayout(False)
         msMain.ResumeLayout(False)
         msMain.PerformLayout()
         ResumeLayout(False)
@@ -312,7 +318,6 @@ Partial Class frmGetObject
     Friend WithEvents tsslLoaded As ToolStripStatusLabel
     Friend WithEvents tsslSelectionLength As ToolStripStatusLabel
     Friend WithEvents scMain As SplitContainer
-    Friend WithEvents tbDetails As TextBox
     Friend WithEvents tUpdateDetails As Timer
     Friend WithEvents msMain As MenuStrip
     Friend WithEvents tsmiData As ToolStripMenuItem
@@ -322,11 +327,13 @@ Partial Class frmGetObject
     Friend WithEvents ToolStripMenuItem1 As ToolStripSeparator
     Friend WithEvents tsmiData_Accept As ToolStripMenuItem
     Friend WithEvents tsmiData_SetLocation As ToolStripMenuItem
-    Friend WithEvents scRight As SplitContainer
-    Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
-    Friend WithEvents cbCustomOnly As CheckBox
     Friend WithEvents tsmiTools_Recalc As ToolStripMenuItem
     Friend WithEvents tsmiTools_GetBestObjects As ToolStripMenuItem
-    Friend WithEvents cbOptimumOnly As CheckBox
     Friend WithEvents tsslObsCalcResult As ToolStripStatusLabel
+    Friend WithEvents tspgMain As ToolStripProgressBar
+    Friend WithEvents tbDetails As TextBox
+    Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
+    Friend WithEvents scLeft As SplitContainer
+    Friend WithEvents tsmiOptions As ToolStripMenuItem
+    Friend WithEvents tsmiOptions_FilterUnavailable As ToolStripMenuItem
 End Class
