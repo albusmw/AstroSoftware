@@ -12,7 +12,7 @@ Public Class MainForm
 
     Private Sub btnGetObject_Click(sender As Object, e As EventArgs) Handles btnGetObject.Click
         Dim SelectionForm As New frmGetObject
-        SelectionForm.SelectedObject = New cObjectInfo("Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
+        SelectionForm.SelectedObject = New cObjectInfo(eCatMode.Own, "Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
         If SelectionForm.ShowDialog() = DialogResult.OK Then
             tbSelected.Text = SelectionForm.SelectedObject.FullName(True)
             UpdateRA(SelectionForm.SelectedObject.RA)
@@ -73,17 +73,17 @@ Public Class MainForm
 
     Private Sub tsmiEnter_Dec_Click(sender As Object, e As EventArgs) Handles tsmiEnter_Dec.Click, btnDec.Click
         Dim TextInput As String = InputBox("Dec to parse [°]: ", "Dec to parse")
-        UpdateDec(TextInput.ParseDegree)
+        If TextInput.Trim.Length > 0 Then UpdateDec(TextInput.ParseDegree)
     End Sub
 
     Private Sub tsmiEnter_RA_Click(sender As Object, e As EventArgs) Handles tsmiEnter_RA.Click, btnRA.Click
         Dim TextInput As String = InputBox("RA to parse [hms format]: ", "RA to parse")
-        UpdateRA(TextInput.ParseRA)
+        If TextInput.Trim.Length > 0 Then UpdateRA(TextInput.ParseRA)
     End Sub
 
     Private Sub tsmiEnter_RADeg_Click(sender As Object, e As EventArgs) Handles tsmiEnter_RADeg.Click
         Dim TextInput As String = InputBox("RA to parse [°]: ", "RA to parse")
-        UpdateRA(TextInput.ParseDegree * (24 / 360))
+        If TextInput.Trim.Length > 0 Then UpdateRA(TextInput.ParseDegree * (24 / 360))
     End Sub
 
     Private Sub tsmiGoTo_Object_Click(sender As Object, e As EventArgs) Handles tsmiGoTo_Object.Click

@@ -60,7 +60,7 @@ Public Class frmGetObject
     Private Sub ApplySearchString(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged, tsmiOptions_FilterUnavailable.CheckedChanged
 
         Dim SearchString = tbSearchString.Text.Trim.ToUpper
-        Dim Cat_Custom = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Custom)
+        Dim Cat_Own = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Own)
         FoundEntries.Clear()
 
         For Each Entry In AllObjects
@@ -75,8 +75,8 @@ Public Class frmGetObject
             'Decide if object should be displayed
             Dim DisplayItem As Boolean = False
             If ObjectFound Then
-                If Entry.Catalog = Cat_Custom Then
-                    DisplayItem = True                          'always display custom catalog items
+                If Entry.Catalog = Cat_Own Then
+                    DisplayItem = True                          'always display own catalog items
                 Else
                     If tsmiOptions_FilterUnavailable.Checked = False Then
                         DisplayItem = True                      'do not judge availability
@@ -184,14 +184,14 @@ Public Class frmGetObject
         For Each Catalog As String In CatData.Keys
             For Each Obj As cObjectInfo In CatData(Catalog)
                 'Not finished!
-                AllObjects.Add(New cObjectInfo("VIZ:" & Obj.FullName(False), Obj.RA, Obj.Dec))
+                AllObjects.Add(New cObjectInfo(eCatMode.Vizier, Obj.FullName(False), Obj.RA, Obj.Dec))
             Next Obj
         Next Catalog
 
         'Load custom objects
         Sep = "|"c
         If System.IO.File.Exists(CustomCat) = True Then
-            DoubleEntries += AddToCat(eCatMode.Custom, System.IO.File.ReadAllLines(CustomCat), Sep)
+            DoubleEntries += AddToCat(eCatMode.Own, System.IO.File.ReadAllLines(CustomCat), Sep)
         End If
 
         Return DoubleEntries
@@ -366,8 +366,9 @@ Public Class frmGetObject
         Dim Limits As New cPlotConfig
 
         Limits.Limit_MoonMaxHeigth = 100
-        Limits.Limit_ObjectMinHeigth = 10
+        Limits.Limit_ObjectMinHeigth = 20
         Limits.Limit_SunMaxHeigth = -6
+        Dim MinVisTime As Double = 4
 
         'Store settings
         Dim Old_Calc_Moon As Boolean = InView.Props.Calc_Moon
@@ -380,13 +381,13 @@ Public Class frmGetObject
         InView.Props.ObjectName = "Visibility test"
 
         ObjectAvailability = New Dictionary(Of Tuple(Of Integer, Integer), Double)
-        tspgMain.Maximum = (24 * 180) + 1
+        tspgMain.Maximum = (25 * 180) + 1
         tspgMain.Value = 0
 
-        For RA As Integer = 0 To 23
-            'For RA As Integer = 7 To 9                                  'test range
+        For RA As Integer = 0 To 24                                     'rounding can result in 24 ...
+            'For RA As Integer = 7 To 9                                 'test range
             For Dec As Integer = -90 To 90
-                'For Dec As Integer = -7 To -5                           'test range
+                'For Dec As Integer = -7 To -5                          'test range
 
                 If tspgMain.Value < tspgMain.Maximum Then
                     tspgMain.Value += 1 : De()
@@ -431,7 +432,9 @@ Public Class frmGetObject
                 If (FirstVisible = DateTime.MinValue) And (LastVisible = DateTime.MaxValue) Then
                     ObjectAvailability.Add(ObsTuple, 0)
                 Else
-                    ObjectAvailability.Add(ObsTuple, (LastVisible - FirstVisible).TotalHours)
+                    If (LastVisible - FirstVisible).TotalHours > MinVisTime Then
+                        ObjectAvailability.Add(ObsTuple, (LastVisible - FirstVisible).TotalHours)
+                    End If
                 End If
 
                 'Test code
