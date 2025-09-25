@@ -67,10 +67,10 @@ Public Class frmGetObject
 
             'Search all name fields
             Dim ObjectFound As Boolean = False
-            If Entry.FullName(True).ToUpper.Contains(SearchString) Then ObjectFound = True
-            If Entry.AliasName.ToUpper.Contains(SearchString) Then ObjectFound = True
-            If Entry.HD.ToString.Trim.Contains(SearchString) Then ObjectFound = True
-            If Entry.HIP.ToString.Trim.Contains(SearchString) Then ObjectFound = True
+            If AllPartsAreIn(Entry.FullName(True), SearchString) Then ObjectFound = True
+            If AllPartsAreIn(Entry.AliasName, SearchString) Then ObjectFound = True
+            If AllPartsAreIn(Entry.HD.ToString.Trim, SearchString) Then ObjectFound = True
+            If AllPartsAreIn(Entry.HIP.ToString.Trim, SearchString) Then ObjectFound = True
 
             'Decide if object should be displayed
             Dim DisplayItem As Boolean = False
@@ -109,6 +109,13 @@ Public Class frmGetObject
         If lbResults.Items.Count = 1 Then lbResults.SelectedIndex = 0
         tsslSelectionLength.Text = FoundEntries.Count.ToString.Trim & " entries filtered (" & (AllObjects.Count - FoundEntries.Count).ToString.Trim & " entries removed"
     End Sub
+
+    Private Function AllPartsAreIn(ByVal EntryToCheck As String, ByVal SearchString As String) As Boolean
+        For Each SearchPart As String In SearchString.Split(" "c)
+            If EntryToCheck.ToUpper.Contains(SearchPart.ToUpper) = False Then Return False
+        Next SearchPart
+        Return True
+    End Function
 
     Private Sub lbResults_DoubleClick(sender As Object, e As EventArgs) Handles lbResults.DoubleClick
         AcceptAndClose()
