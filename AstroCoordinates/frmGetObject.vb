@@ -412,7 +412,7 @@ Public Class frmGetObject
         Dim Old_ObjectName As String = InViewProps.ObjectName
 
         'Calculate sun and moon only for 1st run because they stay the same
-        InViewProps.TimeVector_Stepping = New TimeSpan(0, 0, 10)             '1 minute stepping
+        InViewProps.TimeVector_Stepping = New TimeSpan(0, 1, 0)             '1 minute stepping
         InViewProps.Calc_Moon = True
         InViewProps.Calc_Sun = True
         InViewProps.ObjectName = "Visibility test"
@@ -449,7 +449,7 @@ Public Class frmGetObject
                 If FirstRARun = False Then
                     Result.HA = CommonHAs.CreateCopy
                 Else
-                    CommonHAs = Array.Empty(Of Double)()
+                    Result.HA = Array.Empty(Of Double)()
                 End If
 
                 'Run calculation for given RS and DEC

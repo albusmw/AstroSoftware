@@ -158,6 +158,7 @@ Public Class frmInView
 
         'Calculate
         tsslMain.Text = "Calculating ..." : De()
+        Vector = New cAstroInView.cVectors              'reset all vectors
         AstroInView.CalculateVectors(Props, Vector)
         tsslMain.Text = "Calculated." : De()
 
