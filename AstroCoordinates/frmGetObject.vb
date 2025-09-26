@@ -391,6 +391,7 @@ Public Class frmGetObject
         Dim CommonUTCTimes() As Date = Array.Empty(Of Date)()
         Dim CommonJDs() As Double = Array.Empty(Of Double)()
         Dim CommonLSTs() As Double = Array.Empty(Of Double)()
+        Dim CommonHAs() As Double = Array.Empty(Of Double)()
         Dim CommonMoonAltitude() As Double = Array.Empty(Of Double)()
         Dim CommonSunAltitude() As Double = Array.Empty(Of Double)()
 
@@ -418,8 +419,10 @@ Public Class frmGetObject
         tspgMain.Value = 0
 
         Dim FirstRun As Boolean = True
-        For RA As Integer = 0 To 24                                     'rounding can result in 24 ...
-            For Dec As Integer = -90 To 90
+        For Dec As Integer = -90 To 90
+
+            Dim FirstRARun As Boolean = True
+            For RA As Integer = 0 To 24                                     'rounding can result in 24 ...
 
                 If tspgMain.Value < tspgMain.Maximum Then
                     tspgMain.Value += 1 : De()
@@ -439,6 +442,13 @@ Public Class frmGetObject
                     Result.Moon_Alt = CommonMoonAltitude.CreateCopy
                 End If
 
+                'RA is only called on first RA loop run
+                If FirstRARun = False Then
+                    Result.HA = CommonHAs.CreateCopy
+                Else
+                    CommonHAs = Array.Empty(Of Double)()
+                End If
+
                 'Run calculation for given RS and DEC
                 InViewCalc.CalculateVectors(InView.Props, Result)
 
@@ -449,6 +459,10 @@ Public Class frmGetObject
                     CommonLSTs = Result.LST.CreateCopy
                     CommonMoonAltitude = Result.Moon_Alt.CreateCopy
                     CommonSunAltitude = Result.Sun_Altitude.CreateCopy
+                End If
+
+                If FirstRARun Then
+                    CommonHAs = Result.HA.CreateCopy
                 End If
 
                 'Copy sun and moon vectors in any case to have it for the CalcObservable function
@@ -484,8 +498,9 @@ Public Class frmGetObject
                     FirstRun = False
                 End If
 
-            Next Dec
-        Next RA
+                FirstRARun = False
+            Next RA
+        Next Dec
 
         'Re-store settings
         InView.Props.Calc_Moon = Old_Calc_Moon
