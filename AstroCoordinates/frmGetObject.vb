@@ -5,7 +5,22 @@ Imports AstroCoordinates.cAstroInView
 
 Public Class frmGetObject
 
-    Public Property MinVisibleHours As Double = 4
+    Public Class cVisFilter
+
+        <ComponentModel.DisplayName("1.) Filter based on visibility")>
+        Public Property RemoveUnavailable As Boolean = False
+
+        <ComponentModel.DisplayName("2.) Minimum hours visible")>
+        Public Property MinVisibleHours As Double = 4.0
+
+        <ComponentModel.DisplayName("3.) Minimum heigth")>
+        Public Property MinHeight As Double = 20.0
+
+        <ComponentModel.DisplayName("4.) Maximum sun heigth")>
+        Public Property MaxSunHeigth As Double = -18.0
+
+    End Class
+    Public VisFilter As New cVisFilter
 
     '''<summary>My executable folder.</summary>
     Private ReadOnly MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
@@ -24,7 +39,7 @@ Public Class frmGetObject
     '''<summary>All present objects loaded from catalogs.</summary>
     Dim AllObjects As New List(Of cObjectInfo)
 
-    Dim FoundEntries As New List(Of cObjectInfo)
+    Dim MatchingEntries As New List(Of cObjectInfo)
 
     '''<summary>Catalog where custom entries are located.</summary>
     Public Property CustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
@@ -44,6 +59,8 @@ Public Class frmGetObject
     Private Sub frmGetObject_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
         Plotter = New cZEDGraph(zgcMain)
+        pgFilter.SelectedObject = VisFilter
+
 
         'Load catalogs copied from PixInsight
         Dim DoubleEntries As Integer = LoadCatalogs()
@@ -57,57 +74,12 @@ Public Class frmGetObject
 
     End Sub
 
-    Private Sub ApplySearchString(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged, tsmiOptions_FilterUnavailable.CheckedChanged
+    Private Sub tbSearchString_TextChanged(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged
+        GetMatchingObjects()
+    End Sub
 
-        Dim SearchString = tbSearchString.Text.Trim.ToUpper
-        Dim Cat_Own = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Own)
-        FoundEntries.Clear()
-
-        For Each Entry In AllObjects
-
-            'Search all name fields
-            Dim ObjectFound As Boolean = False
-            If AllPartsAreIn(Entry.FullName(True), SearchString) Then ObjectFound = True
-            If AllPartsAreIn(Entry.AliasName, SearchString) Then ObjectFound = True
-            If AllPartsAreIn(Entry.HD.ToString.Trim, SearchString) Then ObjectFound = True
-            If AllPartsAreIn(Entry.HIP.ToString.Trim, SearchString) Then ObjectFound = True
-
-            'Decide if object should be displayed
-            Dim DisplayItem As Boolean = False
-            If ObjectFound Then
-                If Entry.Catalog = Cat_Own Then
-                    DisplayItem = True                          'always display own catalog items
-                Else
-                    If tsmiOptions_FilterUnavailable.Checked = False Then
-                        DisplayItem = True                      'do not judge availability
-                    Else
-                        Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(Entry.RA), CInt(Entry.Dec))
-                        If ObjectAvailability.ContainsKey(TuppleToSearch) = False Then
-                            DisplayItem = True                  'availability not judgable -> default is show
-                        Else
-                            Dim VisibleHours = ObjectAvailability(TuppleToSearch)
-                            If VisibleHours >= MinVisibleHours Then
-                                DisplayItem = True
-                            End If
-                        End If
-                    End If
-                End If
-            End If
-
-            'Add if found
-            If DisplayItem Then
-                FoundEntries.Add(Entry)
-            End If
-        Next Entry
-        lbResults.Items.Clear()
-        Dim NewlbResultsContent As New List(Of String)
-        For Each Item In FoundEntries
-            NewlbResultsContent.Add(Item.FullName(True))
-        Next Item
-        lbResults.Items.AddRange(NewlbResultsContent.ToArray)
-        'If there is only 1 entry, auto-select it and update the calculation
-        If lbResults.Items.Count = 1 Then lbResults.SelectedIndex = 0
-        tsslSelectionLength.Text = FoundEntries.Count.ToString.Trim & " entries filtered (" & (AllObjects.Count - FoundEntries.Count).ToString.Trim & " entries removed"
+    Private Sub pgFilter_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgFilter.PropertyValueChanged
+        GetMatchingObjects()
     End Sub
 
     Private Function AllPartsAreIn(ByVal EntryToCheck As String, ByVal SearchString As String) As Boolean
@@ -228,9 +200,63 @@ Public Class frmGetObject
         Return Split((New System.IO.StreamReader(System.Reflection.Assembly.GetExecutingAssembly.GetManifestResourceStream(Name))).ReadToEnd, vbLf)
     End Function
 
+    '''<summary>Get objects that match the search criterias (name / conditions).</summary>
+    Private Sub GetMatchingObjects()
+
+        Dim SearchString = tbSearchString.Text.Trim.ToUpper
+        Dim Cat_Own = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Own)
+
+        MatchingEntries.Clear()
+        For Each Entry In AllObjects
+
+            'Search all name fields
+            Dim ObjectFound = False
+            If AllPartsAreIn(Entry.FullName(True), SearchString) Then ObjectFound = True
+            If AllPartsAreIn(Entry.AliasName, SearchString) Then ObjectFound = True
+            If AllPartsAreIn(Entry.HD.ToString.Trim, SearchString) Then ObjectFound = True
+            If AllPartsAreIn(Entry.HIP.ToString.Trim, SearchString) Then ObjectFound = True
+
+            'Decide if object should be displayed
+            Dim DisplayItem = False
+            If ObjectFound Then
+                If Entry.Catalog = Cat_Own Then
+                    DisplayItem = True                          'always display own catalog items
+                Else
+                    If VisFilter.RemoveUnavailable = False Then
+                        DisplayItem = True                      'do not judge availability
+                    Else
+                        Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(Entry.RA), CInt(Entry.Dec))
+                        If ObjectAvailability.ContainsKey(TuppleToSearch) = False Then
+                            DisplayItem = True                  'availability not judgable -> default is show
+                        Else
+                            Dim VisibleHours = ObjectAvailability(TuppleToSearch)
+                            If VisibleHours >= VisFilter.MinVisibleHours Then
+                                DisplayItem = True
+                            End If
+                        End If
+                    End If
+                End If
+            End If
+
+            'Add if found
+            If DisplayItem Then MatchingEntries.Add(Entry)
+
+        Next Entry
+        lbResults.Items.Clear()
+        Dim NewlbResultsContent As New List(Of String)
+        For Each Item In MatchingEntries
+            NewlbResultsContent.Add(Item.FullName(True))
+        Next Item
+        lbResults.Items.AddRange(NewlbResultsContent.ToArray)
+        'If there is only 1 entry, auto-select it and update the calculation
+        If lbResults.Items.Count = 1 Then lbResults.SelectedIndex = 0
+        tsslSelectionLength.Text = MatchingEntries.Count.ToString.Trim & " matching entries (" & (AllObjects.Count - MatchingEntries.Count).ToString.Trim & " entries removed)"
+
+    End Sub
+
     '''<summary>New object or location selected.</summary>
     Private Sub NewObjectOrLocationSelected()
-        SelectedObject = FoundEntries.Item(lbResults.SelectedIndex)
+        SelectedObject = MatchingEntries.Item(lbResults.SelectedIndex)
         UpdateObjectCurrentInfo()
         UpdateInView()
     End Sub
@@ -331,7 +357,7 @@ Public Class frmGetObject
     End Sub
 
     Private Sub AcceptAndClose()
-        SelectedObject = FoundEntries.Item(lbResults.SelectedIndex)
+        SelectedObject = MatchingEntries.Item(lbResults.SelectedIndex)
         Me.DialogResult = DialogResult.OK
         Me.Close()
     End Sub
@@ -364,8 +390,11 @@ Public Class frmGetObject
     Private Sub tsmiTools_GetBestObjects_Click(sender As Object, e As EventArgs) Handles tsmiTools_GetBestObjects.Click
 
         'Calculate which objects are best observable for the selected time range and location
-        Dim Moon_Alt() As Double = Array.Empty(Of Double)()
-        Dim Sun_Altitude() As Double = Array.Empty(Of Double)()
+        Dim CommonUTCTimes() As Date = Array.Empty(Of Date)()
+        Dim CommonJDs() As Double = Array.Empty(Of Double)()
+        Dim CommonLSTs() As Double = Array.Empty(Of Double)()
+        Dim CommonMoonAltitude() As Double = Array.Empty(Of Double)()
+        Dim CommonSunAltitude() As Double = Array.Empty(Of Double)()
 
         Dim InViewCalc As New cAstroInView
         Dim TestObject As cObjectInfo = Nothing
@@ -373,16 +402,15 @@ Public Class frmGetObject
         Dim Limits As New cPlotConfig
 
         Limits.Limit_MoonMaxHeigth = 100
-        Limits.Limit_ObjectMinHeigth = 20
-        Limits.Limit_SunMaxHeigth = -6
-        Dim MinVisTime As Double = 4
+        Limits.Limit_ObjectMinHeigth = VisFilter.MinHeight
+        Limits.Limit_SunMaxHeigth = VisFilter.MaxSunHeigth
 
         'Store settings
         Dim Old_Calc_Moon As Boolean = InView.Props.Calc_Moon
         Dim Old_Calc_Sun As Boolean = InView.Props.Calc_Sun
         Dim Old_ObjectName As String = InView.Props.ObjectName
 
-        'Calculate sun and moon only for 1st run
+        'Calculate sun and moon only for 1st run because they stay the same
         InView.Props.Calc_Moon = True
         InView.Props.Calc_Sun = True
         InView.Props.ObjectName = "Visibility test"
@@ -391,10 +419,9 @@ Public Class frmGetObject
         tspgMain.Maximum = (25 * 180) + 1
         tspgMain.Value = 0
 
+        Dim FirstRun As Boolean = True
         For RA As Integer = 0 To 24                                     'rounding can result in 24 ...
-            'For RA As Integer = 7 To 9                                 'test range
             For Dec As Integer = -90 To 90
-                'For Dec As Integer = -7 To -5                          'test range
 
                 If tspgMain.Value < tspgMain.Maximum Then
                     tspgMain.Value += 1 : De()
@@ -406,19 +433,29 @@ Public Class frmGetObject
                 Dim ObsTuple As New Tuple(Of Integer, Integer)(RA, Dec)
 
                 'Copy sun and moon vectors if not calculated
-                If InView.Props.Calc_Sun = False Then Result.Sun_Altitude = Sun_Altitude.CreateCopy
-                If InView.Props.Calc_Moon = False Then Result.Moon_Alt = Moon_Alt.CreateCopy
+                If FirstRun = False Then
+                    Result.UTCTimes = CommonUTCTimes.CreateCopy
+                    Result.JD = CommonJDs.CreateCopy
+                    Result.LST = CommonLSTs.CreateCopy
+                    Result.Sun_Altitude = CommonSunAltitude.CreateCopy
+                    Result.Moon_Alt = CommonMoonAltitude.CreateCopy
+                End If
 
                 'Run calculation for given RS and DEC
                 InViewCalc.CalculateVectors(InView.Props, Result)
 
-                'Get calculated moon and sun positions from the 1st run
-                If InView.Props.Calc_Moon = True Then Moon_Alt = Result.Moon_Alt.CreateCopy
-                If InView.Props.Calc_Sun = True Then Sun_Altitude = Result.Sun_Altitude.CreateCopy
+                'Get calculated static from the 1st run
+                If FirstRun Then
+                    CommonUTCTimes = Result.UTCTimes.CreateCopy
+                    CommonJDs = Result.JD.CreateCopy
+                    CommonLSTs = Result.LST.CreateCopy
+                    CommonMoonAltitude = Result.Moon_Alt.CreateCopy
+                    CommonSunAltitude = Result.Sun_Altitude.CreateCopy
+                End If
 
                 'Copy sun and moon vectors in any case to have it for the CalcObservable function
-                Result.Sun_Altitude = Sun_Altitude.CreateCopy
-                Result.Moon_Alt = Moon_Alt.CreateCopy
+                Result.Sun_Altitude = CommonSunAltitude.CreateCopy
+                Result.Moon_Alt = CommonMoonAltitude.CreateCopy
 
                 'Calculate the observable vectors
                 Dim Observable() As Double = InViewCalc.CalcObservable(Result, Limits)
@@ -439,9 +476,7 @@ Public Class frmGetObject
                 If (FirstVisible = DateTime.MinValue) And (LastVisible = DateTime.MaxValue) Then
                     ObjectAvailability.Add(ObsTuple, 0)
                 Else
-                    If (LastVisible - FirstVisible).TotalHours > MinVisTime Then
-                        ObjectAvailability.Add(ObsTuple, (LastVisible - FirstVisible).TotalHours)
-                    End If
+                    ObjectAvailability.Add(ObsTuple, (LastVisible - FirstVisible).TotalHours)
                 End If
 
                 'Test code
@@ -450,8 +485,11 @@ Public Class frmGetObject
                 'End If
 
                 'Do not calculate sun and moon any more
-                InView.Props.Calc_Sun = False
-                InView.Props.Calc_Moon = False
+                If FirstRun Then
+                    InView.Props.Calc_Sun = False
+                    InView.Props.Calc_Moon = False
+                    FirstRun = False
+                End If
 
             Next Dec
         Next RA

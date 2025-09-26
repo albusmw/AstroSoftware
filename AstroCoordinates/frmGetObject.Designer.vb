@@ -33,6 +33,7 @@ Partial Class frmGetObject
         tspgMain = New ToolStripProgressBar()
         scMain = New SplitContainer()
         scLeft = New SplitContainer()
+        pgFilter = New PropertyGrid()
         tbDetails = New TextBox()
         zgcMain = New ZedGraph.ZedGraphControl()
         tUpdateDetails = New Timer(components)
@@ -46,8 +47,6 @@ Partial Class frmGetObject
         tsmiTools_InViewDisplay = New ToolStripMenuItem()
         tsmiTools_Recalc = New ToolStripMenuItem()
         tsmiTools_GetBestObjects = New ToolStripMenuItem()
-        tsmiOptions = New ToolStripMenuItem()
-        tsmiOptions_FilterUnavailable = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
@@ -66,7 +65,7 @@ Partial Class frmGetObject
         tbSearchString.Font = New Font("Courier New", 9F)
         tbSearchString.Location = New Point(94, 26)
         tbSearchString.Name = "tbSearchString"
-        tbSearchString.Size = New Size(1324, 21)
+        tbSearchString.Size = New Size(1126, 21)
         tbSearchString.TabIndex = 0
         ' 
         ' Label1
@@ -80,7 +79,7 @@ Partial Class frmGetObject
         ' 
         ' lbResults
         ' 
-        lbResults.Dock = DockStyle.Fill
+        lbResults.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         lbResults.Font = New Font("Courier New", 9F)
         lbResults.FormattingEnabled = True
         lbResults.HorizontalScrollbar = True
@@ -88,16 +87,16 @@ Partial Class frmGetObject
         lbResults.ItemHeight = 15
         lbResults.Location = New Point(0, 0)
         lbResults.Name = "lbResults"
-        lbResults.Size = New Size(354, 456)
+        lbResults.Size = New Size(354, 402)
         lbResults.TabIndex = 2
         ' 
         ' ssMain
         ' 
         ssMain.ImageScalingSize = New Size(20, 20)
         ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength, tsslObsCalcResult, tspgMain})
-        ssMain.Location = New Point(0, 790)
+        ssMain.Location = New Point(0, 912)
         ssMain.Name = "ssMain"
-        ssMain.Size = New Size(1429, 22)
+        ssMain.Size = New Size(1231, 22)
         ssMain.TabIndex = 3
         ssMain.Text = "StatusStrip1"
         ' 
@@ -139,7 +138,7 @@ Partial Class frmGetObject
         ' scMain.Panel2
         ' 
         scMain.Panel2.Controls.Add(zgcMain)
-        scMain.Size = New Size(1407, 724)
+        scMain.Size = New Size(1209, 846)
         scMain.SplitterDistance = 354
         scMain.TabIndex = 4
         ' 
@@ -153,15 +152,27 @@ Partial Class frmGetObject
         ' 
         ' scLeft.Panel1
         ' 
+        scLeft.Panel1.Controls.Add(pgFilter)
         scLeft.Panel1.Controls.Add(lbResults)
         ' 
         ' scLeft.Panel2
         ' 
         scLeft.Panel2.Controls.Add(tbDetails)
-        scLeft.Size = New Size(354, 724)
-        scLeft.SplitterDistance = 456
+        scLeft.Size = New Size(354, 846)
+        scLeft.SplitterDistance = 532
         scLeft.SplitterWidth = 3
         scLeft.TabIndex = 3
+        ' 
+        ' pgFilter
+        ' 
+        pgFilter.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        pgFilter.HelpVisible = False
+        pgFilter.Location = New Point(0, 408)
+        pgFilter.Name = "pgFilter"
+        pgFilter.PropertySort = PropertySort.Alphabetical
+        pgFilter.Size = New Size(354, 121)
+        pgFilter.TabIndex = 3
+        pgFilter.ToolbarVisible = False
         ' 
         ' tbDetails
         ' 
@@ -171,7 +182,7 @@ Partial Class frmGetObject
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(354, 265)
+        tbDetails.Size = New Size(354, 311)
         tbDetails.TabIndex = 5
         tbDetails.WordWrap = False
         ' 
@@ -188,7 +199,7 @@ Partial Class frmGetObject
         zgcMain.ScrollMinX = 0R
         zgcMain.ScrollMinY = 0R
         zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(1049, 724)
+        zgcMain.Size = New Size(851, 846)
         zgcMain.TabIndex = 1
         ' 
         ' tUpdateDetails
@@ -199,10 +210,10 @@ Partial Class frmGetObject
         ' msMain
         ' 
         msMain.ImageScalingSize = New Size(20, 20)
-        msMain.Items.AddRange(New ToolStripItem() {tsmiData, tsmiTools, tsmiOptions})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiData, tsmiTools})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(1429, 24)
+        msMain.Size = New Size(1231, 24)
         msMain.TabIndex = 6
         msMain.Text = "MenuStrip1"
         ' 
@@ -261,25 +272,11 @@ Partial Class frmGetObject
         tsmiTools_GetBestObjects.Size = New Size(184, 22)
         tsmiTools_GetBestObjects.Text = "Get best objects"
         ' 
-        ' tsmiOptions
-        ' 
-        tsmiOptions.DropDownItems.AddRange(New ToolStripItem() {tsmiOptions_FilterUnavailable})
-        tsmiOptions.Name = "tsmiOptions"
-        tsmiOptions.Size = New Size(61, 20)
-        tsmiOptions.Text = "Options"
-        ' 
-        ' tsmiOptions_FilterUnavailable
-        ' 
-        tsmiOptions_FilterUnavailable.CheckOnClick = True
-        tsmiOptions_FilterUnavailable.Name = "tsmiOptions_FilterUnavailable"
-        tsmiOptions_FilterUnavailable.Size = New Size(204, 22)
-        tsmiOptions_FilterUnavailable.Text = "Filter unavailable objects"
-        ' 
         ' frmGetObject
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1429, 812)
+        ClientSize = New Size(1231, 934)
         Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(msMain)
@@ -328,6 +325,5 @@ Partial Class frmGetObject
     Friend WithEvents tbDetails As TextBox
     Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
     Friend WithEvents scLeft As SplitContainer
-    Friend WithEvents tsmiOptions As ToolStripMenuItem
-    Friend WithEvents tsmiOptions_FilterUnavailable As ToolStripMenuItem
+    Friend WithEvents pgFilter As PropertyGrid
 End Class
