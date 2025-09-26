@@ -5,16 +5,16 @@ Public Class frmGetObject
 
     Public Class cVisFilter
 
-        <ComponentModel.DisplayName("1.) Filter based on visibility")>
+        <ComponentModel.DisplayName("1.1) Filter based on visibility")>
         Public Property RemoveUnavailable As Boolean = False
 
-        <ComponentModel.DisplayName("2.) Minimum hours visible")>
+        <ComponentModel.DisplayName("1.2) Minimum hours visible")>
         Public Property MinVisibleHours As Double = 4.0
 
-        <ComponentModel.DisplayName("3.) Minimum heigth")>
+        <ComponentModel.DisplayName("2.1) Minimum heigth")>
         Public Property MinHeight As Double = 20.0
 
-        <ComponentModel.DisplayName("4.) Maximum sun heigth")>
+        <ComponentModel.DisplayName("2.2) Maximum sun heigth")>
         Public Property MaxSunHeigth As Double = -18.0
 
     End Class
@@ -387,6 +387,9 @@ Public Class frmGetObject
 
     Private Sub tsmiTools_GetBestObjects_Click(sender As Object, e As EventArgs) Handles tsmiTools_GetBestObjects.Click
 
+        Dim InViewProps As cAstroInView.cProps = InView.Props
+        Dim InViewCalc As New cAstroInView
+
         'Calculate which objects are best observable for the selected time range and location
         Dim CommonUTCTimes() As Date = Array.Empty(Of Date)()
         Dim CommonJDs() As Double = Array.Empty(Of Double)()
@@ -395,7 +398,6 @@ Public Class frmGetObject
         Dim CommonMoonAltitude() As Double = Array.Empty(Of Double)()
         Dim CommonSunAltitude() As Double = Array.Empty(Of Double)()
 
-        Dim InViewCalc As New cAstroInView
         Dim TestObject As cObjectInfo = Nothing
         Dim Result As New cAstroInView.cVectors
         Dim Limits As New cAstroInView.cPlotConfig
@@ -405,32 +407,33 @@ Public Class frmGetObject
         Limits.Limit_SunMaxHeigth = VisFilter.MaxSunHeigth
 
         'Store settings
-        Dim Old_Calc_Moon As Boolean = InView.Props.Calc_Moon
-        Dim Old_Calc_Sun As Boolean = InView.Props.Calc_Sun
-        Dim Old_ObjectName As String = InView.Props.ObjectName
+        Dim Old_Calc_Moon As Boolean = InViewProps.Calc_Moon
+        Dim Old_Calc_Sun As Boolean = InViewProps.Calc_Sun
+        Dim Old_ObjectName As String = InViewProps.ObjectName
 
         'Calculate sun and moon only for 1st run because they stay the same
-        InView.Props.Calc_Moon = True
-        InView.Props.Calc_Sun = True
-        InView.Props.ObjectName = "Visibility test"
+        InViewProps.TimeVector_Stepping = New TimeSpan(0, 0, 10)             '1 minute stepping
+        InViewProps.Calc_Moon = True
+        InViewProps.Calc_Sun = True
+        InViewProps.ObjectName = "Visibility test"
 
         ObjectAvailability = New Dictionary(Of Tuple(Of Integer, Integer), Double)
         tspgMain.Maximum = (25 * 180) + 1
         tspgMain.Value = 0
 
         Dim FirstRun As Boolean = True
-        For Dec As Integer = -90 To 90
+        For RA As Integer = 0 To 24                                     'rounding can result in 24 ...
 
             Dim FirstRARun As Boolean = True
-            For RA As Integer = 0 To 24                                     'rounding can result in 24 ...
+            For Dec As Integer = -90 To 90
 
                 If tspgMain.Value < tspgMain.Maximum Then
                     tspgMain.Value += 1 : De()
                 End If
 
                 'Set the object properties
-                InView.Props.RightAscension = CDbl(RA).ToHMS
-                InView.Props.Declination = CDbl(Dec).ToDegMinSec
+                InViewProps.RightAscension = CDbl(RA).ToHMS
+                InViewProps.Declination = CDbl(Dec).ToDegMinSec
                 Dim ObsTuple As New Tuple(Of Integer, Integer)(RA, Dec)
 
                 'Copy sun and moon vectors if not calculated
@@ -450,7 +453,7 @@ Public Class frmGetObject
                 End If
 
                 'Run calculation for given RS and DEC
-                InViewCalc.CalculateVectors(InView.Props, Result)
+                InViewCalc.CalculateVectors(InViewProps, Result)
 
                 'Get calculated static from the 1st run
                 If FirstRun Then
@@ -461,9 +464,8 @@ Public Class frmGetObject
                     CommonSunAltitude = Result.Sun_Altitude.CreateCopy
                 End If
 
-                If FirstRARun Then
-                    CommonHAs = Result.HA.CreateCopy
-                End If
+                'Store HA from the 1st run of RA
+                If FirstRARun Then CommonHAs = Result.HA.CreateCopy
 
                 'Copy sun and moon vectors in any case to have it for the CalcObservable function
                 Result.Sun_Altitude = CommonSunAltitude.CreateCopy
@@ -493,19 +495,20 @@ Public Class frmGetObject
 
                 'Do not calculate sun and moon any more
                 If FirstRun Then
-                    InView.Props.Calc_Sun = False
-                    InView.Props.Calc_Moon = False
+                    InViewProps.Calc_Sun = False
+                    InViewProps.Calc_Moon = False
                     FirstRun = False
                 End If
 
                 FirstRARun = False
-            Next RA
-        Next Dec
+
+            Next Dec
+        Next RA
 
         'Re-store settings
-        InView.Props.Calc_Moon = Old_Calc_Moon
-        InView.Props.Calc_Sun = Old_Calc_Sun
-        InView.Props.ObjectName = Old_ObjectName
+        InViewProps.Calc_Moon = Old_Calc_Moon
+        InViewProps.Calc_Sun = Old_Calc_Sun
+        InViewProps.ObjectName = Old_ObjectName
 
         tspgMain.Value = 0
 

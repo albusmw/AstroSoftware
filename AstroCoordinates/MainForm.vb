@@ -192,7 +192,7 @@ Public Class MainForm
         Parameter.Add("hour=" & Now.Hour.ValRegIndep)
         Parameter.Add("min=" & Now.Minute.ValRegIndep)
         Parameter.Add("PLlimitmag=2")
-        Parameter.Add("zoom=160")
+        Parameter.Add("zoom=16")
         Parameter.Add("ra=" & tbRAParsedDecimal.Text)
         Parameter.Add("dec=" & tbDecParsedDecimal.Text)
         cAstrobinAPIV2.OpenURLInBrowser(URL & Join(Parameter.ToArray, "&"))
