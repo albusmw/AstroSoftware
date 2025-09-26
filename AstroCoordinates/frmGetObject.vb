@@ -1,8 +1,6 @@
 ﻿Option Explicit On
 Option Strict On
 
-Imports AstroCoordinates.cAstroInView
-
 Public Class frmGetObject
 
     Public Class cVisFilter
@@ -399,7 +397,7 @@ Public Class frmGetObject
         Dim InViewCalc As New cAstroInView
         Dim TestObject As cObjectInfo = Nothing
         Dim Result As New cAstroInView.cVectors
-        Dim Limits As New cPlotConfig
+        Dim Limits As New cAstroInView.cPlotConfig
 
         Limits.Limit_MoonMaxHeigth = 100
         Limits.Limit_ObjectMinHeigth = VisFilter.MinHeight
@@ -478,11 +476,6 @@ Public Class frmGetObject
                 Else
                     ObjectAvailability.Add(ObsTuple, (LastVisible - FirstVisible).TotalHours)
                 End If
-
-                'Test code
-                'If (RA = 8) And (Dec = -6) Then
-                '    MsgBox("!!!")
-                'End If
 
                 'Do not calculate sun and moon any more
                 If FirstRun Then
