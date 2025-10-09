@@ -47,6 +47,7 @@
     <Compile Include="..\..\MyLib\TimeZoneCalc.vb" Link="MyLib\TimeZoneCalc.vb" />
     <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
     <Compile Include="..\..\MyLib\VSOPEx.vb" Link="MyLib\VSOPEx.vb" />
+	<Compile Include="..\..\MyLib\Astronomy.NET.vb" Link="MyLib\Astronomy.NET.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
@@ -116,7 +117,7 @@
     <PackageReference Include="FastLZMA2Net" Version="1.0.0" />
     <PackageReference Include="GeoTimeZone" Version="6.0.0" />
     <PackageReference Include="MessagePack" Version="3.1.4" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="SharpCompress" Version="0.40.0" />
     <PackageReference Include="VSOP87.NET" Version="1.2.1" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />

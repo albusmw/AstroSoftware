@@ -179,7 +179,7 @@ Public Class MainForm
 
     Private Sub tsmiFile_InTheSky_Click(sender As Object, e As EventArgs) Handles tsmiFile_InTheSky.Click
         'Show the sky chart
-        Dim Location As Ato.AstroCalc.sLatLong = Ato.AstroCalc.KnownLocations.DSC
+        Dim Location As Astronomy.Net.sLatLong = Ato.AstroCalc.KnownLocations.DSC
         Dim URL As String = "https://in-the-sky.org/staratlas.php?"
         Dim Parameter As New List(Of String)
         Parameter.Add("no_cookie=1")

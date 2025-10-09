@@ -221,7 +221,7 @@ Public Class frmInView
                 Results.Add(Vector.Object_Alt(Idx))
                 Results.Add(Vector.Object_Az(Idx))
                 Results.Add(Vector.Sun_Altitude(Idx))
-                Results.Add(Ato.AstroCalc.LST(Vector.UTCTimes(Idx), Props.Observatory_Longitude))
+                Results.Add(Astronomy.Net.LST(Vector.UTCTimes(Idx), Props.Observatory_Longitude))
                 worksheet1.Cell(Idx + 2, 1).InsertData(Results, True)
             Next Idx
 
