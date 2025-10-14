@@ -41,6 +41,8 @@
     <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.vb" Link="MyLib\frmAstroBinSearch.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
+	  <Compile Include="..\..\MyLib\frmVizieR.Designer.vb" Link="MyLib\frmVizieR.Designer.vb" />
+	  <Compile Include="..\..\MyLib\frmVizieR.vb" Link="MyLib\frmVizieR.vb" />
     <Compile Include="..\..\MyLib\frmSelectFromList.Designer.vb" Link="MyLib\frmSelectFromList.Designer.vb" />
     <Compile Include="..\..\MyLib\frmSelectFromList.vb" Link="MyLib\frmSelectFromList.vb" />
     <Compile Include="..\..\MyLib\GetBuildDateTime.vb" Link="MyLib\GetBuildDateTime.vb" />
@@ -73,6 +75,7 @@
   <ItemGroup>
     <EmbeddedResource Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.resx" Link="MyLib\frmAstroBinSearch.resx" />
     <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="MyLib\frmLogDisplay.resx" />
+	  <EmbeddedResource Include="..\..\MyLib\frmVizieR.resx" Link="MyLib\frmVizieR.resx" />
     <EmbeddedResource Include="..\..\MyLib\frmSelectFromList.resx" Link="MyLib\frmSelectFromList.resx" />
     <EmbeddedResource Include="catalogs\messier.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

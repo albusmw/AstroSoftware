@@ -228,4 +228,9 @@ Public Class MainForm
         X.Show()
     End Sub
 
+    Private Sub tsmiFile_VizieRTools_Click(sender As Object, e As EventArgs) Handles tsmiFile_VizieRTools.Click
+        Dim X As New frmVizieR
+        X.Show()
+    End Sub
+
 End Class

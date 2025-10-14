@@ -59,6 +59,7 @@ Partial Class MainForm
         tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
         RawGotoCommandToolStripMenuItem = New ToolStripMenuItem()
+        tsmiFile_VizieRTools = New ToolStripMenuItem()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -215,7 +216,7 @@ Partial Class MainForm
         ' 
         ' tsmiFile
         ' 
-        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_DropBoxCAT, tsmiFile_LoadVizier, tsmiFile_AstroBin, tsmiFile_InTheSky, ToolStripMenuItem1, tsmiFile_End})
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenEXE, tsmiFile_DropBoxCAT, tsmiFile_LoadVizier, tsmiFile_VizieRTools, tsmiFile_AstroBin, tsmiFile_InTheSky, ToolStripMenuItem1, tsmiFile_End})
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
@@ -328,6 +329,12 @@ Partial Class MainForm
         RawGotoCommandToolStripMenuItem.Size = New Size(206, 22)
         RawGotoCommandToolStripMenuItem.Text = "Raw goto command ..."
         ' 
+        ' tsmiFile_VizieRTools
+        ' 
+        tsmiFile_VizieRTools.Name = "tsmiFile_VizieRTools"
+        tsmiFile_VizieRTools.Size = New Size(180, 22)
+        tsmiFile_VizieRTools.Text = "VizieR tools"
+        ' 
         ' MainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
@@ -385,4 +392,5 @@ Partial Class MainForm
     Friend WithEvents tsmiEnter_ParseClipboard As ToolStripMenuItem
     Friend WithEvents tsmiFile_DropBoxCAT As ToolStripMenuItem
     Friend WithEvents RawGotoCommandToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents tsmiFile_VizieRTools As ToolStripMenuItem
 End Class
