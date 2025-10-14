@@ -25,7 +25,6 @@ Partial Class frmGetObject
         components = New ComponentModel.Container()
         tbSearchString = New TextBox()
         Label1 = New Label()
-        lbResults = New ListBox()
         ssMain = New StatusStrip()
         tsslLoaded = New ToolStripStatusLabel()
         tsslSelectionLength = New ToolStripStatusLabel()
@@ -33,6 +32,7 @@ Partial Class frmGetObject
         tspgMain = New ToolStripProgressBar()
         scMain = New SplitContainer()
         scLeft = New SplitContainer()
+        adgvObjects = New Zuby.ADGV.AdvancedDataGridView()
         pgFilter = New PropertyGrid()
         tbDetails = New TextBox()
         zgcMain = New ZedGraph.ZedGraphControl()
@@ -56,6 +56,7 @@ Partial Class frmGetObject
         scLeft.Panel1.SuspendLayout()
         scLeft.Panel2.SuspendLayout()
         scLeft.SuspendLayout()
+        CType(adgvObjects, ComponentModel.ISupportInitialize).BeginInit()
         msMain.SuspendLayout()
         SuspendLayout()
         ' 
@@ -65,7 +66,7 @@ Partial Class frmGetObject
         tbSearchString.Font = New Font("Courier New", 9F)
         tbSearchString.Location = New Point(94, 26)
         tbSearchString.Name = "tbSearchString"
-        tbSearchString.Size = New Size(1126, 21)
+        tbSearchString.Size = New Size(1342, 21)
         tbSearchString.TabIndex = 0
         ' 
         ' Label1
@@ -77,26 +78,13 @@ Partial Class frmGetObject
         Label1.TabIndex = 1
         Label1.Text = "Search string"
         ' 
-        ' lbResults
-        ' 
-        lbResults.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        lbResults.Font = New Font("Courier New", 9F)
-        lbResults.FormattingEnabled = True
-        lbResults.HorizontalScrollbar = True
-        lbResults.IntegralHeight = False
-        lbResults.ItemHeight = 15
-        lbResults.Location = New Point(0, 0)
-        lbResults.Name = "lbResults"
-        lbResults.Size = New Size(354, 402)
-        lbResults.TabIndex = 2
-        ' 
         ' ssMain
         ' 
         ssMain.ImageScalingSize = New Size(20, 20)
         ssMain.Items.AddRange(New ToolStripItem() {tsslLoaded, tsslSelectionLength, tsslObsCalcResult, tspgMain})
-        ssMain.Location = New Point(0, 912)
+        ssMain.Location = New Point(0, 1006)
         ssMain.Name = "ssMain"
-        ssMain.Size = New Size(1231, 22)
+        ssMain.Size = New Size(1447, 22)
         ssMain.TabIndex = 3
         ssMain.Text = "StatusStrip1"
         ' 
@@ -138,8 +126,8 @@ Partial Class frmGetObject
         ' scMain.Panel2
         ' 
         scMain.Panel2.Controls.Add(zgcMain)
-        scMain.Size = New Size(1209, 846)
-        scMain.SplitterDistance = 354
+        scMain.Size = New Size(1425, 940)
+        scMain.SplitterDistance = 596
         scMain.TabIndex = 4
         ' 
         ' scLeft
@@ -152,25 +140,40 @@ Partial Class frmGetObject
         ' 
         ' scLeft.Panel1
         ' 
+        scLeft.Panel1.Controls.Add(adgvObjects)
         scLeft.Panel1.Controls.Add(pgFilter)
-        scLeft.Panel1.Controls.Add(lbResults)
         ' 
         ' scLeft.Panel2
         ' 
         scLeft.Panel2.Controls.Add(tbDetails)
-        scLeft.Size = New Size(354, 846)
-        scLeft.SplitterDistance = 532
+        scLeft.Size = New Size(596, 940)
+        scLeft.SplitterDistance = 591
         scLeft.SplitterWidth = 3
         scLeft.TabIndex = 3
+        ' 
+        ' adgvObjects
+        ' 
+        adgvObjects.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        adgvObjects.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        adgvObjects.FilterAndSortEnabled = True
+        adgvObjects.FilterStringChangedInvokeBeforeDatasourceUpdate = True
+        adgvObjects.Location = New Point(3, 3)
+        adgvObjects.MaxFilterButtonImageHeight = 23
+        adgvObjects.Name = "adgvObjects"
+        adgvObjects.RightToLeft = RightToLeft.No
+        adgvObjects.RowHeadersVisible = False
+        adgvObjects.Size = New Size(590, 458)
+        adgvObjects.SortStringChangedInvokeBeforeDatasourceUpdate = True
+        adgvObjects.TabIndex = 4
         ' 
         ' pgFilter
         ' 
         pgFilter.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         pgFilter.HelpVisible = False
-        pgFilter.Location = New Point(0, 408)
+        pgFilter.Location = New Point(0, 467)
         pgFilter.Name = "pgFilter"
         pgFilter.PropertySort = PropertySort.Alphabetical
-        pgFilter.Size = New Size(354, 121)
+        pgFilter.Size = New Size(596, 121)
         pgFilter.TabIndex = 3
         pgFilter.ToolbarVisible = False
         ' 
@@ -182,7 +185,7 @@ Partial Class frmGetObject
         tbDetails.Multiline = True
         tbDetails.Name = "tbDetails"
         tbDetails.ScrollBars = ScrollBars.Both
-        tbDetails.Size = New Size(354, 311)
+        tbDetails.Size = New Size(596, 346)
         tbDetails.TabIndex = 5
         tbDetails.WordWrap = False
         ' 
@@ -199,7 +202,7 @@ Partial Class frmGetObject
         zgcMain.ScrollMinX = 0R
         zgcMain.ScrollMinY = 0R
         zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(851, 846)
+        zgcMain.Size = New Size(825, 940)
         zgcMain.TabIndex = 1
         ' 
         ' tUpdateDetails
@@ -213,7 +216,7 @@ Partial Class frmGetObject
         msMain.Items.AddRange(New ToolStripItem() {tsmiData, tsmiTools})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
-        msMain.Size = New Size(1231, 24)
+        msMain.Size = New Size(1447, 24)
         msMain.TabIndex = 6
         msMain.Text = "MenuStrip1"
         ' 
@@ -276,7 +279,7 @@ Partial Class frmGetObject
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1231, 934)
+        ClientSize = New Size(1447, 1028)
         Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(msMain)
@@ -296,6 +299,7 @@ Partial Class frmGetObject
         scLeft.Panel2.PerformLayout()
         CType(scLeft, ComponentModel.ISupportInitialize).EndInit()
         scLeft.ResumeLayout(False)
+        CType(adgvObjects, ComponentModel.ISupportInitialize).EndInit()
         msMain.ResumeLayout(False)
         msMain.PerformLayout()
         ResumeLayout(False)
@@ -304,7 +308,6 @@ Partial Class frmGetObject
 
     Friend WithEvents tbSearchString As TextBox
     Friend WithEvents Label1 As Label
-    Friend WithEvents lbResults As ListBox
     Friend WithEvents ssMain As StatusStrip
     Friend WithEvents tsslLoaded As ToolStripStatusLabel
     Friend WithEvents tsslSelectionLength As ToolStripStatusLabel
@@ -326,4 +329,5 @@ Partial Class frmGetObject
     Friend WithEvents zgcMain As ZedGraph.ZedGraphControl
     Friend WithEvents scLeft As SplitContainer
     Friend WithEvents pgFilter As PropertyGrid
+    Friend WithEvents adgvObjects As Zuby.ADGV.AdvancedDataGridView
 End Class

@@ -12,7 +12,7 @@ Public Class MainForm
 
     Private Sub btnGetObject_Click(sender As Object, e As EventArgs) Handles btnGetObject.Click
         Dim SelectionForm As New frmGetObject
-        SelectionForm.SelectedObject = New cObjectInfo(eCatMode.Own, "Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
+        SelectionForm.SelectedObject = New cObjectInfo("Manual", "Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
         If SelectionForm.ShowDialog() = DialogResult.OK Then
             tbSelected.Text = SelectionForm.SelectedObject.FullName(True)
             UpdateRA(SelectionForm.SelectedObject.RA)

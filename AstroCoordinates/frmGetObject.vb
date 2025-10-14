@@ -1,5 +1,8 @@
 ﻿Option Explicit On
 Option Strict On
+Imports AstroCoordinates.Astronomy.Net
+Imports AstroCoordinates.Ato
+Imports DocumentFormat.OpenXml.Office2013.Drawing.Chart
 
 Public Class frmGetObject
 
@@ -20,10 +23,28 @@ Public Class frmGetObject
     End Class
     Public VisFilter As New cVisFilter
 
+    '''<summary>Different columns in the list.</summary>
+    Public Class cColumns
+        Public Const FullName As String = "Full name"
+        Public Const Catalog As String = "Catalog"
+        Public Const Item As String = "Item"
+        Public Const CulmTime As String = "Culmination"
+        Public Const CulmHeight As String = "Height"
+    End Class
+
     '''<summary>My executable folder.</summary>
     Private ReadOnly MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
 
+    Public CurrentLocation As Astronomy.Net.sLatLong
+
+    '''<summary>All present objects loaded from catalogs.</summary>
+    Public AllObjects As New List(Of cObjectInfo)
+
+    '''<summary>The current selected object.</summary>
     Public SelectedObject As cObjectInfo = Nothing
+
+    '''<summary>Table objects.</summary>
+    Public Objects As New Data.DataTable
 
     Public ObjectAvailability As New Dictionary(Of Tuple(Of Integer, Integer), Double)
 
@@ -33,11 +54,6 @@ Public Class frmGetObject
     Private Plotter As cZEDGraph
 
     Private TimeCalc As cTimeZoneCalc
-
-    '''<summary>All present objects loaded from catalogs.</summary>
-    Dim AllObjects As New List(Of cObjectInfo)
-
-    Dim MatchingEntries As New List(Of cObjectInfo)
 
     '''<summary>Catalog where custom entries are located.</summary>
     Public Property CustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
@@ -56,28 +72,56 @@ Public Class frmGetObject
 
     Private Sub frmGetObject_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
+        CurrentLocation = Ato.AstroCalc.KnownLocations.DSC
+
+        'Configure object data source
+        Objects.Columns.Add(cColumns.FullName, GetType(String))
+        Objects.Columns.Add(cColumns.Catalog, GetType(String))
+        Objects.Columns.Add(cColumns.Item, GetType(String))
+        Objects.Columns.Add(cColumns.CulmTime, GetType(DateTime))
+        Objects.Columns.Add(cColumns.CulmHeight, GetType(Double))
+
+        'Set default location
+        InView.Props.SetObservatory(CurrentLocation)
+
+        'Configure GUI
         Plotter = New cZEDGraph(zgcMain)
         pgFilter.SelectedObject = VisFilter
 
+        'Configure data grid
+        ConfigDataGridView(adgvObjects)
+        'adgvObjects.SetFilterChecklistEnabled(adgvObjects.Columns(cColumns.FullName), False)       'does not work ...
+        'adgvObjects.SetFilterChecklistNodesMax(adgvObjects.Columns(cColumns.FullName), 0)          'does not work ...
 
         'Load catalogs copied from PixInsight
         Dim DoubleEntries As Integer = LoadCatalogs()
 
+        'Display objects
+        adgvObjects.DataSource = Nothing
+        Dim StartMomentUTC As DateTime = Now.ToUniversalTime
+        Objects.Clear()
+        For Each Item In AllObjects
+            Dim ObjectRaDec As New sRADec(Item.RA, Item.Dec)
+            Dim CulmTime As DateTime = Astronomy.Net.GetNextObjectCulminationTime(StartMomentUTC, CurrentLocation, ObjectRaDec)
+            Dim CulmHeigth As Double = Astronomy.Net.GetObjectPosition(CulmTime, CurrentLocation, ObjectRaDec).Alt
+            Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name, CulmTime, Math.Round(CulmHeigth, 1)})
+        Next Item
+        adgvObjects.DataSource = Objects
+
         'Display info on loaded objects
         tsslLoaded.Text = AllObjects.Count.ToString.Trim & " objects loaded, " & DoubleEntries.ToString.Trim & " double enties"
 
-        'Set default location
-        InView.Props.SetObservatory(Ato.AstroCalc.KnownLocations.DSC)
         UpdateInView()
 
     End Sub
 
     Private Sub tbSearchString_TextChanged(sender As Object, e As EventArgs) Handles tbSearchString.TextChanged
-        GetMatchingObjects()
-    End Sub
-
-    Private Sub pgFilter_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgFilter.PropertyValueChanged
-        GetMatchingObjects()
+        'Set a custom filter for the full name search, this unfortunatly also disables all other filters
+        If tbSearchString.Text.Trim.Length = 0 Then
+            adgvObjects.CleanFilterAndSort()
+        Else
+            adgvObjects.LoadFilterAndSort("([Full name] LIKE '%" & tbSearchString.Text & "%')", adgvObjects.SortString)
+        End If
     End Sub
 
     Private Function AllPartsAreIn(ByVal EntryToCheck As String, ByVal SearchString As String) As Boolean
@@ -87,7 +131,7 @@ Public Class frmGetObject
         Return True
     End Function
 
-    Private Sub lbResults_DoubleClick(sender As Object, e As EventArgs) Handles lbResults.DoubleClick
+    Private Sub adgvObjects_DoubleClick(sender As Object, e As EventArgs) Handles adgvObjects.DoubleClick
         AcceptAndClose()
     End Sub
 
@@ -95,7 +139,7 @@ Public Class frmGetObject
         UpdateObjectCurrentInfo()
     End Sub
 
-    Private Sub lbResults_SelectedIndexChanged(sender As Object, e As EventArgs) Handles lbResults.SelectedIndexChanged
+    Private Sub lbResults_SelectedIndexChanged(sender As Object, e As EventArgs) Handles adgvObjects.SelectionChanged
         NewObjectOrLocationSelected()
     End Sub
 
@@ -150,9 +194,9 @@ Public Class frmGetObject
         Dim Sep As Char = Chr(9)
 
         'Load all build-in catalogs
-        DoubleEntries += AddToCat(eCatMode.M, GetResourceLines("AstroCoordinates.messier.txt"), Sep)
-        DoubleEntries += AddToCat(eCatMode.Stars, GetResourceLines("AstroCoordinates.namedStars.txt"), Sep)
-        DoubleEntries += AddToCat(eCatMode.NGC, GetResourceLines("AstroCoordinates.ngc2000.txt"), Sep)
+        DoubleEntries += AddToCat(eSpecialCat.M, GetResourceLines("AstroCoordinates.messier.txt"), Sep)
+        DoubleEntries += AddToCat(eSpecialCat.Stars, GetResourceLines("AstroCoordinates.namedStars.txt"), Sep)
+        DoubleEntries += AddToCat(eSpecialCat.NGC, GetResourceLines("AstroCoordinates.ngc2000.txt"), Sep)
 
         'Load all VizierR catalogs
         Dim Vizier As New cVizier("C:\!AstroCat")
@@ -161,14 +205,14 @@ Public Class frmGetObject
         For Each Catalog As String In CatData.Keys
             For Each Obj As cObjectInfo In CatData(Catalog)
                 'Not finished!
-                AllObjects.Add(New cObjectInfo(eCatMode.Vizier, Obj.FullName(False), Obj.RA, Obj.Dec))
+                AllObjects.Add(New cObjectInfo(Obj.Catalog, Obj.Name, Obj.RA, Obj.Dec))
             Next Obj
         Next Catalog
 
         'Load custom objects
         Sep = "|"c
         If System.IO.File.Exists(CustomCat) = True Then
-            DoubleEntries += AddToCat(eCatMode.Own, System.IO.File.ReadAllLines(CustomCat), Sep)
+            DoubleEntries += AddToCat(eSpecialCat.Own, System.IO.File.ReadAllLines(CustomCat), Sep)
         End If
 
         Return DoubleEntries
@@ -180,7 +224,7 @@ Public Class frmGetObject
     '''<param name="FileContent">Content of the file.</param>
     '''<param name="Splitter">Split character.</param>
     '''<returns>Number of double entries.</returns>
-    Private Function AddToCat(ByVal Mode As eCatMode, ByRef FileContent As String(), ByVal Splitter As Char) As Integer
+    Private Function AddToCat(ByVal Mode As eSpecialCat, ByRef FileContent As String(), ByVal Splitter As Char) As Integer
         Dim RetVal As Integer = 0
         For Idx As Integer = 1 To FileContent.GetUpperBound(0)
             Dim FileLine As String = FileContent(Idx).Trim
@@ -199,62 +243,66 @@ Public Class frmGetObject
     End Function
 
     '''<summary>Get objects that match the search criterias (name / conditions).</summary>
-    Private Sub GetMatchingObjects()
+    'Private Sub GetMatchingObjects()
 
-        Dim SearchString = tbSearchString.Text.Trim.ToUpper
-        Dim Cat_Own = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Own)
+    '    Dim SearchString = tbSearchString.Text.Trim.ToUpper
+    '    Dim Cat_Own = ComponentModelEx.EnumDesciptionConverter.GetEnumDescription(eCatMode.Own)
 
-        MatchingEntries.Clear()
-        For Each Entry In AllObjects
+    '    MatchingEntries.Clear()
+    '    For Each Entry In AllObjects
 
-            'Search all name fields
-            Dim ObjectFound = False
-            If AllPartsAreIn(Entry.FullName(True), SearchString) Then ObjectFound = True
-            If AllPartsAreIn(Entry.AliasName, SearchString) Then ObjectFound = True
-            If AllPartsAreIn(Entry.HD.ToString.Trim, SearchString) Then ObjectFound = True
-            If AllPartsAreIn(Entry.HIP.ToString.Trim, SearchString) Then ObjectFound = True
+    '        'Search all name fields
+    '        Dim ObjectFound = False
+    '        If AllPartsAreIn(Entry.FullName(True), SearchString) Then ObjectFound = True
+    '        If AllPartsAreIn(Entry.AliasName, SearchString) Then ObjectFound = True
+    '        If AllPartsAreIn(Entry.HD.ToString.Trim, SearchString) Then ObjectFound = True
+    '        If AllPartsAreIn(Entry.HIP.ToString.Trim, SearchString) Then ObjectFound = True
 
-            'Decide if object should be displayed
-            Dim DisplayItem = False
-            If ObjectFound Then
-                If Entry.Catalog = Cat_Own Then
-                    DisplayItem = True                          'always display own catalog items
-                Else
-                    If VisFilter.RemoveUnavailable = False Then
-                        DisplayItem = True                      'do not judge availability
-                    Else
-                        Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(Entry.RA), CInt(Entry.Dec))
-                        If ObjectAvailability.ContainsKey(TuppleToSearch) = False Then
-                            DisplayItem = True                  'availability not judgable -> default is show
-                        Else
-                            Dim VisibleHours = ObjectAvailability(TuppleToSearch)
-                            If VisibleHours >= VisFilter.MinVisibleHours Then
-                                DisplayItem = True
-                            End If
-                        End If
-                    End If
-                End If
-            End If
+    '        'Decide if object should be displayed
+    '        Dim DisplayItem = False
+    '        If ObjectFound Then
+    '            If Entry.Catalog = Cat_Own Then
+    '                DisplayItem = True                          'always display own catalog items
+    '            Else
+    '                If VisFilter.RemoveUnavailable = False Then
+    '                    DisplayItem = True                      'do not judge availability
+    '                Else
+    '                    Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(Entry.RA), CInt(Entry.Dec))
+    '                    If ObjectAvailability.ContainsKey(TuppleToSearch) = False Then
+    '                        DisplayItem = True                  'availability not judgable -> default is show
+    '                    Else
+    '                        Dim VisibleHours = ObjectAvailability(TuppleToSearch)
+    '                        If VisibleHours >= VisFilter.MinVisibleHours Then
+    '                            DisplayItem = True
+    '                        End If
+    '                    End If
+    '                End If
+    '            End If
+    '        End If
 
-            'Add if found
-            If DisplayItem Then MatchingEntries.Add(Entry)
+    '        'Add if found
+    '        If DisplayItem Then MatchingEntries.Add(Entry)
 
-        Next Entry
-        lbResults.Items.Clear()
-        Dim NewlbResultsContent As New List(Of String)
-        For Each Item In MatchingEntries
-            NewlbResultsContent.Add(Item.FullName(True))
-        Next Item
-        lbResults.Items.AddRange(NewlbResultsContent.ToArray)
-        'If there is only 1 entry, auto-select it and update the calculation
-        If lbResults.Items.Count = 1 Then lbResults.SelectedIndex = 0
-        tsslSelectionLength.Text = MatchingEntries.Count.ToString.Trim & " matching entries (" & (AllObjects.Count - MatchingEntries.Count).ToString.Trim & " entries removed)"
+    '    Next Entry
 
-    End Sub
+    '    'Display objects
+    '    Objects.Clear()
+    '    For Each Item In MatchingEntries
+    '        Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name})
+    '    Next Item
+
+    '    'If there is only 1 entry, auto-select it and update the calculation
+    '    'If adgvObjects.DisplayedRowCount(True) = 1 Then adgvObjects.Rows.GetFirstRow = 0
+
+    '    'Display summary
+    '    tsslSelectionLength.Text = MatchingEntries.Count.ToString.Trim & " matching entries (" & (AllObjects.Count - MatchingEntries.Count).ToString.Trim & " entries removed)"
+
+    'End Sub
 
     '''<summary>New object or location selected.</summary>
     Private Sub NewObjectOrLocationSelected()
-        SelectedObject = MatchingEntries.Item(lbResults.SelectedIndex)
+        Dim X As cObjectInfo = GetSelectedObject()
+        If IsNothing(X) = False Then SelectedObject = X
         UpdateObjectCurrentInfo()
         UpdateInView()
     End Sub
@@ -329,23 +377,23 @@ Public Class frmGetObject
         'Update build-in graph
         Dim Props As New cAstroInView.cProps
         With Props
-            .ObjectName = SelectedObject.Name
+            .ObjectName = SelectedObject.FullName(True)
             .RightAscension = SelectedObject.RA.ToHMS
             .Declination = SelectedObject.Dec.ToDegMinSec
         End With
         If IsNothing(InView) = False Then
             Dim UpdateRequired As Boolean = ForceUpdate
             If ForceUpdate = True Then UpdateRequired = True
-            If InView.Props.ObjectName <> SelectedObject.Name Then
-                InView.Props.ObjectName = SelectedObject.Name
+            If InView.Props.ObjectName <> Props.ObjectName Then
+                InView.Props.ObjectName = Props.ObjectName
                 UpdateRequired = True
             End If
-            If InView.Props.RightAscension <> SelectedObject.RA.ToHMS Then
-                InView.Props.RightAscension = SelectedObject.RA.ToHMS
+            If InView.Props.RightAscension <> Props.RightAscension Then
+                InView.Props.RightAscension = Props.RightAscension
                 UpdateRequired = True
             End If
-            If InView.Props.Declination <> SelectedObject.Dec.ToDegMinSec Then
-                InView.Props.Declination = SelectedObject.Dec.ToDegMinSec
+            If InView.Props.Declination <> Props.Declination Then
+                InView.Props.Declination = Props.Declination
                 UpdateRequired = True
             End If
             If UpdateRequired Then
@@ -357,7 +405,7 @@ Public Class frmGetObject
     End Sub
 
     Private Sub AcceptAndClose()
-        SelectedObject = MatchingEntries.Item(lbResults.SelectedIndex)
+        SelectedObject = GetSelectedObject()
         Me.DialogResult = DialogResult.OK
         Me.Close()
     End Sub
@@ -514,6 +562,36 @@ Public Class frmGetObject
 
         tspgMain.Value = 0
 
+    End Sub
+
+    '''<summary>Get the selected object from the table.</summary>
+    Private Function GetSelectedObject() As cObjectInfo
+        If adgvObjects.SelectedRows.Count > 0 Then
+            Dim TableSelect As String = CStr(adgvObjects.SelectedRows.Item(0).Cells(cColumns.FullName).Value)
+            For Each X As cObjectInfo In AllObjects
+                If X.FullName(True) = TableSelect Then
+                    Return X
+                End If
+            Next X
+        End If
+        Return Nothing
+    End Function
+
+    '''<summary>Configure the data grid view in a unique way.</summary>
+    Public Shared Sub ConfigDataGridView(ByRef adgv As Zuby.ADGV.AdvancedDataGridView)
+        With adgv
+            .AllowUserToAddRows = False
+            .AllowUserToDeleteRows = False
+            .AllowUserToOrderColumns = True
+            .EditMode = DataGridViewEditMode.EditProgrammatically
+            .RowHeadersVisible = False
+            .EnableHeadersVisualStyles = False
+            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+            .ColumnHeadersDefaultCellStyle.SelectionBackColor = .ColumnHeadersDefaultCellStyle.BackColor
+            .FilterAndSortEnabled = True
+        End With
     End Sub
 
     Private Sub De()
