@@ -12,7 +12,8 @@ Public Class MainForm
 
     Private Sub btnGetObject_Click(sender As Object, e As EventArgs) Handles btnGetObject.Click
         Dim SelectionForm As New frmGetObject
-        SelectionForm.SelectedObject = New cObjectInfo("Manual", "Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
+        'SelectionForm.SelectedObject = New cObjectInfo("Manual", "Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
+        SelectionForm.Tag = tbSelected.Text
         If SelectionForm.ShowDialog() = DialogResult.OK Then
             tbSelected.Text = SelectionForm.SelectedObject.FullName(True)
             UpdateRA(SelectionForm.SelectedObject.RA)
@@ -47,6 +48,7 @@ Public Class MainForm
             Clipboard.SetText(.Text)
             .BackColor = Color.LimeGreen
         End With
+        tResetCopyColor.Enabled = True
     End Sub
 
     Private Sub GotoObject()
@@ -231,6 +233,11 @@ Public Class MainForm
     Private Sub tsmiFile_VizieRTools_Click(sender As Object, e As EventArgs) Handles tsmiFile_VizieRTools.Click
         Dim X As New frmVizieR
         X.Show()
+    End Sub
+
+    Private Sub tResetCopyColor_Tick(sender As Object, e As EventArgs) Handles tResetCopyColor.Tick
+        tbSelected.BackColor = Color.White
+        tResetCopyColor.Enabled = False
     End Sub
 
 End Class

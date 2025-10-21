@@ -122,7 +122,7 @@
     <PackageReference Include="GeoTimeZone" Version="6.0.0" />
     <PackageReference Include="MessagePack" Version="3.1.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="SharpCompress" Version="0.40.0" />
+    <PackageReference Include="SharpCompress" Version="0.41.0" />
     <PackageReference Include="VSOP87.NET" Version="1.2.1" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>

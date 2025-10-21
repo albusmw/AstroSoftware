@@ -6,6 +6,10 @@ Imports DocumentFormat.OpenXml.Office2013.Drawing.Chart
 
 Public Class frmGetObject
 
+    Private Class Cats
+        Public Const Cat3 As String = "3.) New visible filter calculation"
+    End Class
+
     Public Class cVisFilter
 
         <ComponentModel.DisplayName("1.1) Filter based on visibility")>
@@ -20,6 +24,10 @@ Public Class frmGetObject
         <ComponentModel.DisplayName("2.2) Maximum sun heigth")>
         Public Property MaxSunHeigth As Double = -18.0
 
+        <ComponentModel.Category(Cats.Cat3)>
+        <ComponentModel.DisplayName("1.) Minimum culmination heigth")>
+        Public Property Vis_MinCulmHeigth As Double = 30
+
     End Class
     Public VisFilter As New cVisFilter
 
@@ -28,8 +36,11 @@ Public Class frmGetObject
         Public Const FullName As String = "Full name"
         Public Const Catalog As String = "Catalog"
         Public Const Item As String = "Item"
-        Public Const CulmTime As String = "Culmination"
-        Public Const CulmHeight As String = "Height"
+        Public Const ObjSize As String = "Size arcsec"
+        Public Const CulmTime As String = "Culm Time"
+        Public Const CulmHeight As String = "Culm Height"
+        Public Const ObjLowest As String = "Obj lowest"
+        Public Const CulmVisible As String = "Visible"
     End Class
 
     '''<summary>My executable folder.</summary>
@@ -78,11 +89,17 @@ Public Class frmGetObject
         Objects.Columns.Add(cColumns.FullName, GetType(String))
         Objects.Columns.Add(cColumns.Catalog, GetType(String))
         Objects.Columns.Add(cColumns.Item, GetType(String))
+        Objects.Columns.Add(cColumns.ObjSize, GetType(String))
         Objects.Columns.Add(cColumns.CulmTime, GetType(DateTime))
         Objects.Columns.Add(cColumns.CulmHeight, GetType(Double))
+        Objects.Columns.Add(cColumns.ObjLowest, GetType(Double))
+        Objects.Columns.Add(cColumns.CulmVisible, GetType(String))
 
-        'Set default location
+        'Set default location and calculate the common parameters
+        Dim InViewCalc As New cAstroInView
+        Dim Result As New cAstroInView.cVectors
         InView.Props.SetObservatory(CurrentLocation)
+        InViewCalc.CalculateVectors(InView.Props, Result)
 
         'Configure GUI
         Plotter = New cZEDGraph(zgcMain)
@@ -104,12 +121,19 @@ Public Class frmGetObject
             Dim ObjectRaDec As New sRADec(Item.RA, Item.Dec)
             Dim CulmTime As DateTime = Astronomy.Net.GetNextObjectCulminationTime(StartMomentUTC, CurrentLocation, ObjectRaDec)
             Dim CulmHeigth As Double = Astronomy.Net.GetObjectPosition(CulmTime, CurrentLocation, ObjectRaDec).Alt
-            Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name, CulmTime, Math.Round(CulmHeigth, 1)})
+            Dim ObjLowest As Double = Astronomy.Net.GetObjectPosition(CulmTime.AddHours(12), CurrentLocation, ObjectRaDec).Alt
+            Dim Visible As Boolean = True
+            If CulmHeigth < VisFilter.Vis_MinCulmHeigth Then Visible = False                    'object culmination height must be "significant"
+            Dim VisibleText As String = CStr(IIf(Visible = True, "YES", "NO"))
+            Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name, Item.Diameter.Describe, CulmTime, Math.Round(CulmHeigth, 1), Math.Round(ObjLowest, 1), VisibleText})
         Next Item
         adgvObjects.DataSource = Objects
 
         'Display info on loaded objects
         tsslLoaded.Text = AllObjects.Count.ToString.Trim & " objects loaded, " & DoubleEntries.ToString.Trim & " double enties"
+
+        'Enter a search string if there is one
+        If IsNothing(Me.Tag) = False Then tbSearchString.Text = CStr(Me.Tag)
 
         UpdateInView()
 
@@ -130,10 +154,6 @@ Public Class frmGetObject
         Next SearchPart
         Return True
     End Function
-
-    Private Sub adgvObjects_DoubleClick(sender As Object, e As EventArgs) Handles adgvObjects.DoubleClick
-        AcceptAndClose()
-    End Sub
 
     Private Sub tUpdateDetails_Tick(sender As Object, e As EventArgs) Handles tUpdateDetails.Tick
         UpdateObjectCurrentInfo()
@@ -203,16 +223,13 @@ Public Class frmGetObject
         Vizier.InspectCatalog(False)
         Dim CatData As Dictionary(Of String, List(Of cObjectInfo)) = Vizier.GetCatData()
         For Each Catalog As String In CatData.Keys
-            For Each Obj As cObjectInfo In CatData(Catalog)
-                'Not finished!
-                AllObjects.Add(New cObjectInfo(Obj.Catalog, Obj.Name, Obj.RA, Obj.Dec))
-            Next Obj
+            AllObjects.AddRange(CatData(Catalog))
         Next Catalog
 
         'Load custom objects
         Sep = "|"c
         If System.IO.File.Exists(CustomCat) = True Then
-            DoubleEntries += AddToCat(eSpecialCat.Own, System.IO.File.ReadAllLines(CustomCat), Sep)
+            DoubleEntries += AddToCat(eSpecialCat.USER, System.IO.File.ReadAllLines(CustomCat), Sep)
         End If
 
         Return DoubleEntries
@@ -327,13 +344,14 @@ Public Class frmGetObject
                 Details.Add(SelectedObject.FullName(True) & " - Catalog: " & SelectedObject.Catalog)
                 Details.Add(Sep)
                 Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
-                If SelectedObject.Diameter > 0 Then Details.Add(" diameter".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.ValRegIndep & " '")
+                If SelectedObject.Diameter.IsEmpty = False Then Details.Add(" Size".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.Width.ValRegIndep & "x" & SelectedObject.Diameter.Height.ValRegIndep & " '")
                 If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
                 If SelectedObject.HD > 0 Then Details.Add(" HD".PadLeft(LeftWidth) & ": " & SelectedObject.HD.ToString.Trim)
                 Details.Add("   RA".PadLeft(LeftWidth) & ": " & SelectedObject.RA.ToHMS)
                 Details.Add("   Dec".PadLeft(LeftWidth) & ": " & SelectedObject.Dec.ToDegMinSec)
                 Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Pos.Alt.ToDegMinSec)
                 Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
+                Details.Add("   Size".PadLeft(LeftWidth) & ":  " & SelectedObject.Diameter.Describe)
                 Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
                 Details.Add("   Culmination".PadLeft(LeftWidth) & ":  " & Astronomy.Net.GetNextObjectCulminationTime(DateTime.UtcNow, CurrentLocation, CurrentObject).ToString)
                 Details.Add(Sep)
@@ -435,7 +453,7 @@ Public Class frmGetObject
         UpdateInView(True)
     End Sub
 
-    Private Sub tsmiTools_GetBestObjects_Click(sender As Object, e As EventArgs) Handles tsmiTools_GetBestObjects.Click
+    Private Sub tsmiTools_GetBestObjectsOLD_Click(sender As Object, e As EventArgs) Handles tsmiTools_GetBestObjectsOLD.Click
 
         Dim InViewProps As cAstroInView.cProps = InView.Props
         Dim InViewCalc As New cAstroInView
@@ -596,6 +614,10 @@ Public Class frmGetObject
 
     Private Sub De()
         System.Windows.Forms.Application.DoEvents()
+    End Sub
+
+    Private Sub btnAccept_Click(sender As Object, e As EventArgs) Handles btnAccept.Click
+        AcceptAndClose()
     End Sub
 
 End Class
