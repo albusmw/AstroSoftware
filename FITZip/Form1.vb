@@ -14,8 +14,12 @@ Public Class Form1
     Public Class cFileProps
         '''<summary>Name of the file.</summary>
         Public FileName As String = String.Empty
+        '''<summary>Size of the file.</summary>
+        Public FileSize As Long = -1
         '''<summary>Data start position of the FITS file.</summary>
         Public DataStartPos As Integer = -1
+        '''<summary>Tail byte (if there is only one ...).</summary>
+        Public TailByte As Byte = 255
         '''<summary>Checksum.</summary>
         Public Checksum As String = String.Empty
         '''<summary>Name of the output file.</summary>
@@ -98,6 +102,8 @@ Public Class Form1
         Logging(FileProps, "  Read header ...")
         FITSHeaderParser = New cFITSHeaderParser(cFITSHeaderChanger.ParseHeader(FileProps.FileName, FileProps.DataStartPos))
         Logging(FileProps, "    -> data format: <" & FITSHeaderParser.BitPix.ValRegIndep & ">")
+        Logging(FileProps, "    -> width      : <" & FITSHeaderParser.Width.ValRegIndep & " pixel>")
+        Logging(FileProps, "    -> heigth     : <" & FITSHeaderParser.Height.ValRegIndep & " pixel>")
         Finish(FileProps, Stopper)
 
         'Get raw header bytes
@@ -116,10 +122,14 @@ Public Class Form1
             Logging(FileProps, "-- ERROR: Only BitPix format 16 supported --")
             FileOK = False
         End If
+
+        'Check if the tail contains only 1 unique tail byte (and e.g. no other information is coded)
         Dim CheckResult As String = CheckFITSFileIsOK(FileProps)
         If String.IsNullOrEmpty(CheckResult) = False Then
             Logging(FileProps, "-- ERROR: " & CheckResult)
             FileOK = False
+        Else
+            Logging(FileProps, "    -> tail byte: <0x" & Hex(FileProps.TailByte).Trim & ">")
         End If
 
         'Set the output file
@@ -179,7 +189,7 @@ Public Class Form1
             'Store
             Stopper.Restart() : Stopper.Start()
             Logging(FileProps, "  Storing ...")
-            SFGen.StoreSFTar(FileProps.OutFile, FileProps.RawHeader, FileProps.Checksum)
+            SFGen.StoreSFTar(FileProps.OutFile, FileProps.RawHeader, FileProps.FileSize, FileProps.TailByte, FileProps.Checksum)
             Finish(FileProps, Stopper)
 
             'Normal compression (for reference)
@@ -205,10 +215,10 @@ Public Class Form1
     End Function
 
     Private Function CheckFITSFileIsOK(ByRef FileProps As cFileProps) As String
-        Dim FileSize As Long = (New System.IO.FileInfo(FileProps.FileName)).Length
+        FileProps.FileSize = (New System.IO.FileInfo(FileProps.FileName)).Length
         Dim HeaderLength As Long = FileProps.DataStartPos
         Dim DataContentLength As Long = (FITSHeaderParser.Width * FITSHeaderParser.Height * 2)
-        Dim TailLength As Long = FileSize - HeaderLength - DataContentLength
+        Dim TailLength As Long = FileProps.FileSize - HeaderLength - DataContentLength
         If TailLength = 0 Then
             Return String.Empty
         Else
@@ -217,13 +227,18 @@ Public Class Form1
                 Dim Tail(CInt(TailLength) - 1) As Byte
                 Checker.Seek(HeaderLength + DataContentLength, IO.SeekOrigin.Begin)
                 Checker.Read(Tail, 0, Tail.Length)
+                Dim TailBytes As New Dictionary(Of Byte, Integer)
                 Dim NonZeroBytes As Integer = 0
                 For Each SingleByte As Byte In Tail
-                    If SingleByte <> 0 Then
-                        NonZeroBytes += 1
-                    End If
+                    If TailBytes.ContainsKey(SingleByte) = False Then TailBytes.Add(SingleByte, 0)
+                    TailBytes(SingleByte) += 1
                 Next SingleByte
-                If NonZeroBytes > 0 Then Return NonZeroBytes.ValRegIndep & " non-zero tail byte found in tail of length " & TailLength.ValRegIndep
+                Select Case TailBytes.Count
+                    Case 1
+                        FileProps.TailByte = TailBytes.First.Key
+                    Case Else
+                        Return TailBytes.Count.ValRegIndep & " different non-zero tail bytes found in tail of length " & TailLength.ValRegIndep
+                End Select
             End Using
             Return String.Empty
         End If
@@ -250,6 +265,15 @@ Public Class Form1
         tbLog.Text = Join(FileProps.AllLog.ToArray, System.Environment.NewLine)
         tbLog.SelectionStart = tbLog.Text.Length - 1 : tbLog.ScrollToCaret()
         System.Windows.Forms.Application.DoEvents()
+    End Sub
+
+    Private Sub btnClearList_Click(sender As Object, e As EventArgs) Handles btnClearList.Click
+        lbFiles.Items.Clear()
+    End Sub
+
+    Private Sub lbFiles_KeyUp(sender As Object, e As KeyEventArgs) Handles lbFiles.KeyUp
+        'Delete this item
+        If e.KeyCode = Keys.Delete Then lbFiles.Items.Remove(lbFiles.SelectedItems(0))
     End Sub
 
 End Class

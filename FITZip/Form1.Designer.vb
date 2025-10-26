@@ -28,6 +28,7 @@ Partial Class Form1
         tsslStatus = New ToolStripStatusLabel()
         tbLog = New TextBox()
         scMain = New SplitContainer()
+        btnClearList = New Button()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
@@ -101,11 +102,22 @@ Partial Class Form1
         scMain.SplitterDistance = 288
         scMain.TabIndex = 4
         ' 
+        ' btnClearList
+        ' 
+        btnClearList.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
+        btnClearList.Location = New Point(1001, 595)
+        btnClearList.Name = "btnClearList"
+        btnClearList.Size = New Size(111, 45)
+        btnClearList.TabIndex = 5
+        btnClearList.Text = "Clear list"
+        btnClearList.UseVisualStyleBackColor = True
+        ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(1124, 665)
+        Controls.Add(btnClearList)
         Controls.Add(scMain)
         Controls.Add(ssMain)
         Controls.Add(btnCompress)
@@ -128,5 +140,6 @@ Partial Class Form1
     Friend WithEvents tsslStatus As ToolStripStatusLabel
     Friend WithEvents tbLog As TextBox
     Friend WithEvents scMain As SplitContainer
+    Friend WithEvents btnClearList As Button
 
 End Class
