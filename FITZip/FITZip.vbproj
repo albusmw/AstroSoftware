@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <StartupObject>Sub Main</StartupObject>
+    <UseWindowsForms>true</UseWindowsForms>
+    <MyType>WindowsForms</MyType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="MyLib\AstroStatistics.vb" />
+    <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
+    <Compile Include="..\..\MyLib\cDragDrop.vb" Link="MyLib\cDragDrop.vb" />
+    <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="MyLib\cIntelIPP.vb" />
+    <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\cShanFano.vb" Link="MyLib\cShanFano.vb" />
+    <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="MyLib\cStatMultiThread.vb" />
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
+    <Compile Include="..\..\MyLib\RecursiveDirScan.vb" Link="MyLib\RecursiveDirScan.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="MyLib\cFITSHeaderChanger.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="src\cFITSHeaderParser.vb" />
+    <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="src\cFITSReader.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Import Include="System.Data" />
+    <Import Include="System.Drawing" />
+    <Import Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="My Project\Application.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="MyLib\" />
+    <Folder Include="src\" />
+  </ItemGroup>
+
+</Project>
