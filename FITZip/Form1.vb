@@ -138,7 +138,7 @@ Public Class Form1
             Stopper.Restart() : Stopper.Start()
             Logging(FileProps, "  Get checksum ...")
             FileProps.Checksum = RecursiveDirScanner.GetHash(FileProps.FileName)
-            Logging(FileProps, "    -> Checksum: <" & FileProps.Checksum & ">")
+            Logging(FileProps, "    -> SHA256 hash: <" & FileProps.Checksum & ">")
             Finish(FileProps, Stopper)
 
             'Read FITS data
@@ -192,12 +192,12 @@ Public Class Form1
 
             Logging(FileProps, "END.")
 
-            Logging(FileProps, "══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════")
+            Logging(FileProps, New String("="c, 60))
             Return True
 
         Else
 
-            Logging(FileProps, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            Logging(FileProps, New String("!"c, 60))
             Return False
 
         End If
@@ -217,11 +217,13 @@ Public Class Form1
                 Dim Tail(CInt(TailLength) - 1) As Byte
                 Checker.Seek(HeaderLength + DataContentLength, IO.SeekOrigin.Begin)
                 Checker.Read(Tail, 0, Tail.Length)
+                Dim NonZeroBytes As Integer = 0
                 For Each SingleByte As Byte In Tail
                     If SingleByte <> 0 Then
-                        Return "Non-zero tail byte found"
+                        NonZeroBytes += 1
                     End If
                 Next SingleByte
+                If NonZeroBytes > 0 Then Return NonZeroBytes.ValRegIndep & " non-zero tail byte found in tail of length " & TailLength.ValRegIndep
             End Using
             Return String.Empty
         End If
@@ -230,7 +232,7 @@ Public Class Form1
     Private Sub Finish(ByRef FileProps As cFileProps, ByVal Stopper As Stopwatch)
         Stopper.Stop()
         Logging(FileProps, "    DONE in <" & Stopper.ElapsedMilliseconds.ValRegIndep & " ms>")
-        Logging(FileProps, "──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────")
+        Logging(FileProps, New String("─"c, 60))
     End Sub
 
     Private Sub Logging(ByRef FileProps As cFileProps, ByVal LogText As String)
