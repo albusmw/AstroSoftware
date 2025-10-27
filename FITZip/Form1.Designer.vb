@@ -29,6 +29,7 @@ Partial Class Form1
         tbLog = New TextBox()
         scMain = New SplitContainer()
         btnClearList = New Button()
+        btnDeCompress = New Button()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
@@ -44,13 +45,13 @@ Partial Class Form1
         lbFiles.IntegralHeight = False
         lbFiles.Location = New Point(3, 3)
         lbFiles.Name = "lbFiles"
-        lbFiles.Size = New Size(1094, 282)
+        lbFiles.Size = New Size(1094, 294)
         lbFiles.TabIndex = 0
         ' 
         ' btnCompress
         ' 
         btnCompress.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
-        btnCompress.Location = New Point(12, 595)
+        btnCompress.Location = New Point(12, 621)
         btnCompress.Name = "btnCompress"
         btnCompress.Size = New Size(111, 45)
         btnCompress.TabIndex = 1
@@ -60,7 +61,7 @@ Partial Class Form1
         ' ssMain
         ' 
         ssMain.Items.AddRange(New ToolStripItem() {tsslStatus})
-        ssMain.Location = New Point(0, 643)
+        ssMain.Location = New Point(0, 669)
         ssMain.Name = "ssMain"
         ssMain.Size = New Size(1124, 22)
         ssMain.TabIndex = 2
@@ -80,7 +81,7 @@ Partial Class Form1
         tbLog.Multiline = True
         tbLog.Name = "tbLog"
         tbLog.ScrollBars = ScrollBars.Both
-        tbLog.Size = New Size(1094, 279)
+        tbLog.Size = New Size(1094, 293)
         tbLog.TabIndex = 3
         tbLog.WordWrap = False
         ' 
@@ -98,25 +99,36 @@ Partial Class Form1
         ' scMain.Panel2
         ' 
         scMain.Panel2.Controls.Add(tbLog)
-        scMain.Size = New Size(1100, 577)
-        scMain.SplitterDistance = 288
+        scMain.Size = New Size(1100, 603)
+        scMain.SplitterDistance = 300
         scMain.TabIndex = 4
         ' 
         ' btnClearList
         ' 
         btnClearList.Anchor = AnchorStyles.Bottom Or AnchorStyles.Right
-        btnClearList.Location = New Point(1001, 595)
+        btnClearList.Location = New Point(1001, 621)
         btnClearList.Name = "btnClearList"
         btnClearList.Size = New Size(111, 45)
         btnClearList.TabIndex = 5
         btnClearList.Text = "Clear list"
         btnClearList.UseVisualStyleBackColor = True
         ' 
+        ' btnDeCompress
+        ' 
+        btnDeCompress.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left
+        btnDeCompress.Location = New Point(129, 621)
+        btnDeCompress.Name = "btnDeCompress"
+        btnDeCompress.Size = New Size(111, 45)
+        btnDeCompress.TabIndex = 6
+        btnDeCompress.Text = "De-Compress"
+        btnDeCompress.UseVisualStyleBackColor = True
+        ' 
         ' Form1
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1124, 665)
+        ClientSize = New Size(1124, 691)
+        Controls.Add(btnDeCompress)
         Controls.Add(btnClearList)
         Controls.Add(scMain)
         Controls.Add(ssMain)
@@ -141,5 +153,6 @@ Partial Class Form1
     Friend WithEvents tbLog As TextBox
     Friend WithEvents scMain As SplitContainer
     Friend WithEvents btnClearList As Button
+    Friend WithEvents btnDeCompress As Button
 
 End Class

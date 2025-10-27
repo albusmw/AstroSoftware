@@ -1,5 +1,6 @@
 ﻿Option Explicit On
 Option Strict On
+Imports FITZip.Form1
 
 '''<summary>Code and decode a file using Shannon Fano coding.</summary>
 Public Class Form1
@@ -78,11 +79,32 @@ Public Class Form1
     End Sub
 
     Private Sub btnCompress_Click(sender As Object, e As EventArgs) Handles btnCompress.Click
-        For Each File As String In lbFiles.Items
+        For Each FITsFile As String In lbFiles.Items
             Dim FileProps As New cFileProps
-            FileProps.FileName = File
+            FileProps.FileName = FITsFile
             Compress(FileProps)
-        Next File
+        Next FITsFile
+    End Sub
+
+    Private Sub btnDeCompress_Click(sender As Object, e As EventArgs) Handles btnDeCompress.Click
+
+        For Each FITZipFile As String In lbFiles.Items
+
+            Dim FileProps As New cFileProps
+            FileProps.FileName = FITZipFile
+
+            'Start with file
+            Logging(FileProps, "FILE <" & FileProps.FileName & ">")
+
+            Dim SFGen As New cShanFano(Of UInt16)
+            SFGen.DecodeFITZipFile(FITZipFile, String.Empty)
+
+            Logging(FileProps, "END.")
+
+            Logging(FileProps, New String("="c, 60))
+
+        Next FITZipFile
+
     End Sub
 
     Private Function Compress(ByRef FileProps As cFileProps) As Boolean
