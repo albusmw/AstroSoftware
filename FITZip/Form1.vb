@@ -56,13 +56,13 @@ Public Class Form1
     Private FITSHeaderParser As cFITSHeaderParser = Nothing
 
     '''<summary>Statistics calculator (where the image data are stored ...).</summary>
-    Private SingleStatCalc As AstroNET.Statistics = Nothing
+    'Private SingleStatCalc As AstroNET.Statistics = Nothing
 
     '''<summary>Block size for FITS files.</summary>
     Private Const FITSBlockSize As Integer = 2880
 
     '''<summary>Image statistics.</summary>
-    Private Statistics As AstroNET.Statistics.sStatistics
+    'Private Statistics As AstroNET.Statistics.sStatistics
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
 
@@ -96,7 +96,7 @@ Public Class Form1
             'Start with file
             Logging(FileProps, "FILE <" & FileProps.FileName & ">")
 
-            Dim SFGen As New cShanFano(Of UInt16)
+            Dim SFGen As New cShanFano
             SFGen.DecodeFITZipFile(FITZipFile, String.Empty)
 
             Logging(FileProps, "END.")
@@ -114,7 +114,7 @@ Public Class Form1
         'Create IPP instance - search path automatically
         If IsNothing(IPP) Then IPP = New cIntelIPP
         If IsNothing(FITSReader) Then FITSReader = New cFITSReader(IPP.IPPPath)
-        If IsNothing(SingleStatCalc) Then SingleStatCalc = New AstroNET.Statistics(IPP)
+        'If IsNothing(SingleStatCalc) Then SingleStatCalc = New AstroNET.Statistics(IPP)
 
         'Start with file
         Logging(FileProps, "FILE <" & FileProps.FileName & ">")
@@ -142,6 +142,10 @@ Public Class Form1
         Dim FileOK As Boolean = True
         If FITSHeaderParser.BitPix <> 16 Then
             Logging(FileProps, "-- ERROR: Only BitPix format 16 supported --")
+            FileOK = False
+        End If
+        If FITSHeaderParser.NAXIS3 > 1 Then
+            Logging(FileProps, "-- ERROR: Only 2D mono data supported (NAXIS3=0) --")
             FileOK = False
         End If
 
@@ -173,39 +177,41 @@ Public Class Form1
             Logging(FileProps, "    -> SHA256 hash: <" & FileProps.Checksum & ">")
             Finish(FileProps, Stopper)
 
-            'Read FITS data
+            'Read UInt16 data
             Stopper.Restart() : Stopper.Start()
-            Logging(FileProps, "  Read FITS data ...")
-            SingleStatCalc.ResetAllProcessors()
-            With SingleStatCalc.DataProcessor_UInt16
-                .ImageData(0).Data = FITSReader.ReadInUInt16(FileProps.FileName, UseIPP, ForceDirect)
-                If FITSHeaderParser.NAXIS3 > 1 Then
-                    For Idx As Integer = 1 To FITSHeaderParser.NAXIS3 - 1
-                        FileProps.DataStartPos += CInt(.ImageData(Idx - 1).Length * FITSHeaderParser.BytesPerSample)        'move to next plane
-                        .ImageData(Idx).Data = FITSReader.ReadInUInt16(FileProps.FileName, FileProps.DataStartPos, UseIPP, ForceDirect)
-                    Next Idx
-                End If
-            End With
-            Finish(FileProps, Stopper)
+            Logging(FileProps, "  Read data content and calculate statistics...")
 
-            'Calculate statistics
-            Stopper.Restart() : Stopper.Start()
-            Logging(FileProps, "  Calculate statistics ...")
-            Statistics = SingleStatCalc.ImageStatistics()
+            'We just combine 2 byte to 1 UInt16 value and count how often each of this value is present
+            'This will replace reading the complete data and calculate the histogram; the real data are not required in this step
+            Dim Histo As New Dictionary(Of UInt16, System.UInt64)
+            Dim OneMore As System.UInt32 = 1
+            Using DataReader As New System.IO.BinaryReader(System.IO.File.OpenRead(FileProps.FileName))
+                DataReader.BaseStream.Position = FileProps.DataStartPos
+                Dim OneLineBytes As Integer = 2 * FITSHeaderParser.Width
+                For X1 As Integer = 1 To FITSHeaderParser.Height
+                    Dim Buffer() As Byte = DataReader.ReadBytes(OneLineBytes)
+                    For BytesPtr As Integer = 0 To Buffer.Length - 2 Step 2
+                        Dim Pixel As UInt16 = CUShort(BitConverter.ToInt16({Buffer(BytesPtr + 1), Buffer(BytesPtr)}, 0) + 32768)
+                        If Histo.ContainsKey(Pixel) = False Then Histo.Add(Pixel, 0)
+                        Histo(Pixel) += OneMore
+                    Next BytesPtr
+                Next X1
+            End Using
             Finish(FileProps, Stopper)
 
             'Code book generation
             Stopper.Restart() : Stopper.Start()
             Logging(FileProps, "  Codebook generation ...")
-            Dim Dic As Dictionary(Of UInt16, ULong) = Statistics.MonochromHistogram_Uint16
-            Dim SFGen As New cShanFano(Of UInt16)
-            Logging(FileProps, "    ", SFGen.GenCodeBook(Dic))
+            Dim SFGen As New cShanFano
+            Logging(FileProps, "    ", SFGen.GenCodeBook(Histo))
             Finish(FileProps, Stopper)
 
             'Compression
             Stopper.Restart() : Stopper.Start()
             Logging(FileProps, "  Compression ...")
-            SFGen.Compress(SingleStatCalc.DataProcessor_UInt16.ImageData(0).Data)
+            Using DataReader As New System.IO.BinaryReader(System.IO.File.OpenRead(FileProps.FileName))
+                SFGen.Compress(DataReader, FileProps.DataStartPos, FITSHeaderParser.Width, FITSHeaderParser.Height)
+            End Using
             Finish(FileProps, Stopper)
 
             'Store
