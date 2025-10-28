@@ -339,7 +339,8 @@ Public Class frmGetObject
                 Dim TZI As TimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ObservatoryTZ.Result)
                 Dim TimeCalc As New cTimeZoneCalc("W. Europe Standard Time", TZI.Id)
                 Dim Now_DateOnly As New DateOnly(Now.Year, Now.Month, Now.Day)
-                Dim JD As Double = Astronomy.Net.JulianDate(Now)
+                Dim JD As Double = Astronomy.Net.JulianDate(Now_DateOnly)
+                Dim JDT As Double = Astronomy.Net.JulianDateTime(Now)
                 Dim ObjectHourAngle As Double = Double.NaN
                 Dim CurrentLocation As New Astronomy.Net.sLatLong(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
                 Dim CurrentObject As New Astronomy.Net.sRADec(SelectedObject.RA, SelectedObject.Dec)
@@ -366,7 +367,7 @@ Public Class frmGetObject
                 Details.Add(Sep)
                 AddEntry(Details, "UTC time", TimeCalc.UTCNowString)
                 AddEntry(Details, "JD", JD.ValRegIndep)
-                AddEntry(Details, "JDT", Astronomy.Net.JulianDateTime(Now).ValRegIndep)
+                AddEntry(Details, "JDT", JDT.ValRegIndep)
                 'AddEntry(Details, "GMST", Astronomy.Net.GMST(TimeCalc.UTCNow))
                 Details.Add("Observatory".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Name)
                 AddEntry(Details, "    Time", TimeCalc.ObservatoryString)
