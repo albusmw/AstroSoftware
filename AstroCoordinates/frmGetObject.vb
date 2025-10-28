@@ -1,5 +1,6 @@
 ﻿Option Explicit On
 Option Strict On
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ListView
 Imports AstroCoordinates.Astronomy.Net
 Imports AstroCoordinates.Ato
 Imports DocumentFormat.OpenXml.Office2013.Drawing.Chart
@@ -333,35 +334,45 @@ Public Class frmGetObject
         Else
             Try
                 'Display selected object information
+                Dim W2nd As Integer = 15
                 Dim ObservatoryTZ As GeoTimeZone.TimeZoneResult = GeoTimeZone.TimeZoneLookup.GetTimeZone(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
                 Dim TZI As TimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ObservatoryTZ.Result)
                 Dim TimeCalc As New cTimeZoneCalc("W. Europe Standard Time", TZI.Id)
+                Dim Now_DateOnly As New DateOnly(Now.Year, Now.Month, Now.Day)
+                Dim JD As Double = Astronomy.Net.JulianDate(Now)
                 Dim ObjectHourAngle As Double = Double.NaN
                 Dim CurrentLocation As New Astronomy.Net.sLatLong(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
                 Dim CurrentObject As New Astronomy.Net.sRADec(SelectedObject.RA, SelectedObject.Dec)
-                Dim Pos As Astronomy.Net.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, CurrentObject)
+                Dim Pos As Astronomy.Net.sAzAlt = Astronomy.Net.GetObjectPosition(CurrentUTC, CurrentLocation, CurrentObject)
+                'Dim Pos_ASCOM As Astronomy.Net.sAzAlt = GetObjectPosition_ASCOM(CurrentUTC, CurrentLocation, CurrentObject)
+                Dim CulmTime As DateTime = Astronomy.Net.GetNextObjectCulminationTime(DateTime.UtcNow, CurrentLocation, CurrentObject)
+                Dim Vis As Astronomy.Net.sVisibility = Astronomy.Net.GetRaiseAndSet(Now_DateOnly, CurrentLocation, CurrentObject)
                 Dim Details As New List(Of String)
                 Details.Add(SelectedObject.FullName(True) & " - Catalog: " & SelectedObject.Catalog)
                 Details.Add(Sep)
-                Details.Add(" mag".PadLeft(LeftWidth) & ": " & SelectedObject.Mag.ValRegIndep)
-                If SelectedObject.Diameter.IsEmpty = False Then Details.Add(" Size".PadLeft(LeftWidth) & ": " & SelectedObject.Diameter.Width.ValRegIndep & "x" & SelectedObject.Diameter.Height.ValRegIndep & " '")
-                If SelectedObject.HIP > 0 Then Details.Add(" HIP".PadLeft(LeftWidth) & ": " & SelectedObject.HIP.ToString.Trim)
-                If SelectedObject.HD > 0 Then Details.Add(" HD".PadLeft(LeftWidth) & ": " & SelectedObject.HD.ToString.Trim)
-                Details.Add("   RA".PadLeft(LeftWidth) & ": " & SelectedObject.RA.ToHMS)
-                Details.Add("   Dec".PadLeft(LeftWidth) & ": " & SelectedObject.Dec.ToDegMinSec)
-                Details.Add("   Alt".PadLeft(LeftWidth) & ":  " & Pos.Alt.ToDegMinSec)
-                Details.Add("   Az".PadLeft(LeftWidth) & ":  " & Pos.AZ.ToDegMinSec)
-                Details.Add("   Size".PadLeft(LeftWidth) & ":  " & SelectedObject.Diameter.Describe)
-                Details.Add("   Hour angle".PadLeft(LeftWidth) & ":  " & (ObjectHourAngle * (24 / 360)).ToHMS)
-                Details.Add("   Culmination".PadLeft(LeftWidth) & ":  " & Astronomy.Net.GetNextObjectCulminationTime(DateTime.UtcNow, CurrentLocation, CurrentObject).ToString)
+                AddEntry(Details, "   mag", SelectedObject.Mag.ValRegIndep)
+                AddEntry(Details, "   RA", SelectedObject.RA.ToHMS.PadLeft(W2nd, " "c) & " = " & SelectedObject.RA.ValRegIndep("00.00000") & " = " & (SelectedObject.RA * (180 / 12)).ValRegIndep("00.00000") & "°")
+                AddEntry(Details, "   Dec", SelectedObject.Dec.ToDegMinSec.PadLeft(W2nd, " "c) & " = " & SelectedObject.Dec.ValRegIndep("00.00000") & "°")
+                AddEntry(Details, "   Alt", Pos.Alt.ToDegMinSec.PadLeft(W2nd, " "c) & " = " & Pos.Alt.ValRegIndep("00.00000") & "°")
+                AddEntry(Details, "   Az", Pos.AZ.ToDegMinSec.PadLeft(W2nd, " "c) & " = " & Pos.AZ.ValRegIndep("00.00000") & "°")
+                AddEntry(Details, "   Size", SelectedObject.Diameter.Describe.PadLeft(W2nd, " "c))
+                AddEntry(Details, "   Hour angle", (ObjectHourAngle * (24 / 360)).ToHMS.PadLeft(W2nd, " "c))
+                AddEntry(Details, "   Raise Time", Vis.RaiseTime.ToString("HH:mm:ss").PadLeft(W2nd, " "c))
+                AddEntry(Details, "   Culmination", CulmTime.ToString("HH:mm:ss").PadLeft(W2nd, " "c))
+                AddEntry(Details, "   Set Time", Vis.SetTime.ToString("HH:mm:ss").PadLeft(W2nd, " "c))
+                If SelectedObject.Diameter.IsEmpty = False Then AddEntry(Details, "   Size", SelectedObject.Diameter.Width.ValRegIndep & "x" & SelectedObject.Diameter.Height.ValRegIndep & " '")
+                If SelectedObject.HIP > 0 Then AddEntry(Details, "   HIP", SelectedObject.HIP.ToString.Trim)
+                If SelectedObject.HD > 0 Then AddEntry(Details, "   HD", SelectedObject.HD.ToString.Trim)
                 Details.Add(Sep)
-                Details.Add("UTC time".PadRight(LeftWidth) & ": " & TimeCalc.UTCNowString)
+                AddEntry(Details, "UTC time", TimeCalc.UTCNowString)
+                AddEntry(Details, "JD", JD.ValRegIndep)
+                AddEntry(Details, "JDT", Astronomy.Net.JulianDateTime(Now).ValRegIndep)
+                'AddEntry(Details, "GMST", Astronomy.Net.GMST(TimeCalc.UTCNow))
                 Details.Add("Observatory".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Name)
-                Details.Add("    Time".PadRight(LeftWidth) & ": " & TimeCalc.ObservatoryString)
-                Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Astronomy.Net.LST(CurrentUTC, InView.Props.Observatory_Longitude).ValRegIndep)
-                Details.Add("    Siderial Time".PadRight(LeftWidth) & ": " & Ato.AstroCalc.LSTFormated(CurrentUTC, InView.Props.Observatory_Longitude))
-                Details.Add("    Latitude".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Latitude.ToDegMinSec)
-                Details.Add("    Longitude".PadRight(LeftWidth) & ": " & InView.Props.Observatory_Longitude.ToDegMinSec)
+                AddEntry(Details, "    Time", TimeCalc.ObservatoryString)
+                AddEntry(Details, "    Siderial Time", Astronomy.Net.LST(CurrentUTC, InView.Props.Observatory_Longitude).ValRegIndep & " = " & Astronomy.Net.LSTFormated(CurrentUTC, InView.Props.Observatory_Longitude))
+                AddEntry(Details, "    Latitude", InView.Props.Observatory_Latitude.ToDegMinSec.PadLeft(14, " "c) & " = " & InView.Props.Observatory_Latitude.ValRegIndep("00.00000"))
+                AddEntry(Details, "    Longitude", InView.Props.Observatory_Longitude.ToDegMinSec.PadLeft(14, " "c) & " = " & InView.Props.Observatory_Longitude.ValRegIndep("00.00000"))
                 tbDetails.Text = Join(Details.ToArray, System.Environment.NewLine)
             Catch ex As Exception
                 tbDetails.Text = "Calculation error: <" & ex.Message & ">"
@@ -375,6 +386,11 @@ Public Class frmGetObject
                 tsslObsCalcResult.Text = TuppleToSearch.Item1.ToString.Trim & ":" & TuppleToSearch.Item2.ToString.Trim & " -> ??? (entry not found)"
             End Try
         End If
+    End Sub
+
+    Private Sub AddEntry(ByRef L As List(Of String), ByVal Header As String, ByVal Value As String)
+        Dim LeftWidth As Integer = 18
+        L.Add(Header.PadRight(LeftWidth) & ": " & Value)
     End Sub
 
     '''<summary>Update the InView location.</summary>
@@ -429,6 +445,10 @@ Public Class frmGetObject
     End Sub
 
     Private Function GetObjectPosition_ASCOM(ByVal Moment As DateTime, ByVal CurrentLocation As Astronomy.Net.sLatLong, ByVal ObjectCoord As Astronomy.Net.sRADec) As Astronomy.Net.sAzAlt
+        Return GetObjectPosition_ASCOM(Moment, CurrentLocation, 0, ObjectCoord)
+    End Function
+
+    Private Function GetObjectPosition_ASCOM(ByVal Moment As DateTime, ByVal CurrentLocation As Astronomy.Net.sLatLong, ByVal SiteElevation As Double, ByVal ObjectCoord As Astronomy.Net.sRADec) As Astronomy.Net.sAzAlt
 
         'Use dynamically ASCOM calls
         Dim Util As New COMInterop.COMObj("ASCOM.Utilities.Util")
@@ -440,7 +460,7 @@ Public Class frmGetObject
         Trans.Set("JulianDateUTC", Julian)
         Trans.Set("SiteLatitude", CurrentLocation.Latitude)
         Trans.Set("SiteLongitude", CurrentLocation.Longitude)
-        Trans.Set("SiteElevation", CDbl(1700))
+        Trans.Set("SiteElevation", SiteElevation)
         Trans.Call("SetApparent", New Object() {ObjectCoord.RA, ObjectCoord.DEC})
         Dim RetVal As New Astronomy.Net.sAzAlt
         RetVal.Alt = CDbl(Trans.Get("ElevationTopocentric"))
@@ -618,6 +638,11 @@ Public Class frmGetObject
 
     Private Sub btnAccept_Click(sender As Object, e As EventArgs) Handles btnAccept.Click
         AcceptAndClose()
+    End Sub
+
+    Private Sub tsmiData_ToClipboard_Click(sender As Object, e As EventArgs) Handles tsmiData_ToClipboard.Click
+        Clipboard.Clear()
+        Clipboard.SetText(tbDetails.Text)
     End Sub
 
 End Class

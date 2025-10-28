@@ -225,48 +225,48 @@ Partial Class MainForm
         ' tsmiFile_OpenEXE
         ' 
         tsmiFile_OpenEXE.Name = "tsmiFile_OpenEXE"
-        tsmiFile_OpenEXE.Size = New Size(178, 22)
+        tsmiFile_OpenEXE.Size = New Size(180, 22)
         tsmiFile_OpenEXE.Text = "Open EXE folder"
         ' 
         ' tsmiFile_DropBoxCAT
         ' 
         tsmiFile_DropBoxCAT.Name = "tsmiFile_DropBoxCAT"
-        tsmiFile_DropBoxCAT.Size = New Size(178, 22)
+        tsmiFile_DropBoxCAT.Size = New Size(180, 22)
         tsmiFile_DropBoxCAT.Text = "Load Dropbox CAT"
         ' 
         ' tsmiFile_LoadVizier
         ' 
         tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
-        tsmiFile_LoadVizier.Size = New Size(178, 22)
+        tsmiFile_LoadVizier.Size = New Size(180, 22)
         tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
         ' 
         ' tsmiFile_VizieRTools
         ' 
         tsmiFile_VizieRTools.Name = "tsmiFile_VizieRTools"
-        tsmiFile_VizieRTools.Size = New Size(178, 22)
+        tsmiFile_VizieRTools.Size = New Size(180, 22)
         tsmiFile_VizieRTools.Text = "VizieR tools"
         ' 
         ' tsmiFile_AstroBin
         ' 
         tsmiFile_AstroBin.Name = "tsmiFile_AstroBin"
-        tsmiFile_AstroBin.Size = New Size(178, 22)
+        tsmiFile_AstroBin.Size = New Size(180, 22)
         tsmiFile_AstroBin.Text = "AstroBin around"
         ' 
         ' tsmiFile_InTheSky
         ' 
         tsmiFile_InTheSky.Name = "tsmiFile_InTheSky"
-        tsmiFile_InTheSky.Size = New Size(178, 22)
+        tsmiFile_InTheSky.Size = New Size(180, 22)
         tsmiFile_InTheSky.Text = "In the sky"
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(175, 6)
+        ToolStripMenuItem1.Size = New Size(177, 6)
         ' 
         ' tsmiFile_End
         ' 
         tsmiFile_End.Name = "tsmiFile_End"
-        tsmiFile_End.Size = New Size(178, 22)
+        tsmiFile_End.Size = New Size(180, 22)
         tsmiFile_End.Text = "Exit"
         ' 
         ' tsmiEnter

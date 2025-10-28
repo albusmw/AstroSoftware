@@ -176,7 +176,6 @@ Public Class MainForm
             .FieldRadiusMax = SearchRadius
             .TopPickOnly = True
         End With
-
     End Sub
 
     Private Sub tsmiFile_InTheSky_Click(sender As Object, e As EventArgs) Handles tsmiFile_InTheSky.Click
