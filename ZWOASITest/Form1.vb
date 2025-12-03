@@ -22,6 +22,13 @@ Public Class MyMainForm
     '''<summary>StreamDeck.</summary>
     Private WithEvents MyStreamDeck As OpenMacroBoard.SDK.IMacroBoard
 
+    Public Sub New()
+
+        ' This call is required by the designer.
+        InitializeComponent()
+
+    End Sub
+
     Private Class Flags
         Public Shared ResetStatHold As Boolean = False
         Public Shared StopNow As Boolean = False
@@ -60,6 +67,8 @@ Public Class MyMainForm
         'MIDI monitor
         MIDI = New cMIDIMonitor
         If MIDI.MIDIDeviceCount > 0 Then MIDI.SelectMidiDevice(0)
+
+        M.DB.ImageFromData.CM = cColorMaps.eMaps.None
 
         'StreamDeck
         'https://openmacroboard.github.io/
@@ -319,7 +328,7 @@ Public Class MyMainForm
 
         'Get the image data from the capture buffer
         Dim FirstOrientation As Integer = M.DB.CaptureDB.ROI.Width
-        M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data = M.DB.CaptureDB.ImgBufferer_UInt16.FlatTo2D(FirstOrientation)
+        M.DB.StatCalc.DataProcessor_UInt16.ImageData(0).Data = M.DB.CaptureDB.ImgBufferer_UInt16.FlatTo2D(FirstOrientation, False)
 
         Dim Data_Min As UInt16 = UInt16.MaxValue
         Dim Data_Max As UInt16 = UInt16.MinValue

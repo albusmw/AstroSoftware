@@ -57,14 +57,14 @@ Public Class cDB
     <ComponentModel.DisplayName("a) Capture mode")>
     <ComponentModel.TypeConverter(GetType(ComponentModelEx.EnumDesciptionConverter))>
     <ComponentModelEx.EnumDefaultValue(eCaptureMode.Video)>
-    Public Property Capture_Mode As eCaptureMode = eCaptureMode.Video
+    Public Property Capture_Mode As eCaptureMode = eCaptureMode.Still
 
     '''<summary>Exposure time [s].</summary>
     <ComponentModel.Category(Cat_CaptureControl)>
     <ComponentModel.DisplayName("b) Exposure time")>
     <ComponentModel.TypeConverter(GetType(ComponentModelEx.DoublePropertyConverter_s))>
-    <ComponentModel.DefaultValue(0.001)>
-    Public Property Capture_ExposureTime As Double = 0.02
+    <ComponentModel.DefaultValue(0.01)>
+    Public Property Capture_ExposureTime As Double = 0.01
 
     <ComponentModel.Browsable(False)>
     Public ReadOnly Property Capture_ExposureTime_us As Integer
