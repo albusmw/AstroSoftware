@@ -11,7 +11,7 @@ Public Class cCaptureDB
     '''<summary>Number of bytes per sample.</summary>
     Public ReadOnly Property BytePerSample As Integer = 2
     '''<summary>Helper to pin the buffer in order to access it via direct memory operations.</summary>
-    Public Pinner As New Ato.cDLLDynCall.cPinHandler
+    Public Pinner As New cDLLDynCall.cPinHandler
     '''<summary>The image buffer itself.</summary>
     Public ImgBufferer_UInt16() As UInt16 = Array.Empty(Of UShort)()
     '''<summary>Pointer to the buffer.</summary>
