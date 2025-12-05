@@ -24,29 +24,28 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="AstroStatistics.vb" />
+    <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="cDLLDynCall.vb" />
+    <Compile Include="..\..\MyLib\cDragDrop.vb" Link="cDragDrop.vb" />
+    <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="cIntelIPP.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
+    <Compile Include="..\..\MyLib\cSERFormat.vb" Link="cSERFormat.vb" />
+    <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="cStatMultiThread.vb" />
     <Compile Include="..\..\MyLib\Extensions.vb">
       <Link>MyLib\Extensions.vb</Link>
     </Compile>
     <Compile Include="..\..\MyLib\MathEx.vb" Link="MyLib\MathEx.vb" />
-    <Compile Include="..\..\src\atomics\AstroStatistics.vb">
-      <Link>AstroStatistics.vb</Link>
-    </Compile>
-    <Compile Include="..\..\src\atomics\cDLLDynCall.vb">
-      <Link>cDLLDynCall.vb</Link>
-    </Compile>
-    <Compile Include="..\..\src\atomics\cIntelIPP.vb">
-      <Link>cIntelIPP.vb</Link>
-    </Compile>
-    <Compile Include="..\..\src\atomics\cSERFormat.vb">
-      <Link>cSERFormat.vb</Link>
-    </Compile>
-    <Compile Include="..\..\src\atomics\cStatMultiThread.vb">
-      <Link>cStatMultiThread.vb</Link>
-    </Compile>
-    <Compile Include="..\..\src\atomics\DragDrop.vb" Link="src\DragDrop.vb" />
+    <Compile Include="..\..\MyLib\Utils.vb" Link="Utils.vb" />
     <Compile Include="..\..\src\atomics\SignalProcessing.vb" Link="src\SignalProcessing.vb" />
-    <Compile Include="..\..\src\atomics\Utils.vb" Link="src\Utils.vb" />
+    <COMReference Include="Shell32">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
     <Compile Update="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>

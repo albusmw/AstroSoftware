@@ -17,8 +17,8 @@ Public Class MyMainForm
     '''<summary>Statistics of the last frame.</summary>
     'Private LastStat As AstroNET.Statistics.sStatistics
 
-    Private DD1 As Ato.DragDrop
-    Private DD2 As Ato.DragDrop
+    Private DD1 As cDragDrop
+    Private DD2 As cDragDrop
 
     Private Sub tsmiFile_OpenSerSequence_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenSerSequence.Click
 
@@ -39,8 +39,8 @@ Public Class MyMainForm
         End If
         SingleStatCalc = New AstroNET.Statistics(IntelIPP)
         'Drag-and-drop
-        DD1 = New Ato.DragDrop(tbSERFile, True)
-        DD2 = New Ato.DragDrop(tbPWI4LogFile, True)
+        DD1 = New cDragDrop(tbSERFile, True)
+        DD2 = New cDragDrop(tbPWI4LogFile, True)
     End Sub
 
     Private Sub btnAnalysis_Click(sender As Object, e As EventArgs) Handles btnAnalysis.Click
@@ -191,7 +191,7 @@ Public Class MyMainForm
             Next col
             Dim FileToGenerate As String = IO.Path.Combine(MyPath, "SERFocus.xlsx")
             workbook.SaveAs(FileToGenerate)
-            Ato.Utils.StartWithItsEXE(FileToGenerate)
+            Utils.StartWithItsEXE(FileToGenerate)
         End Using
 
     End Sub
