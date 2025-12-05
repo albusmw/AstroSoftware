@@ -5,7 +5,7 @@ Option Strict On
 
 Public Class frmCreateSlideShow
 
-    Public WithEvents DD1 As cDragDrop
+    Private WithEvents DD1 As cDragDrop
     Public SlideShow As New cCreateSlideShow
     Public Files As New List(Of String)
 
