@@ -23,8 +23,11 @@ Partial Class MyMainForm
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         msMain = New MenuStrip()
-        FileToolStripMenuItem = New ToolStripMenuItem()
+        tsmiFile = New ToolStripMenuItem()
         tsmiFile_OpenSerSequence = New ToolStripMenuItem()
+        tsmiFile_Save = New ToolStripMenuItem()
+        tsmiFile_Save_GlobalMin = New ToolStripMenuItem()
+        tsmiFile_Save_GlobalMax = New ToolStripMenuItem()
         ofdMain = New OpenFileDialog()
         gbStatus = New GroupBox()
         tbLog = New TextBox()
@@ -36,32 +39,52 @@ Partial Class MyMainForm
         tbPWI4LogFile = New TextBox()
         Label3 = New Label()
         btnAnalysis = New Button()
+        btnSetSERFile = New Button()
         msMain.SuspendLayout()
         gbStatus.SuspendLayout()
         SuspendLayout()
         ' 
         ' msMain
         ' 
-        msMain.Items.AddRange(New ToolStripItem() {FileToolStripMenuItem})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiFile})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
         msMain.Padding = New Padding(7, 2, 0, 2)
-        msMain.Size = New Size(760, 24)
+        msMain.Size = New Size(703, 24)
         msMain.TabIndex = 0
         msMain.Text = "MenuStrip1"
         ' 
-        ' FileToolStripMenuItem
+        ' tsmiFile
         ' 
-        FileToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenSerSequence})
-        FileToolStripMenuItem.Name = "FileToolStripMenuItem"
-        FileToolStripMenuItem.Size = New Size(37, 20)
-        FileToolStripMenuItem.Text = "File"
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenSerSequence, tsmiFile_Save})
+        tsmiFile.Name = "tsmiFile"
+        tsmiFile.Size = New Size(37, 20)
+        tsmiFile.Text = "File"
         ' 
         ' tsmiFile_OpenSerSequence
         ' 
         tsmiFile_OpenSerSequence.Name = "tsmiFile_OpenSerSequence"
-        tsmiFile_OpenSerSequence.Size = New Size(178, 22)
+        tsmiFile_OpenSerSequence.Size = New Size(180, 22)
         tsmiFile_OpenSerSequence.Text = "Open SER sequence"
+        ' 
+        ' tsmiFile_Save
+        ' 
+        tsmiFile_Save.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_Save_GlobalMin, tsmiFile_Save_GlobalMax})
+        tsmiFile_Save.Name = "tsmiFile_Save"
+        tsmiFile_Save.Size = New Size(180, 22)
+        tsmiFile_Save.Text = "Save ..."
+        ' 
+        ' tsmiFile_Save_GlobalMin
+        ' 
+        tsmiFile_Save_GlobalMin.Name = "tsmiFile_Save_GlobalMin"
+        tsmiFile_Save_GlobalMin.Size = New Size(156, 22)
+        tsmiFile_Save_GlobalMin.Text = "Global MIN file"
+        ' 
+        ' tsmiFile_Save_GlobalMax
+        ' 
+        tsmiFile_Save_GlobalMax.Name = "tsmiFile_Save_GlobalMax"
+        tsmiFile_Save_GlobalMax.Size = New Size(156, 22)
+        tsmiFile_Save_GlobalMax.Text = "Global MAX file"
         ' 
         ' ofdMain
         ' 
@@ -78,7 +101,7 @@ Partial Class MyMainForm
         gbStatus.Margin = New Padding(4, 3, 4, 3)
         gbStatus.Name = "gbStatus"
         gbStatus.Padding = New Padding(4, 3, 4, 3)
-        gbStatus.Size = New Size(734, 396)
+        gbStatus.Size = New Size(677, 382)
         gbStatus.TabIndex = 1
         gbStatus.TabStop = False
         gbStatus.Text = "Status"
@@ -92,14 +115,14 @@ Partial Class MyMainForm
         tbLog.Name = "tbLog"
         tbLog.ReadOnly = True
         tbLog.ScrollBars = ScrollBars.Both
-        tbLog.Size = New Size(720, 336)
+        tbLog.Size = New Size(663, 322)
         tbLog.TabIndex = 4
         tbLog.WordWrap = False
         ' 
         ' tImageStream
         ' 
         tImageStream.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        tImageStream.Location = New Point(646, 33)
+        tImageStream.Location = New Point(589, 33)
         tImageStream.Margin = New Padding(4, 0, 4, 0)
         tImageStream.Name = "tImageStream"
         tImageStream.Size = New Size(82, 15)
@@ -113,7 +136,7 @@ Partial Class MyMainForm
         pbImageStream.Location = New Point(107, 33)
         pbImageStream.Margin = New Padding(4, 3, 4, 3)
         pbImageStream.Name = "pbImageStream"
-        pbImageStream.Size = New Size(531, 15)
+        pbImageStream.Size = New Size(474, 15)
         pbImageStream.TabIndex = 2
         ' 
         ' Label1
@@ -131,9 +154,9 @@ Partial Class MyMainForm
         tbSERFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbSERFile.Location = New Point(91, 27)
         tbSERFile.Name = "tbSERFile"
-        tbSERFile.Size = New Size(657, 23)
+        tbSERFile.Size = New Size(532, 23)
         tbSERFile.TabIndex = 2
-        tbSERFile.Text = "\\192.168.100.10\dsc\2024_10_23 - Focus Videos\Focus Ha\04_42_51.ser"
+        tbSERFile.Text = "C:\!Work\Focus\05_48_38.ser"
         ' 
         ' Label2
         ' 
@@ -149,9 +172,8 @@ Partial Class MyMainForm
         tbPWI4LogFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbPWI4LogFile.Location = New Point(91, 56)
         tbPWI4LogFile.Name = "tbPWI4LogFile"
-        tbPWI4LogFile.Size = New Size(657, 23)
+        tbPWI4LogFile.Size = New Size(600, 23)
         tbPWI4LogFile.TabIndex = 4
-        tbPWI4LogFile.Text = "\\192.168.100.10\dsc\2024_10_23 - Focus Videos\Focus Ha\04_42_51.log"
         ' 
         ' Label3
         ' 
@@ -164,18 +186,30 @@ Partial Class MyMainForm
         ' 
         ' btnAnalysis
         ' 
+        btnAnalysis.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         btnAnalysis.Location = New Point(14, 85)
         btnAnalysis.Name = "btnAnalysis"
-        btnAnalysis.Size = New Size(657, 29)
+        btnAnalysis.Size = New Size(676, 29)
         btnAnalysis.TabIndex = 6
         btnAnalysis.Text = "Analysis"
         btnAnalysis.UseVisualStyleBackColor = True
+        ' 
+        ' btnSetSERFile
+        ' 
+        btnSetSERFile.Anchor = AnchorStyles.Top Or AnchorStyles.Right
+        btnSetSERFile.Location = New Point(629, 27)
+        btnSetSERFile.Name = "btnSetSERFile"
+        btnSetSERFile.Size = New Size(61, 23)
+        btnSetSERFile.TabIndex = 7
+        btnSetSERFile.Text = "..."
+        btnSetSERFile.UseVisualStyleBackColor = True
         ' 
         ' MyMainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(760, 528)
+        ClientSize = New Size(703, 514)
+        Controls.Add(btnSetSERFile)
         Controls.Add(btnAnalysis)
         Controls.Add(Label3)
         Controls.Add(tbPWI4LogFile)
@@ -197,7 +231,7 @@ Partial Class MyMainForm
     End Sub
 
     Friend WithEvents msMain As MenuStrip
-    Friend WithEvents FileToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents tsmiFile As ToolStripMenuItem
     Friend WithEvents tsmiFile_OpenSerSequence As ToolStripMenuItem
     Friend WithEvents ofdMain As OpenFileDialog
     Friend WithEvents gbStatus As GroupBox
@@ -210,4 +244,8 @@ Partial Class MyMainForm
     Friend WithEvents Label3 As Label
     Friend WithEvents btnAnalysis As Button
     Friend WithEvents tbLog As TextBox
+    Friend WithEvents tsmiFile_Save As ToolStripMenuItem
+    Friend WithEvents tsmiFile_Save_GlobalMin As ToolStripMenuItem
+    Friend WithEvents tsmiFile_Save_GlobalMax As ToolStripMenuItem
+    Friend WithEvents btnSetSERFile As Button
 End Class

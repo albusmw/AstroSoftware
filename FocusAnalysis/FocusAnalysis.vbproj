@@ -27,6 +27,7 @@
     <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="AstroStatistics.vb" />
     <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="cDLLDynCall.vb" />
     <Compile Include="..\..\MyLib\cDragDrop.vb" Link="cDragDrop.vb" />
+    <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="cFITSHeaderKeywords.vb" />
     <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="cIntelIPP.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
     <Compile Include="..\..\MyLib\cSERFormat.vb" Link="cSERFormat.vb" />
@@ -36,6 +37,8 @@
     </Compile>
     <Compile Include="..\..\MyLib\MathEx.vb" Link="MyLib\MathEx.vb" />
     <Compile Include="..\..\MyLib\Utils.vb" Link="Utils.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
     <Compile Include="..\..\src\atomics\SignalProcessing.vb" Link="src\SignalProcessing.vb" />
     <COMReference Include="Shell32">
       <WrapperTool>tlbimp</WrapperTool>
