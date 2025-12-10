@@ -1,0 +1,3 @@
+- Enter a typical star size; if a big ROI is selected there is only a small amount of stars, so maybe the 50pct is not enough for a clear dip on optimum focus
+- Check the used dynamics (if the star is "off screen", there is no dynamics any more ...)
+- Add a property groud window for ROI, ...

@@ -24,19 +24,24 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="AstroStatistics.vb" />
-    <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="cDLLDynCall.vb" />
-    <Compile Include="..\..\MyLib\cDragDrop.vb" Link="cDragDrop.vb" />
-    <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="cFITSHeaderKeywords.vb" />
-    <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="cIntelIPP.vb" />
+    <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="MyLib\AstroStatistics.vb" />
+    <Compile Include="..\..\MyLib\cColorMaps.vb" Link="MyLib\cColorMaps.vb" />
+    <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
+    <Compile Include="..\..\MyLib\cDragDrop.vb" Link="MyLib\cDragDrop.vb" />
+    <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\MyLib\cImageFromData.vb" Link="MyLib\cImageFromData.vb" />
+    <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="MyLib\cIntelIPP.vb" />
+    <Compile Include="..\..\MyLib\cLockBitmap.vb" Link="MyLib\cLockBitmap.vb" />
     <Compile Include="..\..\MyLib\CodeUtils.vb" Link="MyLib\CodeUtils.vb" />
-    <Compile Include="..\..\MyLib\cSERFormat.vb" Link="cSERFormat.vb" />
-    <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="cStatMultiThread.vb" />
-    <Compile Include="..\..\MyLib\Extensions.vb">
-      <Link>MyLib\Extensions.vb</Link>
-    </Compile>
+    <Compile Include="..\..\MyLib\ComponentModelConverter.vb" Link="MyLib\ComponentModelConverter.vb" />
+    <Compile Include="..\..\MyLib\cSERFormat.vb" Link="MyLib\cSERFormat.vb" />
+    <Compile Include="..\..\MyLib\cStatMultiThread.vb" Link="MyLib\cStatMultiThread.vb" />
+    <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb=" />
     <Compile Include="..\..\MyLib\MathEx.vb" Link="MyLib\MathEx.vb" />
-    <Compile Include="..\..\MyLib\Utils.vb" Link="Utils.vb" />
+    <Compile Include="..\..\MyLib\PictureBoxEx.vb" Link="MyLib\PictureBoxEx.vb" />
+    <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
+	<Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
+	<Compile Include="..\..\MyLib\cLogTextBox.vb" Link="MyLib\cLogTextBox.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
     <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
     <Compile Include="..\..\src\atomics\SignalProcessing.vb" Link="src\SignalProcessing.vb" />
@@ -71,11 +76,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.95.4" />
-    <PackageReference Include="DocumentFormat.OpenXml" Version="2.7.2" />
-    <PackageReference Include="ExcelNumberFormat" Version="1.0.10" />
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+    <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.IO.Packaging" Version="8.0.1" />
+    <PackageReference Include="System.IO.Packaging" Version="10.0.0" />
+    <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />

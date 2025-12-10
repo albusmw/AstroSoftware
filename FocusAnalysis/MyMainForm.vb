@@ -4,14 +4,7 @@ Option Strict On
 #Disable Warning CA1416 ' Validate platform compatibility
 Public Class MyMainForm
 
-    Private IPPPath As String = String.Empty
-
-    '''<summary>Handle to Intel IPP functions.</summary>
-    Private IntelIPP As cIntelIPP
-
-    '''<summary>Statistics of the last frame.</summary>
-    'Private LastStat As AstroNET.Statistics.sStatistics
-
+    Private DB As New cDB
     Private DD1 As cDragDrop
     Private DD2 As cDragDrop
 
@@ -34,10 +27,28 @@ Public Class MyMainForm
         Public Const Max_ADUValueCount As String = "# pixel" & vbCrLf & "with peak value"
     End Class
 
+    Private Sub MyMainForm_Load(sender As Object, e As EventArgs) Handles Me.Load
+        'Load IPP
+        Dim IPPLoadError As String = String.Empty
+        DB.IPPPath = cIntelIPP.SearchDLLToUse(cIntelIPP.PossiblePaths(DB.Config.MyPath).ToArray, IPPLoadError)
+        If String.IsNullOrEmpty(IPPLoadError) = True Then
+            DB.IntelIPP = New cIntelIPP(DB.IPPPath)
+        End If
+        DB.OriginalFrame = New AstroNET.Statistics(DB.IntelIPP)
+        DB.NoBiasFrame = New AstroNET.Statistics(DB.IntelIPP)
+        DB.Plotter = New cZEDGraph(zgcMain)
+        DB.HistoPlot = New cZEDGraph(zgcHisto)
+        DB.Log = New cLogTextBox(tbLog)
+        pgMain.SelectedObject = DB.Config
+        'Drag-and-drop
+        DD1 = New cDragDrop(tbSERFile, True)
+        DD2 = New cDragDrop(tbPWI4LogFile, True)
+    End Sub
+
     Private Sub tsmiFile_OpenSerSequence_Click(sender As Object, e As EventArgs) Handles tsmiFile_OpenSerSequence.Click
         Dim FileName As String = tbSERFile.Text
         If System.IO.File.Exists(FileName) Then
-            Dim EXEToUse As String = DB.SERPlayer
+            Dim EXEToUse As String = DB.Config.SERPlayer
             If System.IO.File.Exists(EXEToUse) = False Then EXEToUse = Utils.GetOpenWithEXE(FileName)
             Dim SI As New ProcessStartInfo
             With SI
@@ -49,44 +60,31 @@ Public Class MyMainForm
         End If
     End Sub
 
-    Private Sub MyMainForm_Load(sender As Object, e As EventArgs) Handles Me.Load
-        'Load IPP
-        Dim IPPLoadError As String = String.Empty
-        IPPPath = cIntelIPP.SearchDLLToUse(cIntelIPP.PossiblePaths(DB.MyPath).ToArray, IPPLoadError)
-        If String.IsNullOrEmpty(IPPLoadError) = True Then
-            IntelIPP = New cIntelIPP(IPPPath)
-        End If
-        DB.OriginalFrame = New AstroNET.Statistics(IntelIPP)
-        DB.NoBiasFrame = New AstroNET.Statistics(IntelIPP)
-        'Drag-and-drop
-        DD1 = New cDragDrop(tbSERFile, True)
-        DD2 = New cDragDrop(tbPWI4LogFile, True)
-    End Sub
-
     Private Sub btnAnalysis_Click(sender As Object, e As EventArgs) Handles btnAnalysis.Click
         Analysis()
     End Sub
 
     Private Sub Analysis()
 
-        tbLog.Text = String.Empty
+        DB.Log.Clear()
 
         'Load PWI4 file
         Dim PWI4Log As List(Of KeyValuePair(Of DateTime, Double)) = LoadPWI4Log(tbPWI4LogFile.Text)
         If IsNothing(PWI4Log) = False Then
-            tbLog.Text &= "PWI4Log first moment: " & PWI4Log.First.Key.LongWithMS & System.Environment.NewLine
-            tbLog.Text &= "PWI4Log last moment : " & PWI4Log.Last.Key.LongWithMS & System.Environment.NewLine
+            DB.Log.Log("PWI4Log first moment: " & PWI4Log.First.Key.LongWithMS)
+            DB.Log.Log("PWI4Log last moment : " & PWI4Log.Last.Key.LongWithMS)
         Else
-            tbLog.Text &= "PWI4Log not found." & System.Environment.NewLine
+            DB.Log.Log("PWI4Log not found.")
         End If
-
 
         'Open the SER file
         Dim BinaryIN As New System.IO.BinaryReader(System.IO.File.OpenRead(tbSERFile.Text))
         Dim SERHeader As New cSERFormat.cSERHeader(BinaryIN)
         Dim TimeStamps As DateTime() = SERHeader.ReadTrailer(BinaryIN)
-        tbLog.Text &= "SER first moment    : " & TimeStamps.First.LongWithMS & System.Environment.NewLine
-        tbLog.Text &= "SER last moment     : " & TimeStamps.Last.LongWithMS & System.Environment.NewLine
+        DB.Log.Log("Frames              : " & SERHeader.FrameCount.ValRegIndep)
+        DB.Log.Log("Size                : " & SERHeader.FrameWidth.ValRegIndep & "x" & SERHeader.FrameWidth.ValRegIndep)
+        DB.Log.Log("SER first moment    : " & TimeStamps.First.LongWithMS)
+        DB.Log.Log("SER last moment     : " & TimeStamps.Last.LongWithMS)
         DB.SERFileNoExtension = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(tbSERFile.Text), System.IO.Path.GetFileNameWithoutExtension(tbSERFile.Text))
 
         'Exit if the stream is not OK or there are no 16 bit per pixel
@@ -94,22 +92,35 @@ Public Class MyMainForm
         If SERHeader.BytePerPixel <> 2 Then Exit Sub
 
         'Prepare buffers
-        DB.OriginalFrame.ResetAllProcessors()
+        'DB.OriginalFrame.ResetAllProcessors()
         DB.NoBiasFrame.ResetAllProcessors()
-        Dim FullFrameSize As Integer = CInt(SERHeader.FrameWidth * SERHeader.FrameHeight * SERHeader.BytePerPixel)
-        ReDim DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1)
+        Dim ROI_Full As New Rectangle(0, 0, SERHeader.FrameWidth, SERHeader.FrameHeight)
+        Dim ROI As Rectangle
+        If DB.Config.ROIPct <> 100.0 Then
+            ROI = ROI_Full.InnerPct(DB.Config.ROIPct)
+        Else
+            ROI = ROI_Full
+        End If
+        Dim FullFrameSize As Integer = CInt(ROI.Width * ROI.Height * SERHeader.BytePerPixel)
+        ReDim DB.Trace_Indicator(SERHeader.FrameCount - 1) : DB.Trace_Indicator.Init(Double.NaN)
+        ReDim DB.Trace_OVLD(SERHeader.FrameCount - 1) : DB.Trace_OVLD.Init(Double.NaN)
+        ReDim DB.Trace_TotalEnergy(SERHeader.FrameCount - 1) : DB.Trace_TotalEnergy.Init(Double.NaN)
 
         '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
         '1st run: global maximum and minimum
+        ReDim DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1)
+        pbImageStream.Maximum = SERHeader.FrameCount
+
+        'Global MIN and Global MAX are always done on the full frame
         ReDim DB.GlobalMax(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1) : DB.GlobalMax.Init(UInt16.MinValue)
         ReDim DB.GlobalMin(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1) : DB.GlobalMin.Init(UInt16.MaxValue)
-        pbImageStream.Maximum = SERHeader.FrameCount
+
         For FrameCountIdx As Integer = 0 To SERHeader.FrameCount - 1
-            IntelIPP.Transpose(BinaryIN.ReadBytes(FullFrameSize), DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data)
+            DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data = GetSERROI(BinaryIN, SERHeader.FrameWidth, SERHeader.FrameHeight, ROI_Full)
             DB.GlobalMax = DB.GlobalMax.MaximumPerElement(DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data)
             DB.GlobalMin = DB.GlobalMin.MinimumPerElement(DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data)
             pbImageStream.Value = FrameCountIdx
-            tImageStream.Text = FrameCountIdx.ValRegIndep & "/" & pbImageStream.Maximum.ValRegIndep
+            tsslImageStream.Text = FrameCountIdx.ValRegIndep & "/" & pbImageStream.Maximum.ValRegIndep
             De()
         Next FrameCountIdx
 
@@ -143,27 +154,39 @@ Public Class MyMainForm
         Dim FocusFit_Y As New List(Of Double)
 
         'Move over all frames
+        DB.Plotter.Clear()
+        DB.HistoPlot.ManuallyScaleXAxisLin(0, 65536)
         For FrameCountIdx As Integer = 0 To SERHeader.FrameCount - 1
 
             'Show status start
             pbImageStream.Value = FrameCountIdx
-            tImageStream.Text = FrameCountIdx.ValRegIndep & "/" & pbImageStream.Maximum.ValRegIndep
+            tsslImageStream.Text = FrameCountIdx.ValRegIndep & "/" & pbImageStream.Maximum.ValRegIndep
             De()
 
-            'Get timestamp and focus informations stored
+            'Get timestamp
             Dim FrameResult As New Dictionary(Of String, Object)
-            Dim BestFocus As KeyValuePair(Of DateTime, Double) = FocusInMoment(PWI4Log, TimeStamps(FrameCountIdx))
-
             FrameResult.Add(ExcelRows.Frame, FrameCountIdx)                                         'frame idx
             FrameResult.Add(ExcelRows.SERTime, TimeStamps(FrameCountIdx).LongWithMS)                'frame time stamp
-            FrameResult.Add(ExcelRows.Foc_Moment, BestFocus.Key.LongWithMS)                         'focus time stamp
-            FrameResult.Add(ExcelRows.Foc_Pos, BestFocus.Value)                                     'focus position
+
+            'Get focus informations stored
+            Dim BestFocus As KeyValuePair(Of DateTime, Double) = FocusInMoment(PWI4Log, TimeStamps(FrameCountIdx))
+            If Double.IsNaN(BestFocus.Value) = False Then
+                FrameResult.Add(ExcelRows.Foc_Moment, BestFocus.Key.LongWithMS)                         'focus time stamp
+                FrameResult.Add(ExcelRows.Foc_Pos, BestFocus.Value)                                     'focus position
+            Else
+                FrameResult.Add(ExcelRows.Foc_Moment, "---")
+                FrameResult.Add(ExcelRows.Foc_Pos, "---")
+            End If
 
             '1.) Read in 1 frame and convert to 2-byte data type - TODO: Little / Big Endian
-            IntelIPP.Transpose(BinaryIN.ReadBytes(FullFrameSize), DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data)
+            DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data = GetSERROI(BinaryIN, SERHeader.FrameWidth, SERHeader.FrameHeight, ROI)
+            Dim SamplesPerFrame As Long = DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data.LongLength
 
-            '2.) Calculate original statistics and report this
+            'Calculate original statistics and display the image
             DB.OriginalFrame_Stat = DB.OriginalFrame.ImageStatistics
+            UpdateSERFrameImage(DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data, DB.OriginalFrame_Stat)
+
+            'Report statistics
             FrameResult.Add(ExcelRows.Min_ADUValue, DB.OriginalFrame_Stat.MonochromHistogram_Int.First.Key)
             FrameResult.Add(ExcelRows.Min_ADUValueCount, DB.OriginalFrame_Stat.MonochromHistogram_Int.First.Value)
             FrameResult.Add(ExcelRows.Max_ADUValue, DB.OriginalFrame_Stat.MonochromHistogram_Int.Last.Key)
@@ -173,8 +196,54 @@ Public Class MyMainForm
             FrameResult.Add(ExcelRows.Energy_20pct, AstroNET.Statistics.FocusQualityIndicator(DB.OriginalFrame_Stat.MonochromHistogram_Int, 20.0))
             FrameResult.Add(ExcelRows.Energy_50pct, AstroNET.Statistics.FocusQualityIndicator(DB.OriginalFrame_Stat.MonochromHistogram_Int, 50.0))
 
-            '3.) Subtract the "master dark" (per-pixel minimum value) and report this
-            DB.NoBiasFrame.DataProcessor_UInt16.ImageData(0).Data = DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data.Subtract(DB.GlobalMin)
+            tbSummary.Text = Join(DB.OriginalFrame_Stat.StatisticsReport(True, False).ToArray, System.Environment.NewLine)
+
+            'Calculate CCDF
+            Dim CCDF_X As Double() = {}
+            Dim CCDF_Y As Double() = {}
+            AstroNET.Statistics.CountCCDF(DB.OriginalFrame_Stat.MonochromHistogram_Int, SamplesPerFrame, CCDF_X, CCDF_Y)
+
+            'Plot histogram and CCDF
+            DB.HistoPlot.PlotXvsY("CCDF", CCDF_X, CCDF_Y, New cZEDGraph.sGraphStyle(Color.Blue))
+            'DB.HistoPlot.PlotXvsY("Histo", DB.OriginalFrame_Stat.MonochromHistogram_Int, New cZEDGraph.sGraphStyle(Color.Blue))
+            If FrameCountIdx = 0 Then
+                DB.HistoPlot.ManuallyScaleYAxisLog(1 / SamplesPerFrame, 1)
+                DB.HistoPlot.ManuallyScaleXAxisLin(0, 65535)
+            End If
+            DB.HistoPlot.ForceUpdate()
+
+            'Overload indication
+            Dim OVLD_Pixel As ULong = 0
+            Dim MaxADU_Value As Long = DB.OriginalFrame_Stat.MonochromHistogram_Int.Last.Key
+            Dim MaxADU_Count As ULong = DB.OriginalFrame_Stat.MonochromHistogram_Int.Last.Value
+            If MaxADU_Value >= UInt16.MaxValue - 1 Then
+                If MaxADU_Count > 3 Then
+                    OVLD_Pixel = MaxADU_Count
+                    tsslADUOVLD.Text = "ADU OVLD (#: " & MaxADU_Count.ValRegIndep & ")"
+                    tsslADUOVLD.BackColor = Color.Red
+                Else
+                    tsslADUOVLD.Text = "ADU critical (#: " & MaxADU_Count.ValRegIndep & ")"
+                    tsslADUOVLD.BackColor = Color.Orange
+                End If
+            Else
+                tsslADUOVLD.Text = "ADU ok (max: " & MaxADU_Value.ValRegIndep & ")"
+                tsslADUOVLD.BackColor = Color.Green
+            End If
+            pbMaxADU.Value = CInt(MaxADU_Value)
+
+            '3.) Subtract the bias value
+            Dim SubtraceMode As Integer = 2
+            Select Case SubtraceMode
+                Case 1
+                    'Subtrace per-pixel min
+                    DB.NoBiasFrame.DataProcessor_UInt16.ImageData(0).Data = DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data.Subtract(DB.GlobalMin)
+                Case 2
+                    'Subtrace the minimum ADU value of the frame from all pixel
+                    DB.NoBiasFrame.DataProcessor_UInt16.ImageData(0).Data = DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data.CreateCopy
+                    DB.IntelIPP.SubC(DB.NoBiasFrame.DataProcessor_UInt16.ImageData(0).Data, CType(DB.OriginalFrame_Stat.MonochromHistogram_Int.First.Key, UShort))
+            End Select
+
+            'Statistics and report this
             DB.NoBiasFrame_Stat = DB.NoBiasFrame.ImageStatistics
             FrameResult.Add(ExcelRows.Sum_NoBias, AstroNET.Statistics.TotalEnergy(DB.NoBiasFrame_Stat.MonochromHistogram_Int))
             FrameResult.Add(ExcelRows.NoBias_Energy_10pct, AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 10.0))
@@ -189,6 +258,20 @@ Public Class MyMainForm
             '5.) Process focus relevant data
             'FrameResult.Add(ExcelRows.Sum_NoBias, AstroNET.Statistics.TotalEnergy(Stat_NoBias.MonochromHistogram_Int))
 
+            Dim XAxisMax As Double = Double.MinValue
+            DB.Trace_Indicator(FrameCountIdx) = AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPCT) : XAxisMax = Double.Max(XAxisMax, DB.Trace_Indicator.Max)
+            DB.Trace_OVLD(FrameCountIdx) = OVLD_Pixel : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max)
+            DB.Trace_TotalEnergy(FrameCountIdx) = AstroNET.Statistics.TotalEnergy(DB.NoBiasFrame_Stat.MonochromHistogram_Int)
+
+            DB.Plotter.PlotData("Total energy", DB.Trace_TotalEnergy, True)
+            DB.Plotter.PlotData("Pixel for " & DB.Config.EnergyPCT & " % of total energy", DB.Trace_Indicator, New cZEDGraph.sGraphStyle(Color.DarkGreen))
+            DB.Plotter.PlotData("OVLD pixel", DB.Trace_OVLD, New cZEDGraph.sGraphStyle(Color.Violet, cZEDGraph.eCurveMode.LinesAndPoints))
+
+            'Scale and update
+            DB.Plotter.ManuallyScaleXAxisLin(0, DB.Trace_Indicator.Length)
+            DB.Plotter.ManuallyScaleYAxisLin(0, XAxisMax)
+            DB.Plotter.ManuallyScaleY2AxisLog(0, DB.Trace_TotalEnergy.Max)
+            DB.Plotter.ForceUpdate()
 
             '6.) Store results
             Dim ExcelRow As New List(Of Object)
@@ -202,22 +285,26 @@ Public Class MyMainForm
                 FocusFit_Y.Add(AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 10.0))
             End If
 
+            'Slow down
+            If DB.Config.WaitOnNextFrame > 0 Then System.Threading.Thread.Sleep(DB.Config.WaitOnNextFrame)
+
         Next FrameCountIdx
 
         'Fit polynomial
         Dim FitPolynom As Double() = {}
         SignalProcessing.RegressPoly(FocusFit_X.ToArray, FocusFit_Y.ToArray, 2, FitPolynom)
-        tbLog.Text &= "FitPolynom - A0: " & FitPolynom(0).ValRegIndep & System.Environment.NewLine      'c
-        tbLog.Text &= "FitPolynom - A1: " & FitPolynom(1).ValRegIndep & System.Environment.NewLine      'b*x
-        tbLog.Text &= "FitPolynom - A2: " & FitPolynom(2).ValRegIndep & System.Environment.NewLine      'a*x²
+        DB.Log.Log("FitPolynom - A0: " & FitPolynom(0).ValRegIndep)      'c
+        DB.Log.Log("FitPolynom - A1: " & FitPolynom(1).ValRegIndep)      'b*x
+        DB.Log.Log("FitPolynom - A2: " & FitPolynom(2).ValRegIndep)      'a*x²
 
         'Calculate zero point of deviation
         Dim OptFocus As Double = (-FitPolynom(1)) / (2 * FitPolynom(2))
-        tbLog.Text &= "OptFocus: " & OptFocus.ValRegIndep & System.Environment.NewLine
+        DB.Log.Log("OptFocus: " & OptFocus.ValRegIndep)
 
         'Indicate finished
         pbImageStream.Value = 0
-        tImageStream.Text = pbImageStream.Maximum.ValRegIndep & " frames loaded"
+        pbMaxADU.Value = 0
+        tsslImageStream.Text = pbImageStream.Maximum.ValRegIndep & " frames loaded"
         De()
 
         '4) Build EXCEL output, save and open
@@ -230,12 +317,24 @@ Public Class MyMainForm
             For Each col In WorkSheet_Single.ColumnsUsed
                 col.AdjustToContents()
             Next col
-            Dim FileToGenerate As String = IO.Path.Combine(DB.MyPath, "SERFocus.xlsx")
-            workbook.SaveAs(FileToGenerate)
-            Utils.StartWithItsEXE(FileToGenerate)
+            If String.IsNullOrEmpty(DB.Config.ExcelFileName) = False Then
+                Dim FileToGenerate As String = IO.Path.Combine(DB.Config.MyPath, DB.Config.ExcelFileName)
+                workbook.SaveAs(FileToGenerate)
+                Utils.StartWithItsEXE(FileToGenerate)
+            End If
         End Using
 
     End Sub
+
+    Public Function GetSERROI(ByRef BinaryIN As System.IO.BinaryReader, ByVal Width As Integer, ByVal Height As Integer, ByVal ROI As Rectangle) As UInt16(,)
+        Dim FullFrameSize As Integer = Width * Height * 2
+        Dim FullFrame(Width - 1, Height - 1) As UInt16
+        DB.IntelIPP.Transpose(BinaryIN.ReadBytes(FullFrameSize), FullFrame)
+        If (ROI.X > 0) Or (ROI.Y > 0) Or (ROI.Width <> Width) Or (ROI.Height <> Height) Then
+            FullFrame = FullFrame.GetROI(ROI)
+        End If
+        Return FullFrame
+    End Function
 
     '''<summary>Read the PWI4DataRecorder log file to get the focus positions.</summary>
     '''<param name="FileName">PWI4 log file.</param>
@@ -276,6 +375,19 @@ Public Class MyMainForm
         Return New KeyValuePair(Of DateTime, Double)(RequestedDateTime, FocusPos)
     End Function
 
+    Private Sub UpdateSERFrameImage(ByRef Frame(,) As UInt16, ByRef FrameStat As AstroNET.Statistics.sStatistics)
+        Dim NoROI As Rectangle = Nothing
+        With DB.SERFrameImage
+            .CM = cColorMaps.eMaps.FalseColor
+            .CM_LowerEnd_Absolute = FrameStat.MonoStatistics_Int.Min.Key
+            .CM_UpperEnd_Absolute = FrameStat.MonoStatistics_Int.Max.Key
+            .GenerateDisplayImage(Frame, NoROI, FrameStat, DB.IntelIPP)
+            .OutputImage.UnlockBits()
+            pbExSERFrameImage.Image = .OutputImage.BitmapToProcess
+        End With
+
+    End Sub
+
     Private Sub De()
         System.Windows.Forms.Application.DoEvents()
     End Sub
@@ -302,4 +414,3 @@ Public Class MyMainForm
     End Sub
 
 End Class
-#Enable Warning CA1416 ' Validate platform compatibility
