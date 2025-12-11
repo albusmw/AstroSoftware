@@ -1,5 +1,8 @@
 ﻿Option Explicit On
 Option Strict On
+Imports FocusAnalysis.cSERFormat
+
+
 
 #Disable Warning CA1416 ' Validate platform compatibility
 Public Class MyMainForm
@@ -102,9 +105,11 @@ Public Class MyMainForm
             ROI = ROI_Full
         End If
         Dim FullFrameSize As Integer = CInt(ROI.Width * ROI.Height * SERHeader.BytePerPixel)
+        ReDim DB.Trace_XAxis(SERHeader.FrameCount - 1) : DB.Trace_XAxis.Init(Double.NaN)
         ReDim DB.Trace_Indicator(SERHeader.FrameCount - 1) : DB.Trace_Indicator.Init(Double.NaN)
         ReDim DB.Trace_OVLD(SERHeader.FrameCount - 1) : DB.Trace_OVLD.Init(Double.NaN)
         ReDim DB.Trace_TotalEnergy(SERHeader.FrameCount - 1) : DB.Trace_TotalEnergy.Init(Double.NaN)
+        ReDim DB.Trace_EnergyInPixel(SERHeader.FrameCount - 1) : DB.Trace_EnergyInPixel.Init(Double.NaN)
 
         '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
         '1st run: global maximum and minimum
@@ -112,17 +117,24 @@ Public Class MyMainForm
         pbImageStream.Maximum = SERHeader.FrameCount
 
         'Global MIN and Global MAX are always done on the full frame
+        ReDim DB.TotalEnergy(SERHeader.FrameCount - 1) : DB.TotalEnergy.Init(Double.NaN)
         ReDim DB.GlobalMax(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1) : DB.GlobalMax.Init(UInt16.MinValue)
         ReDim DB.GlobalMin(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1) : DB.GlobalMin.Init(UInt16.MaxValue)
 
-        For FrameCountIdx As Integer = 0 To SERHeader.FrameCount - 1
+        For FrameIdx As Integer = 0 To SERHeader.FrameCount - 1
             DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data = GetSERROI(BinaryIN, SERHeader.FrameWidth, SERHeader.FrameHeight, ROI_Full)
+            DB.TotalEnergy(FrameIdx) = DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data.Sum
             DB.GlobalMax = DB.GlobalMax.MaximumPerElement(DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data)
             DB.GlobalMin = DB.GlobalMin.MinimumPerElement(DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data)
-            pbImageStream.Value = FrameCountIdx
-            tsslImageStream.Text = FrameCountIdx.ValRegIndep & "/" & pbImageStream.Maximum.ValRegIndep
+            pbImageStream.Value = FrameIdx
+            tsslImageStream.Text = FrameIdx.ValRegIndep & "/" & pbImageStream.Maximum.ValRegIndep
             De()
-        Next FrameCountIdx
+        Next FrameIdx
+
+        'Report global parameter
+        DB.Log.Log("Max total pixel sum     : " & DB.TotalEnergy.Max.ValRegIndep)
+        DB.Log.Log("Min total pixel sum     : " & DB.TotalEnergy.Min.ValRegIndep)
+        DB.Log.Log("                        : " & ((DB.TotalEnergy.Min / DB.TotalEnergy.Max) * 100).ValRegIndep)
 
         '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
         'Reposition SER pointer again
@@ -192,9 +204,9 @@ Public Class MyMainForm
             FrameResult.Add(ExcelRows.Max_ADUValue, DB.OriginalFrame_Stat.MonochromHistogram_Int.Last.Key)
             FrameResult.Add(ExcelRows.Max_ADUValueCount, DB.OriginalFrame_Stat.MonochromHistogram_Int.Last.Value)
             FrameResult.Add(ExcelRows.Sum_AllPix, AstroNET.Statistics.TotalEnergy(DB.OriginalFrame_Stat.MonochromHistogram_Int))
-            FrameResult.Add(ExcelRows.Energy_10pct, AstroNET.Statistics.FocusQualityIndicator(DB.OriginalFrame_Stat.MonochromHistogram_Int, 10.0))
-            FrameResult.Add(ExcelRows.Energy_20pct, AstroNET.Statistics.FocusQualityIndicator(DB.OriginalFrame_Stat.MonochromHistogram_Int, 20.0))
-            FrameResult.Add(ExcelRows.Energy_50pct, AstroNET.Statistics.FocusQualityIndicator(DB.OriginalFrame_Stat.MonochromHistogram_Int, 50.0))
+            FrameResult.Add(ExcelRows.Energy_10pct, AstroNET.Statistics.PixelForXPct(DB.OriginalFrame_Stat.MonochromHistogram_Int, 10.0))
+            FrameResult.Add(ExcelRows.Energy_20pct, AstroNET.Statistics.PixelForXPct(DB.OriginalFrame_Stat.MonochromHistogram_Int, 20.0))
+            FrameResult.Add(ExcelRows.Energy_50pct, AstroNET.Statistics.PixelForXPct(DB.OriginalFrame_Stat.MonochromHistogram_Int, 50.0))
 
             tbSummary.Text = Join(DB.OriginalFrame_Stat.StatisticsReport(True, False).ToArray, System.Environment.NewLine)
 
@@ -246,9 +258,9 @@ Public Class MyMainForm
             'Statistics and report this
             DB.NoBiasFrame_Stat = DB.NoBiasFrame.ImageStatistics
             FrameResult.Add(ExcelRows.Sum_NoBias, AstroNET.Statistics.TotalEnergy(DB.NoBiasFrame_Stat.MonochromHistogram_Int))
-            FrameResult.Add(ExcelRows.NoBias_Energy_10pct, AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 10.0))
-            FrameResult.Add(ExcelRows.NoBias_Energy_20pct, AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 20.0))
-            FrameResult.Add(ExcelRows.NoBias_Energy_50pct, AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 50.0))
+            FrameResult.Add(ExcelRows.NoBias_Energy_10pct, AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 10.0))
+            FrameResult.Add(ExcelRows.NoBias_Energy_20pct, AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 20.0))
+            FrameResult.Add(ExcelRows.NoBias_Energy_50pct, AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 50.0))
 
             '4.) Change the frame as required - set all pixel below x-percentil to zero
             'Dim ClipLimit As UInt16 = CUShort(DB.NoBiasFrame_Stat.MonochromHistogram_PctFract(90))
@@ -259,15 +271,20 @@ Public Class MyMainForm
             'FrameResult.Add(ExcelRows.Sum_NoBias, AstroNET.Statistics.TotalEnergy(Stat_NoBias.MonochromHistogram_Int))
 
             Dim XAxisMax As Double = Double.MinValue
-            DB.Trace_Indicator(FrameCountIdx) = AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPCT) : XAxisMax = Double.Max(XAxisMax, DB.Trace_Indicator.Max)
-            DB.Trace_OVLD(FrameCountIdx) = OVLD_Pixel : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max)
+            DB.Trace_XAxis(FrameCountIdx) = FrameCountIdx + 1
+            DB.Trace_Indicator(FrameCountIdx) = AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPCT) : XAxisMax = Double.Max(XAxisMax, DB.Trace_Indicator.Max)
+            DB.Trace_OVLD(FrameCountIdx) = OVLD_Pixel : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max) : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max)
+            DB.Trace_EnergyInPixel(FrameCountIdx) = AstroNET.Statistics.EnergyInTopXPixel(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPixel) : XAxisMax = Double.Max(XAxisMax, DB.Trace_EnergyInPixel.Max)
+
             DB.Trace_TotalEnergy(FrameCountIdx) = AstroNET.Statistics.TotalEnergy(DB.NoBiasFrame_Stat.MonochromHistogram_Int)
 
-            DB.Plotter.PlotData("Total energy", DB.Trace_TotalEnergy, True)
-            DB.Plotter.PlotData("Pixel for " & DB.Config.EnergyPCT & " % of total energy", DB.Trace_Indicator, New cZEDGraph.sGraphStyle(Color.DarkGreen))
-            DB.Plotter.PlotData("OVLD pixel", DB.Trace_OVLD, New cZEDGraph.sGraphStyle(Color.Violet, cZEDGraph.eCurveMode.LinesAndPoints))
+            'DB.Plotter.PlotXvsY("Total energy", DB.Trace_XAxis, DB.Trace_TotalEnergy, True)
+            DB.Plotter.PlotXvsY("Pixel for " & DB.Config.EnergyPCT & " % of total energy", DB.Trace_XAxis, DB.Trace_Indicator, New cZEDGraph.sGraphStyle(Color.DarkGreen))
+            DB.Plotter.PlotXvsY("Energy in top " & DB.Config.EnergyPixel & " pixel", DB.Trace_XAxis, DB.Trace_EnergyInPixel, New cZEDGraph.sGraphStyle(Color.Orange))
+            DB.Plotter.PlotXvsY("OVLD pixel", DB.Trace_XAxis, DB.Trace_OVLD, New cZEDGraph.sGraphStyle(Color.Violet, cZEDGraph.eCurveMode.LinesAndPoints))
 
             'Scale and update
+            DB.Plotter.SetCaptions("Plots vs Frame # (staring with 1)", "Frame #, 1st is 1", "Value")
             DB.Plotter.ManuallyScaleXAxisLin(0, DB.Trace_Indicator.Length)
             DB.Plotter.ManuallyScaleYAxisLin(0, XAxisMax)
             DB.Plotter.ManuallyScaleY2AxisLog(0, DB.Trace_TotalEnergy.Max)
@@ -282,7 +299,7 @@ Public Class MyMainForm
 
             If Double.IsNaN(BestFocus.Value) = False Then
                 FocusFit_X.Add(BestFocus.Value)
-                FocusFit_Y.Add(AstroNET.Statistics.FocusQualityIndicator(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 10.0))
+                FocusFit_Y.Add(AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 10.0))
             End If
 
             'Slow down
