@@ -47,10 +47,10 @@ Partial Class MyMainForm
         pgMain = New PropertyGrid()
         tbSummary = New TextBox()
         scRight = New SplitContainer()
-        pbExSERFrameImage = New PictureBoxEx()
-        zgcMain = New ZedGraph.ZedGraphControl()
         scTopRight = New SplitContainer()
         zgcHisto = New ZedGraph.ZedGraphControl()
+        pbExSERFrameImage = New PictureBoxEx()
+        zgcMain = New ZedGraph.ZedGraphControl()
         msMain.SuspendLayout()
         StatusStrip1.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
@@ -65,11 +65,11 @@ Partial Class MyMainForm
         scRight.Panel1.SuspendLayout()
         scRight.Panel2.SuspendLayout()
         scRight.SuspendLayout()
-        CType(pbExSERFrameImage, ComponentModel.ISupportInitialize).BeginInit()
         CType(scTopRight, ComponentModel.ISupportInitialize).BeginInit()
         scTopRight.Panel1.SuspendLayout()
         scTopRight.Panel2.SuspendLayout()
         scTopRight.SuspendLayout()
+        CType(pbExSERFrameImage, ComponentModel.ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' msMain
@@ -78,7 +78,7 @@ Partial Class MyMainForm
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
         msMain.Padding = New Padding(7, 2, 0, 2)
-        msMain.Size = New Size(1292, 24)
+        msMain.Size = New Size(945, 24)
         msMain.TabIndex = 0
         msMain.Text = "MenuStrip1"
         ' 
@@ -128,7 +128,7 @@ Partial Class MyMainForm
         tbLog.Name = "tbLog"
         tbLog.ReadOnly = True
         tbLog.ScrollBars = ScrollBars.Both
-        tbLog.Size = New Size(485, 414)
+        tbLog.Size = New Size(348, 251)
         tbLog.TabIndex = 4
         tbLog.WordWrap = False
         ' 
@@ -137,9 +137,9 @@ Partial Class MyMainForm
         tbSERFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbSERFile.Location = New Point(91, 27)
         tbSERFile.Name = "tbSERFile"
-        tbSERFile.Size = New Size(1089, 23)
+        tbSERFile.Size = New Size(742, 23)
         tbSERFile.TabIndex = 2
-        tbSERFile.Text = "C:\!Work\Focus\2025_12_10__Focus_SII.ser"
+        tbSERFile.Text = "\\Ds1819\dsc\9999 - Focus Videos\2025_12_15 - Focus with log\SERTest_0001.ser"
         ' 
         ' Label2
         ' 
@@ -155,8 +155,9 @@ Partial Class MyMainForm
         tbPWI4LogFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbPWI4LogFile.Location = New Point(91, 56)
         tbPWI4LogFile.Name = "tbPWI4LogFile"
-        tbPWI4LogFile.Size = New Size(1122, 23)
+        tbPWI4LogFile.Size = New Size(775, 23)
         tbPWI4LogFile.TabIndex = 4
+        tbPWI4LogFile.Text = "\\Ds1819\dsc\9999 - Focus Videos\2025_12_15 - Focus with log\SERTest_0001.ser.txt"
         ' 
         ' Label3
         ' 
@@ -170,7 +171,7 @@ Partial Class MyMainForm
         ' btnAnalysis
         ' 
         btnAnalysis.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnAnalysis.Location = New Point(1219, 30)
+        btnAnalysis.Location = New Point(872, 30)
         btnAnalysis.Name = "btnAnalysis"
         btnAnalysis.Size = New Size(61, 49)
         btnAnalysis.TabIndex = 6
@@ -180,7 +181,7 @@ Partial Class MyMainForm
         ' btnSetSERFile
         ' 
         btnSetSERFile.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnSetSERFile.Location = New Point(1186, 26)
+        btnSetSERFile.Location = New Point(839, 26)
         btnSetSERFile.Name = "btnSetSERFile"
         btnSetSERFile.Size = New Size(32, 23)
         btnSetSERFile.TabIndex = 7
@@ -190,9 +191,9 @@ Partial Class MyMainForm
         ' StatusStrip1
         ' 
         StatusStrip1.Items.AddRange(New ToolStripItem() {pbImageStream, tsslImageStream, tsslADUOVLD, pbMaxADU})
-        StatusStrip1.Location = New Point(0, 951)
+        StatusStrip1.Location = New Point(0, 624)
         StatusStrip1.Name = "StatusStrip1"
-        StatusStrip1.Size = New Size(1292, 22)
+        StatusStrip1.Size = New Size(945, 22)
         StatusStrip1.TabIndex = 8
         StatusStrip1.Text = "StatusStrip1"
         ' 
@@ -233,8 +234,8 @@ Partial Class MyMainForm
         ' scMain.Panel2
         ' 
         scMain.Panel2.Controls.Add(scRight)
-        scMain.Size = New Size(1265, 856)
-        scMain.SplitterDistance = 497
+        scMain.Size = New Size(918, 529)
+        scMain.SplitterDistance = 360
         scMain.TabIndex = 9
         ' 
         ' scLeft
@@ -252,8 +253,8 @@ Partial Class MyMainForm
         ' scLeft.Panel2
         ' 
         scLeft.Panel2.Controls.Add(tbLog)
-        scLeft.Size = New Size(491, 847)
-        scLeft.SplitterDistance = 423
+        scLeft.Size = New Size(354, 520)
+        scLeft.SplitterDistance = 259
         scLeft.TabIndex = 5
         ' 
         ' pgMain
@@ -275,7 +276,7 @@ Partial Class MyMainForm
         tbSummary.Name = "tbSummary"
         tbSummary.ReadOnly = True
         tbSummary.ScrollBars = ScrollBars.Both
-        tbSummary.Size = New Size(485, 223)
+        tbSummary.Size = New Size(348, 59)
         tbSummary.TabIndex = 5
         tbSummary.WordWrap = False
         ' 
@@ -293,9 +294,42 @@ Partial Class MyMainForm
         ' scRight.Panel2
         ' 
         scRight.Panel2.Controls.Add(zgcMain)
-        scRight.Size = New Size(758, 850)
-        scRight.SplitterDistance = 424
+        scRight.Size = New Size(548, 523)
+        scRight.SplitterDistance = 260
         scRight.TabIndex = 1
+        ' 
+        ' scTopRight
+        ' 
+        scTopRight.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        scTopRight.Location = New Point(3, 3)
+        scTopRight.Name = "scTopRight"
+        ' 
+        ' scTopRight.Panel1
+        ' 
+        scTopRight.Panel1.Controls.Add(zgcHisto)
+        ' 
+        ' scTopRight.Panel2
+        ' 
+        scTopRight.Panel2.Controls.Add(pbExSERFrameImage)
+        scTopRight.Size = New Size(541, 252)
+        scTopRight.SplitterDistance = 230
+        scTopRight.TabIndex = 1
+        ' 
+        ' zgcHisto
+        ' 
+        zgcHisto.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        zgcHisto.Location = New Point(4, 3)
+        zgcHisto.Margin = New Padding(4, 3, 4, 3)
+        zgcHisto.Name = "zgcHisto"
+        zgcHisto.ScrollGrace = 0R
+        zgcHisto.ScrollMaxX = 0R
+        zgcHisto.ScrollMaxY = 0R
+        zgcHisto.ScrollMaxY2 = 0R
+        zgcHisto.ScrollMinX = 0R
+        zgcHisto.ScrollMinY = 0R
+        zgcHisto.ScrollMinY2 = 0R
+        zgcHisto.Size = New Size(222, 246)
+        zgcHisto.TabIndex = 0
         ' 
         ' pbExSERFrameImage
         ' 
@@ -303,7 +337,7 @@ Partial Class MyMainForm
         pbExSERFrameImage.BackColor = Color.Gray
         pbExSERFrameImage.Location = New Point(3, 3)
         pbExSERFrameImage.Name = "pbExSERFrameImage"
-        pbExSERFrameImage.Size = New Size(419, 410)
+        pbExSERFrameImage.Size = New Size(299, 246)
         pbExSERFrameImage.SizeMode = PictureBoxSizeMode.Zoom
         pbExSERFrameImage.TabIndex = 0
         pbExSERFrameImage.TabStop = False
@@ -321,47 +355,14 @@ Partial Class MyMainForm
         zgcMain.ScrollMinX = 0R
         zgcMain.ScrollMinY = 0R
         zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(751, 416)
+        zgcMain.Size = New Size(541, 253)
         zgcMain.TabIndex = 0
-        ' 
-        ' scTopRight
-        ' 
-        scTopRight.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        scTopRight.Location = New Point(3, 3)
-        scTopRight.Name = "scTopRight"
-        ' 
-        ' scTopRight.Panel1
-        ' 
-        scTopRight.Panel1.Controls.Add(zgcHisto)
-        ' 
-        ' scTopRight.Panel2
-        ' 
-        scTopRight.Panel2.Controls.Add(pbExSERFrameImage)
-        scTopRight.Size = New Size(751, 416)
-        scTopRight.SplitterDistance = 320
-        scTopRight.TabIndex = 1
-        ' 
-        ' zgcHisto
-        ' 
-        zgcHisto.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        zgcHisto.Location = New Point(4, 3)
-        zgcHisto.Margin = New Padding(4, 3, 4, 3)
-        zgcHisto.Name = "zgcHisto"
-        zgcHisto.ScrollGrace = 0R
-        zgcHisto.ScrollMaxX = 0R
-        zgcHisto.ScrollMaxY = 0R
-        zgcHisto.ScrollMaxY2 = 0R
-        zgcHisto.ScrollMinX = 0R
-        zgcHisto.ScrollMinY = 0R
-        zgcHisto.ScrollMinY2 = 0R
-        zgcHisto.Size = New Size(312, 410)
-        zgcHisto.TabIndex = 0
         ' 
         ' MyMainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(1292, 973)
+        ClientSize = New Size(945, 646)
         Controls.Add(scMain)
         Controls.Add(StatusStrip1)
         Controls.Add(btnSetSERFile)
@@ -393,11 +394,11 @@ Partial Class MyMainForm
         scRight.Panel2.ResumeLayout(False)
         CType(scRight, ComponentModel.ISupportInitialize).EndInit()
         scRight.ResumeLayout(False)
-        CType(pbExSERFrameImage, ComponentModel.ISupportInitialize).EndInit()
         scTopRight.Panel1.ResumeLayout(False)
         scTopRight.Panel2.ResumeLayout(False)
         CType(scTopRight, ComponentModel.ISupportInitialize).EndInit()
         scTopRight.ResumeLayout(False)
+        CType(pbExSERFrameImage, ComponentModel.ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
 

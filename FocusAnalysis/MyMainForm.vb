@@ -1,8 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports FocusAnalysis.cSERFormat
-
-
 
 #Disable Warning CA1416 ' Validate platform compatibility
 Public Class MyMainForm
@@ -14,7 +11,6 @@ Public Class MyMainForm
     Private Class ExcelRows
         Public Const Frame As String = "Frame #"
         Public Const SERTime As String = "SER Time" & vbCrLf & "stamp"
-        Public Const Foc_Moment As String = "Focus" & vbCrLf & "Moment"
         Public Const Foc_Pos As String = "Focus" & vbCrLf & "Position"
         Public Const Sum_AllPix As String = "Sum of all pixel" & vbCrLf & "Raw"
         Public Const Energy_10pct As String = "Raw pixel for" & vbCrLf & "10% energy"
@@ -71,13 +67,23 @@ Public Class MyMainForm
 
         DB.Log.Clear()
 
-        'Load PWI4 file
-        Dim PWI4Log As List(Of KeyValuePair(Of DateTime, Double)) = LoadPWI4Log(tbPWI4LogFile.Text)
-        If IsNothing(PWI4Log) = False Then
-            DB.Log.Log("PWI4Log first moment: " & PWI4Log.First.Key.LongWithMS)
-            DB.Log.Log("PWI4Log last moment : " & PWI4Log.Last.Key.LongWithMS)
-        Else
-            DB.Log.Log("PWI4Log not found.")
+        'Load SER focus log
+        Dim PWI4Log As New List(Of KeyValuePair(Of DateTime, Double))
+        Dim SERFocusLog As Double() = {}
+        If System.IO.File.Exists(tbPWI4LogFile.Text) Then
+            If tbPWI4LogFile.Text.EndsWith(".ser.txt") Then
+                'Output with direct focus positions
+                SERFocusLog = LoadSERMoments(tbPWI4LogFile.Text)
+            Else
+                'Load PWI4 file
+                PWI4Log = LoadPWI4Log(tbPWI4LogFile.Text)
+                If IsNothing(PWI4Log) = False Then
+                    DB.Log.Log("PWI4Log first moment: " & PWI4Log.First.Key.LongWithMS)
+                    DB.Log.Log("PWI4Log last moment : " & PWI4Log.Last.Key.LongWithMS)
+                Else
+                    DB.Log.Log("PWI4Log not found.")
+                End If
+            End If
         End If
 
         'Open the SER file
@@ -146,7 +152,6 @@ Public Class MyMainForm
         With ResultParameters
             .Add(ExcelRows.Frame)
             .Add(ExcelRows.SERTime)
-            .Add(ExcelRows.Foc_Moment)
             .Add(ExcelRows.Foc_Pos)
             .Add(ExcelRows.Sum_AllPix)
             .Add(ExcelRows.Energy_10pct)
@@ -181,12 +186,16 @@ Public Class MyMainForm
             FrameResult.Add(ExcelRows.SERTime, TimeStamps(FrameCountIdx).LongWithMS)                'frame time stamp
 
             'Get focus informations stored
-            Dim BestFocus As KeyValuePair(Of DateTime, Double) = FocusInMoment(PWI4Log, TimeStamps(FrameCountIdx))
-            If Double.IsNaN(BestFocus.Value) = False Then
-                FrameResult.Add(ExcelRows.Foc_Moment, BestFocus.Key.LongWithMS)                         'focus time stamp
-                FrameResult.Add(ExcelRows.Foc_Pos, BestFocus.Value)                                     'focus position
+            Dim Focus_Position As Double = Double.NaN
+            If IsNothing(PWI4Log) = False Then
+                Focus_Position = FocusInMoment(PWI4Log, TimeStamps(FrameCountIdx)).Value
+            End If
+            If IsNothing(SERFocusLog) = False Then
+                Focus_Position = SERFocusLog(FrameCountIdx)
+            End If
+            If Double.IsNaN(Focus_Position) = False Then
+                FrameResult.Add(ExcelRows.Foc_Pos, Focus_Position)                                  'focus position
             Else
-                FrameResult.Add(ExcelRows.Foc_Moment, "---")
                 FrameResult.Add(ExcelRows.Foc_Pos, "---")
             End If
 
@@ -270,10 +279,19 @@ Public Class MyMainForm
             '5.) Process focus relevant data
             'FrameResult.Add(ExcelRows.Sum_NoBias, AstroNET.Statistics.TotalEnergy(Stat_NoBias.MonochromHistogram_Int))
 
+            'Get the trace X axis value
             Dim XAxisMax As Double = Double.MinValue
-            DB.Trace_XAxis(FrameCountIdx) = FrameCountIdx + 1
+            If Double.IsNaN(Focus_Position) = False Then
+                DB.Trace_XAxis(FrameCountIdx) = Focus_Position
+                DB.Plotter.AutoScaleXAxisLin()
+            Else
+                DB.Trace_XAxis(FrameCountIdx) = FrameCountIdx + 1
+                If FrameCountIdx = 1 Then DB.Plotter.ManuallyScaleXAxisLin(0, DB.Trace_Indicator.Length)    'On 1st run set X axis
+            End If
+
+
             DB.Trace_Indicator(FrameCountIdx) = AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPCT) : XAxisMax = Double.Max(XAxisMax, DB.Trace_Indicator.Max)
-            DB.Trace_OVLD(FrameCountIdx) = OVLD_Pixel : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max) : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max)
+            DB.Trace_OVLD(FrameCountIdx) = OVLD_Pixel : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max)
             DB.Trace_EnergyInPixel(FrameCountIdx) = AstroNET.Statistics.EnergyInTopXPixel(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPixel) : XAxisMax = Double.Max(XAxisMax, DB.Trace_EnergyInPixel.Max)
 
             DB.Trace_TotalEnergy(FrameCountIdx) = AstroNET.Statistics.TotalEnergy(DB.NoBiasFrame_Stat.MonochromHistogram_Int)
@@ -285,7 +303,7 @@ Public Class MyMainForm
 
             'Scale and update
             DB.Plotter.SetCaptions("Plots vs Frame # (staring with 1)", "Frame #, 1st is 1", "Value")
-            DB.Plotter.ManuallyScaleXAxisLin(0, DB.Trace_Indicator.Length)
+
             DB.Plotter.ManuallyScaleYAxisLin(0, XAxisMax)
             DB.Plotter.ManuallyScaleY2AxisLog(0, DB.Trace_TotalEnergy.Max)
             DB.Plotter.ForceUpdate()
@@ -297,8 +315,8 @@ Public Class MyMainForm
             Next Parameter
             FrameResults.Add(FrameCountIdx, ExcelRow)
 
-            If Double.IsNaN(BestFocus.Value) = False Then
-                FocusFit_X.Add(BestFocus.Value)
+            If Double.IsNaN(Focus_Position) = False Then
+                FocusFit_X.Add(Focus_Position)
                 FocusFit_Y.Add(AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, 10.0))
             End If
 
@@ -368,6 +386,23 @@ Public Class MyMainForm
             RetVal.Add(New KeyValuePair(Of Date, Double)(Moment, FocusPos))
         Next Idx
         Return RetVal
+    End Function
+
+    '''<summary>Read the MoravianVBNet log file to get the focus positions.</summary>
+    '''<param name="FileName">PWI4 log file.</param>
+    '''<returns>All found timing stamps and focus positions.</returns>
+    Private Function LoadSERMoments(ByVal FileName As String) As Double()
+        If System.IO.File.Exists(FileName) = False Then Return Nothing
+        Dim AllLines As String() = System.IO.File.ReadAllLines(FileName)
+        If AllLines.Count < 2 Then Return Nothing
+        Dim RetVal As New List(Of Double)
+        For Idx As Integer = 1 To AllLines.GetUpperBound(0)
+            Dim Splitted As String() = Split(AllLines(Idx), ";")
+            Dim FocusA As Integer = CInt(Splitted(2))
+            Dim FocusB As Integer = CInt(Splitted(3))
+            RetVal.Add((FocusA + FocusB) / 2)
+        Next Idx
+        Return RetVal.ToArray
     End Function
 
     '''<summary>Get focus of the requested moment.</summary>
