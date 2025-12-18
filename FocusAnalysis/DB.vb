@@ -30,9 +30,11 @@ Public Class cDB
 
     Public Trace_XAxis() As Double
     Public Trace_Indicator() As Double
-    Public Trace_OVLD() As Double
     Public Trace_TotalEnergy() As Double
     Public Trace_EnergyInPixel() As Double
+
+    Public Trace_XAxisInvalid As List(Of Double)
+    Public Trace_OVLD As List(Of Double)
 
     '''<summary>Converter used to display single SER frames.</summary>
     Public SERFrameImage As New cImageFromData

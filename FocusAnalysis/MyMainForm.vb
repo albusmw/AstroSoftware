@@ -91,6 +91,7 @@ Public Class MyMainForm
         Dim SERHeader As New cSERFormat.cSERHeader(BinaryIN)
         Dim TimeStamps As DateTime() = SERHeader.ReadTrailer(BinaryIN)
         DB.Log.Log("Frames              : " & SERHeader.FrameCount.ValRegIndep)
+        DB.Log.Log("Real file frames    : " & SERHeader.FileFrames.ValRegIndep)
         DB.Log.Log("Size                : " & SERHeader.FrameWidth.ValRegIndep & "x" & SERHeader.FrameWidth.ValRegIndep)
         DB.Log.Log("SER first moment    : " & TimeStamps.First.LongWithMS)
         DB.Log.Log("SER last moment     : " & TimeStamps.Last.LongWithMS)
@@ -111,23 +112,25 @@ Public Class MyMainForm
             ROI = ROI_Full
         End If
         Dim FullFrameSize As Integer = CInt(ROI.Width * ROI.Height * SERHeader.BytePerPixel)
-        ReDim DB.Trace_XAxis(SERHeader.FrameCount - 1) : DB.Trace_XAxis.Init(Double.NaN)
-        ReDim DB.Trace_Indicator(SERHeader.FrameCount - 1) : DB.Trace_Indicator.Init(Double.NaN)
-        ReDim DB.Trace_OVLD(SERHeader.FrameCount - 1) : DB.Trace_OVLD.Init(Double.NaN)
-        ReDim DB.Trace_TotalEnergy(SERHeader.FrameCount - 1) : DB.Trace_TotalEnergy.Init(Double.NaN)
-        ReDim DB.Trace_EnergyInPixel(SERHeader.FrameCount - 1) : DB.Trace_EnergyInPixel.Init(Double.NaN)
+        ReDim DB.Trace_XAxis(SERHeader.FileFrames - 1) : DB.Trace_XAxis.Init(Double.NaN)
+        ReDim DB.Trace_Indicator(SERHeader.FileFrames - 1) : DB.Trace_Indicator.Init(Double.NaN)
+        ReDim DB.Trace_TotalEnergy(SERHeader.FileFrames - 1) : DB.Trace_TotalEnergy.Init(Double.NaN)
+        ReDim DB.Trace_EnergyInPixel(SERHeader.FileFrames - 1) : DB.Trace_EnergyInPixel.Init(Double.NaN)
+
+        DB.Trace_XAxisInvalid = New List(Of Double)
+        DB.Trace_OVLD = New List(Of Double)
 
         '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
         '1st run: global maximum and minimum
         ReDim DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1)
-        pbImageStream.Maximum = SERHeader.FrameCount
+        pbImageStream.Maximum = SERHeader.FileFrames
 
         'Global MIN and Global MAX are always done on the full frame
-        ReDim DB.TotalEnergy(SERHeader.FrameCount - 1) : DB.TotalEnergy.Init(Double.NaN)
+        ReDim DB.TotalEnergy(SERHeader.FileFrames - 1) : DB.TotalEnergy.Init(Double.NaN)
         ReDim DB.GlobalMax(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1) : DB.GlobalMax.Init(UInt16.MinValue)
         ReDim DB.GlobalMin(SERHeader.FrameWidth - 1, SERHeader.FrameHeight - 1) : DB.GlobalMin.Init(UInt16.MaxValue)
 
-        For FrameIdx As Integer = 0 To SERHeader.FrameCount - 1
+        For FrameIdx As Integer = 0 To SERHeader.FileFrames - 1
             DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data = GetSERROI(BinaryIN, SERHeader.FrameWidth, SERHeader.FrameHeight, ROI_Full)
             DB.TotalEnergy(FrameIdx) = DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data.Sum
             DB.GlobalMax = DB.GlobalMax.MaximumPerElement(DB.OriginalFrame.DataProcessor_UInt16.ImageData(0).Data)
@@ -173,7 +176,7 @@ Public Class MyMainForm
         'Move over all frames
         DB.Plotter.Clear()
         DB.HistoPlot.ManuallyScaleXAxisLin(0, 65536)
-        For FrameCountIdx As Integer = 0 To SERHeader.FrameCount - 1
+        For FrameCountIdx As Integer = 0 To SERHeader.FileFrames - 1
 
             'Show status start
             pbImageStream.Value = FrameCountIdx
@@ -190,7 +193,7 @@ Public Class MyMainForm
             If IsNothing(PWI4Log) = False Then
                 Focus_Position = FocusInMoment(PWI4Log, TimeStamps(FrameCountIdx)).Value
             End If
-            If IsNothing(SERFocusLog) = False Then
+            If SERFocusLog.Length > 0 Then
                 Focus_Position = SERFocusLog(FrameCountIdx)
             End If
             If Double.IsNaN(Focus_Position) = False Then
@@ -281,28 +284,32 @@ Public Class MyMainForm
 
             'Get the trace X axis value
             Dim XAxisMax As Double = Double.MinValue
+            Dim CurrentXValue As Double = Double.NaN
             If Double.IsNaN(Focus_Position) = False Then
-                DB.Trace_XAxis(FrameCountIdx) = Focus_Position
+                CurrentXValue = Focus_Position
                 DB.Plotter.AutoScaleXAxisLin()
             Else
-                DB.Trace_XAxis(FrameCountIdx) = FrameCountIdx + 1
+                CurrentXValue = FrameCountIdx + 1
                 If FrameCountIdx = 1 Then DB.Plotter.ManuallyScaleXAxisLin(0, DB.Trace_Indicator.Length)    'On 1st run set X axis
             End If
-
+            DB.Trace_XAxis(FrameCountIdx) = CurrentXValue
 
             DB.Trace_Indicator(FrameCountIdx) = AstroNET.Statistics.PixelForXPct(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPCT) : XAxisMax = Double.Max(XAxisMax, DB.Trace_Indicator.Max)
-            DB.Trace_OVLD(FrameCountIdx) = OVLD_Pixel : XAxisMax = Double.Max(XAxisMax, DB.Trace_OVLD.Max)
             DB.Trace_EnergyInPixel(FrameCountIdx) = AstroNET.Statistics.EnergyInTopXPixel(DB.NoBiasFrame_Stat.MonochromHistogram_Int, DB.Config.EnergyPixel) : XAxisMax = Double.Max(XAxisMax, DB.Trace_EnergyInPixel.Max)
-
             DB.Trace_TotalEnergy(FrameCountIdx) = AstroNET.Statistics.TotalEnergy(DB.NoBiasFrame_Stat.MonochromHistogram_Int)
+
+            If OVLD_Pixel > 0 Then
+                DB.Trace_XAxisInvalid.Add(CurrentXValue)
+                DB.Trace_OVLD.Add(DB.Trace_EnergyInPixel(FrameCountIdx))
+            End If
 
             'DB.Plotter.PlotXvsY("Total energy", DB.Trace_XAxis, DB.Trace_TotalEnergy, True)
             DB.Plotter.PlotXvsY("Pixel for " & DB.Config.EnergyPCT & " % of total energy", DB.Trace_XAxis, DB.Trace_Indicator, New cZEDGraph.sGraphStyle(Color.DarkGreen))
             DB.Plotter.PlotXvsY("Energy in top " & DB.Config.EnergyPixel & " pixel", DB.Trace_XAxis, DB.Trace_EnergyInPixel, New cZEDGraph.sGraphStyle(Color.Orange))
-            DB.Plotter.PlotXvsY("OVLD pixel", DB.Trace_XAxis, DB.Trace_OVLD, New cZEDGraph.sGraphStyle(Color.Violet, cZEDGraph.eCurveMode.LinesAndPoints))
+            DB.Plotter.PlotXvsY("OVLD pixel", DB.Trace_XAxisInvalid.ToArray, DB.Trace_OVLD.ToArray, New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Dots))
 
             'Scale and update
-            DB.Plotter.SetCaptions("Plots vs Frame # (staring with 1)", "Frame #, 1st is 1", "Value")
+            DB.Plotter.SetCaptions("Plots vs Frame # (starting with 1)", "Frame #, 1st is 1", "Value")
 
             DB.Plotter.ManuallyScaleYAxisLin(0, XAxisMax)
             DB.Plotter.ManuallyScaleY2AxisLog(0, DB.Trace_TotalEnergy.Max)
@@ -346,7 +353,7 @@ Public Class MyMainForm
         Using workbook As New ClosedXML.Excel.XLWorkbook
             Dim WorkSheet_Single As ClosedXML.Excel.IXLWorksheet = workbook.Worksheets.Add("Frame Statistics")
             WorkSheet_Single.Cell(1, 1).InsertData(ResultParameters, True)
-            For FrameCountIdx As Integer = 0 To SERHeader.FrameCount - 1
+            For FrameCountIdx As Integer = 0 To SERHeader.FileFrames - 1
                 WorkSheet_Single.Cell(FrameCountIdx + 2, 1).InsertData(FrameResults(FrameCountIdx), True)
             Next FrameCountIdx
             For Each col In WorkSheet_Single.ColumnsUsed
@@ -437,7 +444,6 @@ Public Class MyMainForm
             .OutputImage.UnlockBits()
             pbExSERFrameImage.Image = .OutputImage.BitmapToProcess
         End With
-
     End Sub
 
     Private Sub De()
