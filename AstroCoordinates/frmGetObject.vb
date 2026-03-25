@@ -1,9 +1,8 @@
 ﻿Option Explicit On
 Option Strict On
+
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ListView
 Imports AstroCoordinates.Astronomy.Net
-Imports AstroCoordinates.Ato
-Imports DocumentFormat.OpenXml.Office2013.Drawing.Chart
 
 Public Class frmGetObject
 
@@ -13,20 +12,18 @@ Public Class frmGetObject
 
     Public Class cVisFilter
 
-        <ComponentModel.DisplayName("1.1) Filter based on visibility")>
-        Public Property RemoveUnavailable As Boolean = False
-
-        <ComponentModel.DisplayName("1.2) Minimum hours visible")>
-        Public Property MinVisibleHours As Double = 4.0
+        <ComponentModel.Category(Cats.Cat3)>
+        <ComponentModel.DisplayName("1.) Calculation start time")>
+        Public Property StartMomentUTC As DateTime = Now.ToUniversalTime
 
         <ComponentModel.DisplayName("2.1) Minimum heigth")>
         Public Property MinHeight As Double = 20.0
 
-        <ComponentModel.DisplayName("2.2) Maximum sun heigth")>
+        <ComponentModel.DisplayName("OLD - 2.2) Maximum sun heigth")>
         Public Property MaxSunHeigth As Double = -18.0
 
         <ComponentModel.Category(Cats.Cat3)>
-        <ComponentModel.DisplayName("1.) Minimum culmination heigth")>
+        <ComponentModel.DisplayName("OLD - 2.) Minimum culmination heigth")>
         Public Property Vis_MinCulmHeigth As Double = 30
 
     End Class
@@ -37,7 +34,8 @@ Public Class frmGetObject
         Public Const FullName As String = "Full name"
         Public Const Catalog As String = "Catalog"
         Public Const Item As String = "Item"
-        Public Const ObjSize As String = "Size arcsec"
+        Public Const ObjSize As String = "Size (arcsec)"
+        Public Const ObjArea As String = "Area (arcsec^2)"
         Public Const CulmTime As String = "Culm Time"
         Public Const CulmHeight As String = "Culm Height"
         Public Const ObjLowest As String = "Obj lowest"
@@ -91,6 +89,7 @@ Public Class frmGetObject
         Objects.Columns.Add(cColumns.Catalog, GetType(String))
         Objects.Columns.Add(cColumns.Item, GetType(String))
         Objects.Columns.Add(cColumns.ObjSize, GetType(String))
+        Objects.Columns.Add(cColumns.ObjArea, GetType(Integer))
         Objects.Columns.Add(cColumns.CulmTime, GetType(DateTime))
         Objects.Columns.Add(cColumns.CulmHeight, GetType(Double))
         Objects.Columns.Add(cColumns.ObjLowest, GetType(Double))
@@ -115,20 +114,7 @@ Public Class frmGetObject
         Dim DoubleEntries As Integer = LoadCatalogs()
 
         'Display objects
-        adgvObjects.DataSource = Nothing
-        Dim StartMomentUTC As DateTime = Now.ToUniversalTime
-        Objects.Clear()
-        For Each Item In AllObjects
-            Dim ObjectRaDec As New sRADec(Item.RA, Item.Dec)
-            Dim CulmTime As DateTime = Astronomy.Net.GetNextObjectCulminationTime(StartMomentUTC, CurrentLocation, ObjectRaDec)
-            Dim CulmHeigth As Double = Astronomy.Net.GetObjectPosition(CulmTime, CurrentLocation, ObjectRaDec).Alt
-            Dim ObjLowest As Double = Astronomy.Net.GetObjectPosition(CulmTime.AddHours(12), CurrentLocation, ObjectRaDec).Alt
-            Dim Visible As Boolean = True
-            If CulmHeigth < VisFilter.Vis_MinCulmHeigth Then Visible = False                    'object culmination height must be "significant"
-            Dim VisibleText As String = CStr(IIf(Visible = True, "YES", "NO"))
-            Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name, Item.Diameter.Describe, CulmTime, Math.Round(CulmHeigth, 1), Math.Round(ObjLowest, 1), VisibleText})
-        Next Item
-        adgvObjects.DataSource = Objects
+        CalcVisibility()
 
         'Display info on loaded objects
         tsslLoaded.Text = AllObjects.Count.ToString.Trim & " objects loaded, " & DoubleEntries.ToString.Trim & " double enties"
@@ -381,7 +367,6 @@ Public Class frmGetObject
             'Display observability results
             Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(SelectedObject.RA), CInt(SelectedObject.Dec))
             Try
-
                 tsslObsCalcResult.Text = TuppleToSearch.Item1.ToString.Trim & ":" & TuppleToSearch.Item2.ToString.Trim & " -> " & ObjectAvailability(TuppleToSearch).ToString.Trim & " hours visible"
             Catch ex As Exception
                 tsslObsCalcResult.Text = TuppleToSearch.Item1.ToString.Trim & ":" & TuppleToSearch.Item2.ToString.Trim & " -> ??? (entry not found)"
@@ -474,7 +459,94 @@ Public Class frmGetObject
         UpdateInView(True)
     End Sub
 
-    Private Sub tsmiTools_GetBestObjectsOLD_Click(sender As Object, e As EventArgs) Handles tsmiTools_GetBestObjectsOLD.Click
+    '''<summary>Get the selected object from the table.</summary>
+    Private Function GetSelectedObject() As cObjectInfo
+        If adgvObjects.SelectedRows.Count > 0 Then
+            Dim TableSelect As String = CStr(adgvObjects.SelectedRows.Item(0).Cells(cColumns.FullName).Value)
+            For Each X As cObjectInfo In AllObjects
+                If X.FullName(True) = TableSelect Then
+                    Return X
+                End If
+            Next X
+        End If
+        Return Nothing
+    End Function
+
+    '''<summary>Configure the data grid view in a unique way.</summary>
+    Public Shared Sub ConfigDataGridView(ByRef adgv As Zuby.ADGV.AdvancedDataGridView)
+        With adgv
+            .AllowUserToAddRows = False
+            .AllowUserToDeleteRows = False
+            .AllowUserToOrderColumns = True
+            .EditMode = DataGridViewEditMode.EditProgrammatically
+            .RowHeadersVisible = False
+            .EnableHeadersVisualStyles = False
+            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
+            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
+            .ColumnHeadersDefaultCellStyle.SelectionBackColor = .ColumnHeadersDefaultCellStyle.BackColor
+            .FilterAndSortEnabled = True
+        End With
+    End Sub
+
+    Private Sub btnAccept_Click(sender As Object, e As EventArgs) Handles btnAccept.Click
+        AcceptAndClose()
+    End Sub
+
+    Private Sub tsmiData_ToClipboard_Click(sender As Object, e As EventArgs) Handles tsmiData_ToClipboard.Click
+        Clipboard.Clear()
+        Clipboard.SetText(tbDetails.Text)
+    End Sub
+
+    Private Sub pgFilter_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgFilter.PropertyValueChanged
+        CalcVisibility()
+    End Sub
+
+    '==============================================================================================================================================================
+
+    Private Sub CalcVisibility()
+        Objects.Clear()
+        Dim TotalObjects As Integer = AllObjects.Count
+        Dim VisibleObjects As Integer = 0
+        tspgMain.Maximum = AllObjects.Count : tspgMain.Value = 0
+        adgvObjects.DataSource = Nothing
+        For Each Item In AllObjects
+            tspgMain.Value += 1 : De()
+            Dim ObjectRaDec As New sRADec(Item.RA, Item.Dec)
+            Dim CulmTime As DateTime = Astronomy.Net.GetNextObjectCulminationTime(VisFilter.StartMomentUTC, CurrentLocation, ObjectRaDec)       'culmination time
+            Dim CulmHeigth As Double = Astronomy.Net.GetObjectPosition(CulmTime, CurrentLocation, ObjectRaDec).Alt                              'culmination heigth
+            Dim ObjLowest As Double = Astronomy.Net.GetObjectPosition(CulmTime.AddHours(12), CurrentLocation, ObjectRaDec).Alt                  'lowest object position (12 hoours after culmination)
+            Dim VisibleText As String = String.Empty
+            If CulmHeigth < 0 Then
+                VisibleText = "Does not raise"
+            Else
+                If CulmHeigth < VisFilter.Vis_MinCulmHeigth Then
+                    VisibleText = "Low"
+                Else
+                    If ObjLowest > 0 Then
+                        VisibleText = "Always visible"
+                    Else
+                        VisibleText = "OK"
+                    End If
+
+                End If
+            End If
+            Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name, Item.Diameter.Describe, Item.Diameter.Area, CulmTime, Math.Round(CulmHeigth, 1), Math.Round(ObjLowest, 1), VisibleText})
+            If Visible = True Then VisibleObjects += 1
+        Next Item
+        adgvObjects.DataSource = Objects
+        tspgMain.Value = 0
+    End Sub
+
+    Private Sub De()
+        System.Windows.Forms.Application.DoEvents()
+    End Sub
+
+    '==============================================================================================================================================================
+    ' OLD CODE
+    '==============================================================================================================================================================
+
+    Private Sub tsmiTools_GetBestObjectsOLD_Click()
 
         Dim InViewProps As cAstroInView.cProps = InView.Props
         Dim InViewCalc As New cAstroInView
@@ -601,49 +673,6 @@ Public Class frmGetObject
 
         tspgMain.Value = 0
 
-    End Sub
-
-    '''<summary>Get the selected object from the table.</summary>
-    Private Function GetSelectedObject() As cObjectInfo
-        If adgvObjects.SelectedRows.Count > 0 Then
-            Dim TableSelect As String = CStr(adgvObjects.SelectedRows.Item(0).Cells(cColumns.FullName).Value)
-            For Each X As cObjectInfo In AllObjects
-                If X.FullName(True) = TableSelect Then
-                    Return X
-                End If
-            Next X
-        End If
-        Return Nothing
-    End Function
-
-    '''<summary>Configure the data grid view in a unique way.</summary>
-    Public Shared Sub ConfigDataGridView(ByRef adgv As Zuby.ADGV.AdvancedDataGridView)
-        With adgv
-            .AllowUserToAddRows = False
-            .AllowUserToDeleteRows = False
-            .AllowUserToOrderColumns = True
-            .EditMode = DataGridViewEditMode.EditProgrammatically
-            .RowHeadersVisible = False
-            .EnableHeadersVisualStyles = False
-            .ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-            .AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
-            .SelectionMode = DataGridViewSelectionMode.FullRowSelect
-            .ColumnHeadersDefaultCellStyle.SelectionBackColor = .ColumnHeadersDefaultCellStyle.BackColor
-            .FilterAndSortEnabled = True
-        End With
-    End Sub
-
-    Private Sub De()
-        System.Windows.Forms.Application.DoEvents()
-    End Sub
-
-    Private Sub btnAccept_Click(sender As Object, e As EventArgs) Handles btnAccept.Click
-        AcceptAndClose()
-    End Sub
-
-    Private Sub tsmiData_ToClipboard_Click(sender As Object, e As EventArgs) Handles tsmiData_ToClipboard.Click
-        Clipboard.Clear()
-        Clipboard.SetText(tbDetails.Text)
     End Sub
 
 End Class

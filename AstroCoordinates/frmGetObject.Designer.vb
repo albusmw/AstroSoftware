@@ -40,17 +40,14 @@ Partial Class frmGetObject
         msMain = New MenuStrip()
         tsmiData = New ToolStripMenuItem()
         tsmiData_AstroBin = New ToolStripMenuItem()
+        tsmiData_ToClipboard = New ToolStripMenuItem()
         tsmiData_SetLocation = New ToolStripMenuItem()
         ToolStripMenuItem1 = New ToolStripSeparator()
         tsmiData_Accept = New ToolStripMenuItem()
         tsmiTools = New ToolStripMenuItem()
         tsmiTools_InViewDisplay = New ToolStripMenuItem()
         tsmiTools_Recalc = New ToolStripMenuItem()
-        tsmiTools_GetBestObjects = New ToolStripMenuItem()
-        ToolStripMenuItem2 = New ToolStripSeparator()
-        tsmiTools_GetBestObjectsOLD = New ToolStripMenuItem()
         btnAccept = New Button()
-        tsmiData_ToClipboard = New ToolStripMenuItem()
         ssMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
         scMain.Panel1.SuspendLayout()
@@ -100,15 +97,18 @@ Partial Class frmGetObject
         ' 
         ' tsslSelectionLength
         ' 
+        tsslSelectionLength.BackColor = SystemColors.ActiveCaption
         tsslSelectionLength.Name = "tsslSelectionLength"
         tsslSelectionLength.Size = New Size(22, 17)
         tsslSelectionLength.Text = "---"
         ' 
         ' tsslObsCalcResult
         ' 
+        tsslObsCalcResult.BackColor = SystemColors.Info
         tsslObsCalcResult.DisplayStyle = ToolStripItemDisplayStyle.Text
         tsslObsCalcResult.Name = "tsslObsCalcResult"
-        tsslObsCalcResult.Size = New Size(0, 17)
+        tsslObsCalcResult.Size = New Size(22, 17)
+        tsslObsCalcResult.Text = "---"
         ' 
         ' tspgMain
         ' 
@@ -237,6 +237,12 @@ Partial Class frmGetObject
         tsmiData_AstroBin.Size = New Size(203, 22)
         tsmiData_AstroBin.Text = "Parse AstroBin clipboard"
         ' 
+        ' tsmiData_ToClipboard
+        ' 
+        tsmiData_ToClipboard.Name = "tsmiData_ToClipboard"
+        tsmiData_ToClipboard.Size = New Size(203, 22)
+        tsmiData_ToClipboard.Text = "Object data to clipboard"
+        ' 
         ' tsmiData_SetLocation
         ' 
         tsmiData_SetLocation.Name = "tsmiData_SetLocation"
@@ -256,7 +262,7 @@ Partial Class frmGetObject
         ' 
         ' tsmiTools
         ' 
-        tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay, tsmiTools_Recalc, tsmiTools_GetBestObjects, ToolStripMenuItem2, tsmiTools_GetBestObjectsOLD})
+        tsmiTools.DropDownItems.AddRange(New ToolStripItem() {tsmiTools_InViewDisplay, tsmiTools_Recalc})
         tsmiTools.Name = "tsmiTools"
         tsmiTools.Size = New Size(42, 20)
         tsmiTools.Text = "Tool"
@@ -264,31 +270,14 @@ Partial Class frmGetObject
         ' tsmiTools_InViewDisplay
         ' 
         tsmiTools_InViewDisplay.Name = "tsmiTools_InViewDisplay"
-        tsmiTools_InViewDisplay.Size = New Size(192, 22)
+        tsmiTools_InViewDisplay.Size = New Size(184, 22)
         tsmiTools_InViewDisplay.Text = "Open In View display"
         ' 
         ' tsmiTools_Recalc
         ' 
         tsmiTools_Recalc.Name = "tsmiTools_Recalc"
-        tsmiTools_Recalc.Size = New Size(192, 22)
+        tsmiTools_Recalc.Size = New Size(184, 22)
         tsmiTools_Recalc.Text = "Recalc"
-        ' 
-        ' tsmiTools_GetBestObjects
-        ' 
-        tsmiTools_GetBestObjects.Name = "tsmiTools_GetBestObjects"
-        tsmiTools_GetBestObjects.Size = New Size(192, 22)
-        tsmiTools_GetBestObjects.Text = "Get visible objects"
-        ' 
-        ' ToolStripMenuItem2
-        ' 
-        ToolStripMenuItem2.Name = "ToolStripMenuItem2"
-        ToolStripMenuItem2.Size = New Size(189, 6)
-        ' 
-        ' tsmiTools_GetBestObjectsOLD
-        ' 
-        tsmiTools_GetBestObjectsOLD.Name = "tsmiTools_GetBestObjectsOLD"
-        tsmiTools_GetBestObjectsOLD.Size = New Size(192, 22)
-        tsmiTools_GetBestObjectsOLD.Text = "Get best objects (OLD)"
         ' 
         ' btnAccept
         ' 
@@ -298,12 +287,6 @@ Partial Class frmGetObject
         btnAccept.TabIndex = 7
         btnAccept.Text = "Use this object"
         btnAccept.UseVisualStyleBackColor = True
-        ' 
-        ' tsmiData_ToClipboard
-        ' 
-        tsmiData_ToClipboard.Name = "tsmiData_ToClipboard"
-        tsmiData_ToClipboard.Size = New Size(203, 22)
-        tsmiData_ToClipboard.Text = "Object data to clipboard"
         ' 
         ' frmGetObject
         ' 
@@ -353,7 +336,6 @@ Partial Class frmGetObject
     Friend WithEvents tsmiData_Accept As ToolStripMenuItem
     Friend WithEvents tsmiData_SetLocation As ToolStripMenuItem
     Friend WithEvents tsmiTools_Recalc As ToolStripMenuItem
-    Friend WithEvents tsmiTools_GetBestObjectsOLD As ToolStripMenuItem
     Friend WithEvents tsslObsCalcResult As ToolStripStatusLabel
     Friend WithEvents tspgMain As ToolStripProgressBar
     Friend WithEvents tbDetails As TextBox
@@ -362,7 +344,5 @@ Partial Class frmGetObject
     Friend WithEvents pgFilter As PropertyGrid
     Friend WithEvents adgvObjects As Zuby.ADGV.AdvancedDataGridView
     Friend WithEvents btnAccept As Button
-    Friend WithEvents ToolStripMenuItem2 As ToolStripSeparator
-    Friend WithEvents tsmiTools_GetBestObjects As ToolStripMenuItem
     Friend WithEvents tsmiData_ToClipboard As ToolStripMenuItem
 End Class

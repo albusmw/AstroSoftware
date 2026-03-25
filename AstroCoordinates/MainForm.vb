@@ -174,7 +174,8 @@ Public Class MainForm
             .DecMax = tbDecParsedDecimal.Text.ValRegIndep + (SearchRadius / 2)
             .FieldRadiusMin = 0
             .FieldRadiusMax = SearchRadius
-            .TopPickOnly = True
+            .TopPick = False
+            .ImageOfTheDay = False
         End With
     End Sub
 
