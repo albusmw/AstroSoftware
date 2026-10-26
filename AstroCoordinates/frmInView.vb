@@ -19,7 +19,7 @@ Public Class frmInView
     Public Vector As New cAstroInView.cVectors
 
     '''<summary>ZEDGraph plotter.</summary>
-    Private Plotter As cZEDGraph
+    Private InViewZEDGraph As cZEDGraph
 
     Private TraceStyle_Sun As New cZEDGraph.sGraphStyle(Color.Orange, cZEDGraph.eCurveMode.Lines)
     Private TraceStyle_Object As New cZEDGraph.sGraphStyle(Color.Black, cZEDGraph.eCurveMode.Lines)
@@ -34,7 +34,7 @@ Public Class frmInView
 
     Private Sub frmInView_Load(sender As Object, e As EventArgs) Handles Me.Load
         pgCalcProp.SelectedObject = Props
-        Plotter = New cZEDGraph(zgcMain)
+        InViewZEDGraph = New cZEDGraph(zgcMain)
     End Sub
 
     Private Sub pgMain_MouseWheel(sender As Object, e As MouseEventArgs) Handles pgCalcProp.MouseWheel
@@ -75,7 +75,7 @@ Public Class frmInView
     End Sub
 
     Private Sub pgDispProp_PropertyValueChanged(s As Object, e As PropertyValueChangedEventArgs) Handles pgDispProp.PropertyValueChanged
-        PlotTraces(Plotter)
+        PlotTraces()
     End Sub
 
     Private Sub tsmiTime_Night_Click(sender As Object, e As EventArgs) Handles tsmiTime_Night.Click
@@ -141,7 +141,7 @@ Public Class frmInView
         pgCalcProp.SelectedObject = Props
         pgDispProp.SelectedObject = PlotConfig
         AstroInViewCalc()
-        PlotTraces(Plotter)
+        PlotTraces()
     End Sub
 
     '''<summary>Calculate the requested parameters over time.</summary>
@@ -166,6 +166,12 @@ Public Class frmInView
 
     End Sub
 
+    '''<summary>Plot the traces to the given ZEDGraph panel.</summary>
+    Public Sub PlotTraces()
+        PlotTraces(InViewZEDGraph)
+    End Sub
+
+    '''<summary>Plot the traces to the given ZEDGraph panel.</summary>
     Public Sub PlotTraces(ByRef Graph As cZEDGraph)
 
         'Update the observable trace

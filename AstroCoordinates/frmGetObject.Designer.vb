@@ -33,6 +33,8 @@ Partial Class frmGetObject
         scMain = New SplitContainer()
         scLeft = New SplitContainer()
         adgvObjects = New Zuby.ADGV.AdvancedDataGridView()
+        cmsTable = New ContextMenuStrip(components)
+        tsmi_AstroBin = New ToolStripMenuItem()
         pgFilter = New PropertyGrid()
         tbDetails = New TextBox()
         zgcMain = New ZedGraph.ZedGraphControl()
@@ -58,6 +60,7 @@ Partial Class frmGetObject
         scLeft.Panel2.SuspendLayout()
         scLeft.SuspendLayout()
         CType(adgvObjects, ComponentModel.ISupportInitialize).BeginInit()
+        cmsTable.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
         ' 
@@ -159,6 +162,7 @@ Partial Class frmGetObject
         ' 
         adgvObjects.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         adgvObjects.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        adgvObjects.ContextMenuStrip = cmsTable
         adgvObjects.FilterAndSortEnabled = True
         adgvObjects.FilterStringChangedInvokeBeforeDatasourceUpdate = True
         adgvObjects.Location = New Point(3, 3)
@@ -169,6 +173,18 @@ Partial Class frmGetObject
         adgvObjects.Size = New Size(590, 444)
         adgvObjects.SortStringChangedInvokeBeforeDatasourceUpdate = True
         adgvObjects.TabIndex = 4
+        ' 
+        ' cmsTable
+        ' 
+        cmsTable.Items.AddRange(New ToolStripItem() {tsmi_AstroBin})
+        cmsTable.Name = "cmsTable"
+        cmsTable.Size = New Size(120, 26)
+        ' 
+        ' tsmi_AstroBin
+        ' 
+        tsmi_AstroBin.Name = "tsmi_AstroBin"
+        tsmi_AstroBin.Size = New Size(119, 22)
+        tsmi_AstroBin.Text = "AstroBin"
         ' 
         ' pgFilter
         ' 
@@ -314,6 +330,7 @@ Partial Class frmGetObject
         CType(scLeft, ComponentModel.ISupportInitialize).EndInit()
         scLeft.ResumeLayout(False)
         CType(adgvObjects, ComponentModel.ISupportInitialize).EndInit()
+        cmsTable.ResumeLayout(False)
         msMain.ResumeLayout(False)
         msMain.PerformLayout()
         ResumeLayout(False)
@@ -345,4 +362,6 @@ Partial Class frmGetObject
     Friend WithEvents adgvObjects As Zuby.ADGV.AdvancedDataGridView
     Friend WithEvents btnAccept As Button
     Friend WithEvents tsmiData_ToClipboard As ToolStripMenuItem
+    Friend WithEvents cmsTable As ContextMenuStrip
+    Friend WithEvents tsmi_AstroBin As ToolStripMenuItem
 End Class

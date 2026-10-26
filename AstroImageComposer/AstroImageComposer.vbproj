@@ -11,8 +11,11 @@
 
   <ItemGroup>
     <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="MyLib\AstroStatistics.vb" />
+    <Compile Include="..\..\MyLib\cAstroProcessing.vb" Link="MyLib\cAstroProcessing.vb" />
     <Compile Include="..\..\MyLib\cColorMaps.vb" Link="MyLib\cColorMaps.vb" />
     <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="atomics\cDLLDynCall.vb" />
+    <Compile Include="..\..\MyLib\cDragDrop.vb" Link="MyLib\cDragDrop.vb" />
+    <Compile Include="..\..\MyLib\cFITSDisplay.vb" Link="MyLib\cFITSDisplay.vb" />
     <Compile Include="..\..\MyLib\cFITSHeaderKeywords.vb" Link="MyLib\cFITSHeaderKeywords.vb" />
     <Compile Include="..\..\MyLib\cImageFromData.vb" Link="MyLib\cImageFromData.vb" />
     <Compile Include="..\..\MyLib\cIntelIPP.vb" Link="MyLib\cIntelIPP.vb" />
@@ -28,6 +31,9 @@
     <Compile Include="..\..\MyLib\frmFITSBrowser.vb" Link="MyLib\frmFITSBrowser.vb" />
     <Compile Include="..\..\MyLib\GetBuildDateTime.vb" Link="MyLib\GetBuildDateTime.vb" />
     <Compile Include="..\..\MyLib\PictureBoxEx.vb" Link="MyLib\PictureBoxEx.vb" />
+    <Compile Include="..\..\MyLib\RecursiveDirScan.vb" Link="MyLib\RecursiveDirScan.vb" />
+    <Compile Include="..\..\MyLib\ucAstroImageControl.Designer.vb" Link="MyLib\ucAstroImageControl.Designer.vb" />
+    <Compile Include="..\..\MyLib\ucAstroImageControl.vb" Link="MyLib\ucAstroImageControl.vb" />
     <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
     <Compile Include="..\..\src\atomics\cFITSGrepper.vb" Link="atomics\cFITSGrepper.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="atomics\cFITSHeaderChanger.vb" />
@@ -35,12 +41,23 @@
     <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="atomics\cFITSHeaderParser.vb" />
     <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="atomics\cFITSReader.vb" />
     <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="atomics\cFITSWriter.vb" />
-    <Compile Include="..\..\src\atomics\DragDrop.vb" Link="atomics\DragDrop.vb" />
-    <Compile Include="..\..\src\atomics\RecursiveDirScan.vb" Link="atomics\RecursiveDirScan.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <COMReference Include="Shell32">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>50a7e9b0-70ef-11d1-b75a-00a0c90564fe</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="..\..\MyLib\frmFITSBrowser.resx" Link="MyLib\frmFITSBrowser.resx" />
+    <EmbeddedResource Include="..\..\MyLib\ucAstroImageControl.resx" Link="MyLib\ucAstroImageControl.resx" />
   </ItemGroup>
 
   <ItemGroup>

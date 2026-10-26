@@ -13,6 +13,7 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <FileVersion>1.0.0.0</FileVersion>
     <ApplicationIcon>FITSGrep.ico</ApplicationIcon>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <OutputPath>bin\x64\Debug\</OutputPath>
@@ -119,13 +120,13 @@
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="DG.AdvancedDataGridView" Version="1.2.30115.18" />
     <PackageReference Include="DockPanelSuite" Version="3.1.1" />
-    <PackageReference Include="PDFsharp" Version="6.2.0" />
+    <PackageReference Include="PDFsharp" Version="6.2.4" />
+    <PackageReference Include="SourceGear.sqlite3" Version="3.50.4.5" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.119" />
+    <PackageReference Include="System.Data.SQLite" Version="2.0.3" />
     <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119" />
-    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.119" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.7" />
+    <PackageReference Include="System.Data.SQLite.EF6" Version="2.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.5" />
   </ItemGroup>
 </Project>

@@ -4,7 +4,7 @@ Option Strict On
 Public Class MDIParent
 
     '''<summary>Drag-and-drop handler.</summary>
-    Private WithEvents DD As Ato.DragDrop
+    Private WithEvents DD As cDragDrop
 
     Private Sub MDIParent_Load(sender As Object, e As EventArgs) Handles Me.Load
 
@@ -13,7 +13,7 @@ Public Class MDIParent
         DB.Init()
 
         'Init drap-and-drop
-        DD = New Ato.DragDrop(CType(dpMain, Control))
+        DD = New cDragDrop(CType(dpMain, Control))
 
     End Sub
 

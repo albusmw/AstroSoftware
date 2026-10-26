@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\MyLib\AstroStatistics.vb" Link="MyLib\AstroStatistics.vb" />
+    <Compile Include="..\..\MyLib\cAstroImageProcessing.vb" Link="cAstroImageProcessing.vb" />
     <Compile Include="..\..\MyLib\cColorMaps.vb" Link="MyLib\cColorMaps.vb" />
     <Compile Include="..\..\MyLib\cDLLDynCall.vb" Link="MyLib\cDLLDynCall.vb" />
     <Compile Include="..\..\MyLib\cDragDrop.vb" Link="MyLib\cDragDrop.vb" />
@@ -42,7 +43,10 @@
     <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
 	<Compile Include="..\..\MyLib\cZEDGraph.vb" Link="MyLib\cZEDGraph.vb" />
 	<Compile Include="..\..\MyLib\cLogTextBox.vb" Link="MyLib\cLogTextBox.vb" />
+	<Compile Include="..\..\src\atomics\cFITSHeaderChanger.vb" Link="cFITSHeaderChanger.vb" />
     <Compile Include="..\..\src\atomics\cFITSHeaderKeywords.vb" Link="src\cFITSHeaderKeywords.vb" />
+    <Compile Include="..\..\src\atomics\cFITSHeaderParser.vb" Link="cFITSHeaderParser.vb" />
+    <Compile Include="..\..\src\atomics\cFITSReader.vb" Link="cFITSReader.vb" />
     <Compile Include="..\..\src\atomics\cFITSWriter.vb" Link="src\cFITSWriter.vb" />
     <Compile Include="..\..\src\atomics\SignalProcessing.vb" Link="src\SignalProcessing.vb" />
     <COMReference Include="Shell32">

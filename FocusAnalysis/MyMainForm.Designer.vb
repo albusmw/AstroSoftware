@@ -29,6 +29,8 @@ Partial Class MyMainForm
         tsmiFile_Save = New ToolStripMenuItem()
         tsmiFile_Save_GlobalMin = New ToolStripMenuItem()
         tsmiFile_Save_GlobalMax = New ToolStripMenuItem()
+        ToolStripMenuItem1 = New ToolStripSeparator()
+        tsmiFile_Exit = New ToolStripMenuItem()
         ofdMain = New OpenFileDialog()
         tbLog = New TextBox()
         tbSERFile = New TextBox()
@@ -51,6 +53,8 @@ Partial Class MyMainForm
         zgcHisto = New ZedGraph.ZedGraphControl()
         pbExSERFrameImage = New PictureBoxEx()
         zgcMain = New ZedGraph.ZedGraphControl()
+        tsmiAnalysis = New ToolStripMenuItem()
+        tsmiAnalysis_FindROI = New ToolStripMenuItem()
         msMain.SuspendLayout()
         StatusStrip1.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
@@ -74,17 +78,17 @@ Partial Class MyMainForm
         ' 
         ' msMain
         ' 
-        msMain.Items.AddRange(New ToolStripItem() {tsmiFile})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiAnalysis})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
         msMain.Padding = New Padding(7, 2, 0, 2)
-        msMain.Size = New Size(945, 24)
+        msMain.Size = New Size(1153, 24)
         msMain.TabIndex = 0
         msMain.Text = "MenuStrip1"
         ' 
         ' tsmiFile
         ' 
-        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenSerSequence, tsmiFile_Save})
+        tsmiFile.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_OpenSerSequence, tsmiFile_Save, ToolStripMenuItem1, tsmiFile_Exit})
         tsmiFile.Name = "tsmiFile"
         tsmiFile.Size = New Size(37, 20)
         tsmiFile.Text = "File"
@@ -92,14 +96,14 @@ Partial Class MyMainForm
         ' tsmiFile_OpenSerSequence
         ' 
         tsmiFile_OpenSerSequence.Name = "tsmiFile_OpenSerSequence"
-        tsmiFile_OpenSerSequence.Size = New Size(178, 22)
+        tsmiFile_OpenSerSequence.Size = New Size(180, 22)
         tsmiFile_OpenSerSequence.Text = "Open SER sequence"
         ' 
         ' tsmiFile_Save
         ' 
         tsmiFile_Save.DropDownItems.AddRange(New ToolStripItem() {tsmiFile_Save_GlobalMin, tsmiFile_Save_GlobalMax})
         tsmiFile_Save.Name = "tsmiFile_Save"
-        tsmiFile_Save.Size = New Size(178, 22)
+        tsmiFile_Save.Size = New Size(180, 22)
         tsmiFile_Save.Text = "Save ..."
         ' 
         ' tsmiFile_Save_GlobalMin
@@ -113,6 +117,17 @@ Partial Class MyMainForm
         tsmiFile_Save_GlobalMax.Name = "tsmiFile_Save_GlobalMax"
         tsmiFile_Save_GlobalMax.Size = New Size(156, 22)
         tsmiFile_Save_GlobalMax.Text = "Global MAX file"
+        ' 
+        ' ToolStripMenuItem1
+        ' 
+        ToolStripMenuItem1.Name = "ToolStripMenuItem1"
+        ToolStripMenuItem1.Size = New Size(177, 6)
+        ' 
+        ' tsmiFile_Exit
+        ' 
+        tsmiFile_Exit.Name = "tsmiFile_Exit"
+        tsmiFile_Exit.Size = New Size(180, 22)
+        tsmiFile_Exit.Text = "Exit"
         ' 
         ' ofdMain
         ' 
@@ -128,7 +143,7 @@ Partial Class MyMainForm
         tbLog.Name = "tbLog"
         tbLog.ReadOnly = True
         tbLog.ScrollBars = ScrollBars.Both
-        tbLog.Size = New Size(348, 251)
+        tbLog.Size = New Size(429, 324)
         tbLog.TabIndex = 4
         tbLog.WordWrap = False
         ' 
@@ -137,7 +152,7 @@ Partial Class MyMainForm
         tbSERFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbSERFile.Location = New Point(91, 27)
         tbSERFile.Name = "tbSERFile"
-        tbSERFile.Size = New Size(742, 23)
+        tbSERFile.Size = New Size(950, 23)
         tbSERFile.TabIndex = 2
         tbSERFile.Text = "\\Ds1819\dsc\9999 - Focus Videos\2025_12_15 - Focus with log\SERTest_0001.ser"
         ' 
@@ -155,7 +170,7 @@ Partial Class MyMainForm
         tbPWI4LogFile.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
         tbPWI4LogFile.Location = New Point(91, 56)
         tbPWI4LogFile.Name = "tbPWI4LogFile"
-        tbPWI4LogFile.Size = New Size(775, 23)
+        tbPWI4LogFile.Size = New Size(983, 23)
         tbPWI4LogFile.TabIndex = 4
         tbPWI4LogFile.Text = "\\Ds1819\dsc\9999 - Focus Videos\2025_12_15 - Focus with log\SERTest_0001.ser.txt"
         ' 
@@ -171,7 +186,7 @@ Partial Class MyMainForm
         ' btnAnalysis
         ' 
         btnAnalysis.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnAnalysis.Location = New Point(872, 30)
+        btnAnalysis.Location = New Point(1080, 30)
         btnAnalysis.Name = "btnAnalysis"
         btnAnalysis.Size = New Size(61, 49)
         btnAnalysis.TabIndex = 6
@@ -181,7 +196,7 @@ Partial Class MyMainForm
         ' btnSetSERFile
         ' 
         btnSetSERFile.Anchor = AnchorStyles.Top Or AnchorStyles.Right
-        btnSetSERFile.Location = New Point(839, 26)
+        btnSetSERFile.Location = New Point(1047, 26)
         btnSetSERFile.Name = "btnSetSERFile"
         btnSetSERFile.Size = New Size(32, 23)
         btnSetSERFile.TabIndex = 7
@@ -191,9 +206,9 @@ Partial Class MyMainForm
         ' StatusStrip1
         ' 
         StatusStrip1.Items.AddRange(New ToolStripItem() {pbImageStream, tsslImageStream, tsslADUOVLD, pbMaxADU})
-        StatusStrip1.Location = New Point(0, 624)
+        StatusStrip1.Location = New Point(0, 769)
         StatusStrip1.Name = "StatusStrip1"
-        StatusStrip1.Size = New Size(945, 22)
+        StatusStrip1.Size = New Size(1153, 22)
         StatusStrip1.TabIndex = 8
         StatusStrip1.Text = "StatusStrip1"
         ' 
@@ -234,8 +249,8 @@ Partial Class MyMainForm
         ' scMain.Panel2
         ' 
         scMain.Panel2.Controls.Add(scRight)
-        scMain.Size = New Size(918, 529)
-        scMain.SplitterDistance = 360
+        scMain.Size = New Size(1126, 674)
+        scMain.SplitterDistance = 441
         scMain.TabIndex = 9
         ' 
         ' scLeft
@@ -253,8 +268,8 @@ Partial Class MyMainForm
         ' scLeft.Panel2
         ' 
         scLeft.Panel2.Controls.Add(tbLog)
-        scLeft.Size = New Size(354, 520)
-        scLeft.SplitterDistance = 259
+        scLeft.Size = New Size(435, 665)
+        scLeft.SplitterDistance = 331
         scLeft.TabIndex = 5
         ' 
         ' pgMain
@@ -276,7 +291,7 @@ Partial Class MyMainForm
         tbSummary.Name = "tbSummary"
         tbSummary.ReadOnly = True
         tbSummary.ScrollBars = ScrollBars.Both
-        tbSummary.Size = New Size(348, 59)
+        tbSummary.Size = New Size(429, 131)
         tbSummary.TabIndex = 5
         tbSummary.WordWrap = False
         ' 
@@ -294,8 +309,8 @@ Partial Class MyMainForm
         ' scRight.Panel2
         ' 
         scRight.Panel2.Controls.Add(zgcMain)
-        scRight.Size = New Size(548, 523)
-        scRight.SplitterDistance = 260
+        scRight.Size = New Size(675, 668)
+        scRight.SplitterDistance = 332
         scRight.TabIndex = 1
         ' 
         ' scTopRight
@@ -311,8 +326,8 @@ Partial Class MyMainForm
         ' scTopRight.Panel2
         ' 
         scTopRight.Panel2.Controls.Add(pbExSERFrameImage)
-        scTopRight.Size = New Size(541, 252)
-        scTopRight.SplitterDistance = 230
+        scTopRight.Size = New Size(668, 324)
+        scTopRight.SplitterDistance = 283
         scTopRight.TabIndex = 1
         ' 
         ' zgcHisto
@@ -328,7 +343,7 @@ Partial Class MyMainForm
         zgcHisto.ScrollMinX = 0R
         zgcHisto.ScrollMinY = 0R
         zgcHisto.ScrollMinY2 = 0R
-        zgcHisto.Size = New Size(222, 246)
+        zgcHisto.Size = New Size(275, 318)
         zgcHisto.TabIndex = 0
         ' 
         ' pbExSERFrameImage
@@ -337,7 +352,7 @@ Partial Class MyMainForm
         pbExSERFrameImage.BackColor = Color.Gray
         pbExSERFrameImage.Location = New Point(3, 3)
         pbExSERFrameImage.Name = "pbExSERFrameImage"
-        pbExSERFrameImage.Size = New Size(299, 246)
+        pbExSERFrameImage.Size = New Size(373, 318)
         pbExSERFrameImage.SizeMode = PictureBoxSizeMode.Zoom
         pbExSERFrameImage.TabIndex = 0
         pbExSERFrameImage.TabStop = False
@@ -355,14 +370,27 @@ Partial Class MyMainForm
         zgcMain.ScrollMinX = 0R
         zgcMain.ScrollMinY = 0R
         zgcMain.ScrollMinY2 = 0R
-        zgcMain.Size = New Size(541, 253)
+        zgcMain.Size = New Size(668, 326)
         zgcMain.TabIndex = 0
+        ' 
+        ' tsmiAnalysis
+        ' 
+        tsmiAnalysis.DropDownItems.AddRange(New ToolStripItem() {tsmiAnalysis_FindROI})
+        tsmiAnalysis.Name = "tsmiAnalysis"
+        tsmiAnalysis.Size = New Size(62, 20)
+        tsmiAnalysis.Text = "Analysis"
+        ' 
+        ' tsmiAnalysis_FindROI
+        ' 
+        tsmiAnalysis_FindROI.Name = "tsmiAnalysis_FindROI"
+        tsmiAnalysis_FindROI.Size = New Size(180, 22)
+        tsmiAnalysis_FindROI.Text = "Find ROI in FITS"
         ' 
         ' MyMainForm
         ' 
         AutoScaleDimensions = New SizeF(7F, 15F)
         AutoScaleMode = AutoScaleMode.Font
-        ClientSize = New Size(945, 646)
+        ClientSize = New Size(1153, 791)
         Controls.Add(scMain)
         Controls.Add(StatusStrip1)
         Controls.Add(btnSetSERFile)
@@ -432,4 +460,8 @@ Partial Class MyMainForm
     Friend WithEvents pgMain As PropertyGrid
     Friend WithEvents scTopRight As SplitContainer
     Friend WithEvents zgcHisto As ZedGraph.ZedGraphControl
+    Friend WithEvents ToolStripMenuItem1 As ToolStripSeparator
+    Friend WithEvents tsmiFile_Exit As ToolStripMenuItem
+    Friend WithEvents tsmiAnalysis As ToolStripMenuItem
+    Friend WithEvents tsmiAnalysis_FindROI As ToolStripMenuItem
 End Class

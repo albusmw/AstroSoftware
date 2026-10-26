@@ -43,6 +43,8 @@ Partial Class frmInView
         tsmiGenerate_ExcelExportSun = New ToolStripMenuItem()
         scMain = New SplitContainer()
         pgDispProp = New PropertyGrid()
+        Label1 = New Label()
+        Label2 = New Label()
         ssMain.SuspendLayout()
         msMain.SuspendLayout()
         CType(scMain, ComponentModel.ISupportInitialize).BeginInit()
@@ -54,10 +56,11 @@ Partial Class frmInView
         ' pgCalcProp
         ' 
         pgCalcProp.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        pgCalcProp.Location = New Point(3, 3)
+        pgCalcProp.Location = New Point(3, 27)
         pgCalcProp.Name = "pgCalcProp"
-        pgCalcProp.Size = New Size(303, 345)
+        pgCalcProp.Size = New Size(303, 321)
         pgCalcProp.TabIndex = 0
+        pgCalcProp.ToolbarVisible = False
         ' 
         ' zgcMain
         ' 
@@ -191,10 +194,12 @@ Partial Class frmInView
         ' 
         ' scMain.Panel1
         ' 
+        scMain.Panel1.Controls.Add(Label2)
         scMain.Panel1.Controls.Add(pgCalcProp)
         ' 
         ' scMain.Panel2
         ' 
+        scMain.Panel2.Controls.Add(Label1)
         scMain.Panel2.Controls.Add(pgDispProp)
         scMain.Size = New Size(309, 704)
         scMain.SplitterDistance = 351
@@ -203,10 +208,31 @@ Partial Class frmInView
         ' pgDispProp
         ' 
         pgDispProp.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
-        pgDispProp.Location = New Point(3, 5)
+        pgDispProp.Location = New Point(3, 37)
         pgDispProp.Name = "pgDispProp"
-        pgDispProp.Size = New Size(303, 340)
+        pgDispProp.Size = New Size(303, 308)
         pgDispProp.TabIndex = 5
+        pgDispProp.ToolbarVisible = False
+        ' 
+        ' Label1
+        ' 
+        Label1.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        Label1.Location = New Point(3, 6)
+        Label1.Name = "Label1"
+        Label1.Size = New Size(300, 23)
+        Label1.TabIndex = 6
+        Label1.Text = "Graph configuration"
+        Label1.TextAlign = ContentAlignment.MiddleCenter
+        ' 
+        ' Label2
+        ' 
+        Label2.Anchor = AnchorStyles.Top Or AnchorStyles.Left Or AnchorStyles.Right
+        Label2.Location = New Point(3, 1)
+        Label2.Name = "Label2"
+        Label2.Size = New Size(303, 23)
+        Label2.TabIndex = 7
+        Label2.Text = "Calculation"
+        Label2.TextAlign = ContentAlignment.MiddleCenter
         ' 
         ' frmInView
         ' 
@@ -252,4 +278,6 @@ Partial Class frmInView
     Friend WithEvents tsmiTime_Recalc As ToolStripMenuItem
     Friend WithEvents tsmiTime_Night As ToolStripMenuItem
     Friend WithEvents tsmiGenerate_ExcelExportSun As ToolStripMenuItem
+    Friend WithEvents Label2 As Label
+    Friend WithEvents Label1 As Label
 End Class

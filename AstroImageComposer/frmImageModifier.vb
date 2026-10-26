@@ -1,7 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
-'''<summary>Windows containinf the image modifier parameters.</summary>
+'''<summary>Windows containing the image modifier parameters.</summary>
 Public Class frmImageModifier
 
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════

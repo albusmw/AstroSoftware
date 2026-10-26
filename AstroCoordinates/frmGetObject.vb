@@ -13,18 +13,12 @@ Public Class frmGetObject
     Public Class cVisFilter
 
         <ComponentModel.Category(Cats.Cat3)>
-        <ComponentModel.DisplayName("1.) Calculation start time")>
+        <ComponentModel.DisplayName("Calculation start time")>
         Public Property StartMomentUTC As DateTime = Now.ToUniversalTime
 
-        <ComponentModel.DisplayName("2.1) Minimum heigth")>
-        Public Property MinHeight As Double = 20.0
-
-        <ComponentModel.DisplayName("OLD - 2.2) Maximum sun heigth")>
-        Public Property MaxSunHeigth As Double = -18.0
-
         <ComponentModel.Category(Cats.Cat3)>
-        <ComponentModel.DisplayName("OLD - 2.) Minimum culmination heigth")>
-        Public Property Vis_MinCulmHeigth As Double = 30
+        <ComponentModel.DisplayName("Minimum culmination heigth")>
+        Public Property MinCulmHeigth As Double = 30
 
     End Class
     Public VisFilter As New cVisFilter
@@ -55,8 +49,6 @@ Public Class frmGetObject
 
     '''<summary>Table objects.</summary>
     Public Objects As New Data.DataTable
-
-    Public ObjectAvailability As New Dictionary(Of Tuple(Of Integer, Integer), Double)
 
     '''<summary>Display to do calculation and show full properties.</summary>
     Private InView As New frmInView
@@ -168,7 +160,7 @@ Public Class frmGetObject
     Private Sub tsmiTools_InViewDisplay_Click(sender As Object, e As EventArgs) Handles tsmiTools_InViewDisplay.Click
         InView.Props.Calc_Sun = True
         InView.Show()
-        UpdateInViewLocation()
+        InViewRecalc()
         UpdateInView()
     End Sub
 
@@ -188,7 +180,7 @@ Public Class frmGetObject
             Case Ato.AstroCalc.KnownLocations.LaPalma.Name
                 InView.Props.SetObservatory(Ato.AstroCalc.KnownLocations.LaPalma)
         End Select
-        UpdateInViewLocation()
+        InViewRecalc()
     End Sub
 
     '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
@@ -202,8 +194,8 @@ Public Class frmGetObject
 
         'Load all build-in catalogs
         DoubleEntries += AddToCat(eSpecialCat.M, GetResourceLines("AstroCoordinates.messier.txt"), Sep)
-        DoubleEntries += AddToCat(eSpecialCat.Stars, GetResourceLines("AstroCoordinates.namedStars.txt"), Sep)
-        DoubleEntries += AddToCat(eSpecialCat.NGC, GetResourceLines("AstroCoordinates.ngc2000.txt"), Sep)
+        DoubleEntries += AddToCat(eSpecialCat.NamedStars, GetResourceLines("AstroCoordinates.namedStars.txt"), Sep)
+        DoubleEntries += AddToCat(eSpecialCat.NGC_IC, GetResourceLines("AstroCoordinates.ngc2000.txt"), Sep)
 
         'Load all VizierR catalogs
         Dim Vizier As New cVizier("C:\!AstroCat")
@@ -318,8 +310,9 @@ Public Class frmGetObject
             tbDetails.Text = "No object selected ..."
             Exit Sub
         Else
+
+            'Display selected object information
             Try
-                'Display selected object information
                 Dim W2nd As Integer = 15
                 Dim ObservatoryTZ As GeoTimeZone.TimeZoneResult = GeoTimeZone.TimeZoneLookup.GetTimeZone(InView.Props.Observatory_Latitude, InView.Props.Observatory_Longitude)
                 Dim TZI As TimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ObservatoryTZ.Result)
@@ -364,13 +357,15 @@ Public Class frmGetObject
             Catch ex As Exception
                 tbDetails.Text = "Calculation error: <" & ex.Message & ">"
             End Try
-            'Display observability results
-            Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(SelectedObject.RA), CInt(SelectedObject.Dec))
-            Try
-                tsslObsCalcResult.Text = TuppleToSearch.Item1.ToString.Trim & ":" & TuppleToSearch.Item2.ToString.Trim & " -> " & ObjectAvailability(TuppleToSearch).ToString.Trim & " hours visible"
-            Catch ex As Exception
-                tsslObsCalcResult.Text = TuppleToSearch.Item1.ToString.Trim & ":" & TuppleToSearch.Item2.ToString.Trim & " -> ??? (entry not found)"
-            End Try
+
+            'Display observability results - OLD METHOD
+            'Dim TuppleToSearch As New Tuple(Of Integer, Integer)(CInt(SelectedObject.RA), CInt(SelectedObject.Dec))
+            'Try
+            'tsslObsCalcResult.Text = TuppleToSearch.Item1.ToString.Trim & ":" & TuppleToSearch.Item2.ToString.Trim & " -> " & ObjectAvailability(TuppleToSearch).ToString.Trim & " hours visible"
+            'Catch ex As Exception
+            'tsslObsCalcResult.Text = TuppleToSearch.Item1.ToString.Trim & ":" & TuppleToSearch.Item2.ToString.Trim & " -> ??? (entry not found)"
+            'End Try
+
         End If
     End Sub
 
@@ -380,10 +375,8 @@ Public Class frmGetObject
     End Sub
 
     '''<summary>Update the InView location.</summary>
-    Private Sub UpdateInViewLocation()
-        If IsNothing(InView) = False Then
-            InView.Recalc()
-        End If
+    Private Sub InViewRecalc()
+        If IsNothing(InView) = False Then InView.Recalc()
     End Sub
 
     '''<summary>Update location and object in the InView display window and the build-in graph.</summary>
@@ -502,8 +495,9 @@ Public Class frmGetObject
         CalcVisibility()
     End Sub
 
-    '==============================================================================================================================================================
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
 
+    '''<summary>Calculate the visibility information of all objects in the table.</summary>
     Private Sub CalcVisibility()
         Objects.Clear()
         Dim TotalObjects As Integer = AllObjects.Count
@@ -513,27 +507,28 @@ Public Class frmGetObject
         For Each Item In AllObjects
             tspgMain.Value += 1 : De()
             Dim ObjectRaDec As New sRADec(Item.RA, Item.Dec)
+            Dim HeigthNow As Double = Astronomy.Net.GetObjectPosition(VisFilter.StartMomentUTC, CurrentLocation, ObjectRaDec).Alt               'heigth at the start of the calculation
             Dim CulmTime As DateTime = Astronomy.Net.GetNextObjectCulminationTime(VisFilter.StartMomentUTC, CurrentLocation, ObjectRaDec)       'culmination time
             Dim CulmHeigth As Double = Astronomy.Net.GetObjectPosition(CulmTime, CurrentLocation, ObjectRaDec).Alt                              'culmination heigth
             Dim ObjLowest As Double = Astronomy.Net.GetObjectPosition(CulmTime.AddHours(12), CurrentLocation, ObjectRaDec).Alt                  'lowest object position (12 hoours after culmination)
-            Dim VisibleText As String = String.Empty
+            'Generate a text that describes the visibility
+            Dim VisibleText As New List(Of String)
             If CulmHeigth < 0 Then
-                VisibleText = "Does not raise"
+                VisibleText.Add("Never")
             Else
-                If CulmHeigth < VisFilter.Vis_MinCulmHeigth Then
-                    VisibleText = "Low"
+                If ObjLowest > 0 Then
+                    VisibleText.Add("Always")
                 Else
-                    If ObjLowest > 0 Then
-                        VisibleText = "Always visible"
-                    Else
-                        VisibleText = "OK"
-                    End If
-
+                    VisibleText.Add("Yes")
                 End If
+                If CulmHeigth < VisFilter.MinCulmHeigth Then VisibleText.Add("Low")
+                If HeigthNow > InView.PlotConfig.Limit_ObjectMinHeigth Then VisibleText.Add("Now visible")
             End If
-            Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name, Item.Diameter.Describe, Item.Diameter.Area, CulmTime, Math.Round(CulmHeigth, 1), Math.Round(ObjLowest, 1), VisibleText})
+            'Add the object to the list
+            Objects.Rows.Add(New Object() {Item.FullName(True), Item.Catalog, Item.Name, Item.Diameter.Describe, Item.Diameter.Area, CulmTime, Math.Round(CulmHeigth, 1), Math.Round(ObjLowest, 1), Join(VisibleText.ToArray, "-")})
             If Visible = True Then VisibleObjects += 1
         Next Item
+        'Table shall display the objects with the corrected visibility information
         adgvObjects.DataSource = Objects
         tspgMain.Value = 0
     End Sub
@@ -542,11 +537,24 @@ Public Class frmGetObject
         System.Windows.Forms.Application.DoEvents()
     End Sub
 
-    '==============================================================================================================================================================
-    ' OLD CODE
-    '==============================================================================================================================================================
+    Private Sub tsmi_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmi_AstroBin.Click
+        Dim ABS As New frmAstroBinSearch
+        ABS.Show()
+        With ABS
+            .SetCoordinates(GetSelectedObject.RA, GetSelectedObject.Dec, .SearchRadius)
+            .FieldRadiusMin = 0
+            .FieldRadiusMax = .SearchRadius
+            .Subjects = GetSelectedObject.FullName(False)
+            .TopPick = False
+            .ImageOfTheDay = False
+        End With
+    End Sub
 
-    Private Sub tsmiTools_GetBestObjectsOLD_Click()
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    ' OLD CODE
+    '══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    Private Sub tsmiTools_GetBestObjectsOLD_Click(ByVal MinHeight As Double, ByVal MaxSunHeigth As Double)
 
         Dim InViewProps As cAstroInView.cProps = InView.Props
         Dim InViewCalc As New cAstroInView
@@ -564,8 +572,8 @@ Public Class frmGetObject
         Dim Limits As New cAstroInView.cPlotConfig
 
         Limits.Limit_MoonMaxHeigth = 100
-        Limits.Limit_ObjectMinHeigth = VisFilter.MinHeight
-        Limits.Limit_SunMaxHeigth = VisFilter.MaxSunHeigth
+        Limits.Limit_ObjectMinHeigth = MinHeight
+        Limits.Limit_SunMaxHeigth = MaxSunHeigth
 
         'Store settings
         Dim Old_Calc_Moon As Boolean = InViewProps.Calc_Moon
@@ -578,7 +586,7 @@ Public Class frmGetObject
         InViewProps.Calc_Sun = True
         InViewProps.ObjectName = "Visibility test"
 
-        ObjectAvailability = New Dictionary(Of Tuple(Of Integer, Integer), Double)
+        Dim ObjectAvailability As New Dictionary(Of Tuple(Of Integer, Integer), Double)
         tspgMain.Maximum = (25 * 180) + 1
         tspgMain.Value = 0
 

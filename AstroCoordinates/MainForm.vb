@@ -11,13 +11,13 @@ Public Class MainForm
     End Sub
 
     Private Sub btnGetObject_Click(sender As Object, e As EventArgs) Handles btnGetObject.Click
-        Dim SelectionForm As New frmGetObject
+        Dim GetObject As New frmGetObject
         'SelectionForm.SelectedObject = New cObjectInfo("Manual", "Manual", tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep)
-        SelectionForm.Tag = tbSelected.Text
-        If SelectionForm.ShowDialog() = DialogResult.OK Then
-            tbSelected.Text = SelectionForm.SelectedObject.FullName(True)
-            UpdateRA(SelectionForm.SelectedObject.RA)
-            UpdateDec(SelectionForm.SelectedObject.Dec)
+        GetObject.Tag = tbSelected.Text
+        If GetObject.ShowDialog() = DialogResult.OK Then
+            tbSelected.Text = GetObject.SelectedObject.FullName(True)
+            UpdateRA(GetObject.SelectedObject.RA)
+            UpdateDec(GetObject.SelectedObject.Dec)
         End If
     End Sub
 
@@ -165,15 +165,10 @@ Public Class MainForm
     Private Sub tsmiFile_AstroBin_Click(sender As Object, e As EventArgs) Handles tsmiFile_AstroBin.Click
         Dim ABS As New frmAstroBinSearch
         ABS.Show()
-        Dim SearchRadius As Double = InputBox("Search radius [°]", "Search radius", "1").ValRegIndep
-        Dim SearchRadiusRad As Double = SearchRadius * (24 / 360)
         With ABS
-            .RaMin = tbRAParsedDecimal.Text.ValRegIndep - (SearchRadiusRad / 2)
-            .RaMax = tbRAParsedDecimal.Text.ValRegIndep + (SearchRadiusRad / 2)
-            .DecMin = tbDecParsedDecimal.Text.ValRegIndep - (SearchRadius / 2)
-            .DecMax = tbDecParsedDecimal.Text.ValRegIndep + (SearchRadius / 2)
+            .SetCoordinates(tbRAParsedDecimal.Text.ValRegIndep, tbDecParsedDecimal.Text.ValRegIndep, .SearchRadius)
             .FieldRadiusMin = 0
-            .FieldRadiusMax = SearchRadius
+            .FieldRadiusMax = .SearchRadius
             .TopPick = False
             .ImageOfTheDay = False
         End With
@@ -202,12 +197,11 @@ Public Class MainForm
 
     Private Sub tsmiEnter_ParseClipboard_Click(sender As Object, e As EventArgs) Handles tsmiEnter_ParseClipboard.Click
         Dim ClipContent As String = Clipboard.GetText(TextDataFormat.UnicodeText)
-        ClipContent = InputBox("Content:", "Content", ClipContent)
-        Dim ClipRa As Double = Double.NaN
-        Dim ClipDec As Double = Double.NaN
-        If ClipContent.ParseCoord(ClipRa, ClipDec) Then
-            UpdateRA(ClipRa)
-            UpdateDec(ClipDec)
+        Dim x As New frmParseCoordinates
+        If String.IsNullOrEmpty(ClipContent) = False Then x.tbCoordinatesText.Text = ClipContent
+        If x.ShowDialog = DialogResult.OK Then
+            UpdateRA(x.ParsedRA)
+            UpdateDec(x.ParsedDec)
         End If
     End Sub
 
@@ -238,6 +232,30 @@ Public Class MainForm
     Private Sub tResetCopyColor_Tick(sender As Object, e As EventArgs) Handles tResetCopyColor.Tick
         tbSelected.BackColor = Color.White
         tResetCopyColor.Enabled = False
+    End Sub
+
+    Private Sub tsmiOpenInView_Click(sender As Object, e As EventArgs) Handles tsmiOpenInView.Click
+
+        'Set the properties to be used for the display
+        Dim Props As New cAstroInView.cProps
+        With Props
+            If String.IsNullOrEmpty(tbSelected.Text.Trim) = True Then
+                .ObjectName = "<" & tbRAParsed.Text & " | " & tbDecParsed.Text & ">"
+            Else
+                .ObjectName = tbSelected.Text
+            End If
+            .RightAscension = tbRAParsed.Text
+            .Declination = tbDecParsed.Text
+        End With
+
+        Dim InView As New frmInView
+        With InView
+            .Props = Props
+            .Props.SetObservatory(Ato.AstroCalc.KnownLocations.DSC)
+            .Show()
+            .Recalc()
+        End With
+
     End Sub
 
 End Class

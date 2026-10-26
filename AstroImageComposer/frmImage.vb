@@ -1,6 +1,5 @@
 ﻿Option Explicit On
 Option Strict On
-Imports Microsoft.VisualBasic.ApplicationServices
 
 '''<summary>Image display form holding image data, the image itself and the statistics.</summary>
 Public Class frmImage

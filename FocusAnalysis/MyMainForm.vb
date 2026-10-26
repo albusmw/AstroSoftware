@@ -1,5 +1,8 @@
 ﻿Option Explicit On
 Option Strict On
+Imports System.Security.Cryptography
+
+
 
 #Disable Warning CA1416 ' Validate platform compatibility
 Public Class MyMainForm
@@ -303,10 +306,11 @@ Public Class MyMainForm
                 DB.Trace_OVLD.Add(DB.Trace_EnergyInPixel(FrameCountIdx))
             End If
 
+            Dim Use2ndAxis As Boolean = True
             'DB.Plotter.PlotXvsY("Total energy", DB.Trace_XAxis, DB.Trace_TotalEnergy, True)
-            DB.Plotter.PlotXvsY("Pixel for " & DB.Config.EnergyPCT & " % of total energy", DB.Trace_XAxis, DB.Trace_Indicator, New cZEDGraph.sGraphStyle(Color.DarkGreen))
-            DB.Plotter.PlotXvsY("Energy in top " & DB.Config.EnergyPixel & " pixel", DB.Trace_XAxis, DB.Trace_EnergyInPixel, New cZEDGraph.sGraphStyle(Color.Orange))
-            DB.Plotter.PlotXvsY("OVLD pixel", DB.Trace_XAxisInvalid.ToArray, DB.Trace_OVLD.ToArray, New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Dots))
+            DB.Plotter.PlotXvsY("# of pixel for " & DB.Config.EnergyPCT & " % of total energy", DB.Trace_XAxis, DB.Trace_Indicator, New cZEDGraph.sGraphStyle(Color.DarkGreen), Use2ndAxis)
+            DB.Plotter.PlotXvsY("Energy in top " & DB.Config.EnergyPixel & " pixel", DB.Trace_XAxis, DB.Trace_EnergyInPixel, New cZEDGraph.sGraphStyle(Color.Orange,))
+            DB.Plotter.PlotXvsY("OVLD pixel", DB.Trace_XAxisInvalid.ToArray, DB.Trace_OVLD.ToArray, New cZEDGraph.sGraphStyle(Color.DarkRed, cZEDGraph.eCurveMode.Dots))
 
             'Scale and update
             DB.Plotter.SetCaptions("Plots vs Frame # (starting with 1)", "Frame #, 1st is 1", "Value")
@@ -469,6 +473,61 @@ Public Class MyMainForm
             If .ShowDialog <> DialogResult.OK Then Exit Sub
             tbSERFile.Text = .FileName
         End With
+    End Sub
+
+    Private Sub tsmiFile_Exit_Click(sender As Object, e As EventArgs) Handles tsmiFile_Exit.Click
+        End
+    End Sub
+
+    Private Sub tsmiAnalysis_FindROI_Click(sender As Object, e As EventArgs) Handles tsmiAnalysis_FindROI.Click
+
+        Dim FileName As String = String.Empty
+        FileName = "\\Ds1819\dsc\9999 - Focus Videos\2026_01_22 - Star search\FindBrightStart_00001.fits"
+        'FileName = "\\Ds1819\dsc\2024_04_24 - M104 Ha\QHY600_H_alpha_480_026_050_001_060_HighGain.fits"
+        Dim FITSReader As New cFITSReader(DB.IPPPath)
+        Dim DataStartPos As Integer = 0
+
+        Dim ForceDirect As Boolean = True
+        Dim Data(,) As UInt16 = {}
+
+        'Read the FITS image
+        Dim FITSHeader As New cFITSHeaderParser(cFITSHeaderChanger.ParseHeader(FileName, DataStartPos))
+        Select Case FITSHeader.BitPix
+            Case 16
+                Data = FITSReader.ReadInUInt16(FileName, True, ForceDirect)
+        End Select
+
+        'Run BIN2 with median (remove outer values)
+        Dim Med2(,) As UInt16 = {}
+        Dim Med2Stat As Dictionary(Of UInt16, UInt32) = cAstroImageProcessing.Bin2NoOuter(Data, Med2)
+
+        'Write the test output file
+        Dim DbgFile1 As String = "C:\Temp\Test_Med2.fits"
+        If System.IO.File.Exists(DbgFile1) Then System.IO.File.Delete(DbgFile1)
+        cFITSWriter.Write(DbgFile1, Med2, cFITSWriter.eBitPix.Int16)
+
+        'Get MAX and MIN
+        Dim Med2Min As UInt16 = UInt16.MaxValue
+        Dim Med2Max As UInt16 = UInt16.MinValue
+        DB.IntelIPP.MinMax(Med2, Med2Min, Med2Max)
+        Dim SplitValue As UInt16 = CType((CType(Med2Min, UInt32) + CType(Med2Max, UInt32)) / 2, UInt16)
+        For Idx1 As Integer = 0 To Med2.GetUpperBound(0) - 1
+            For Idx2 As Integer = 0 To Med2.GetUpperBound(1) - 1
+                If Med2(Idx1, Idx2) < SplitValue Then
+                    Med2(Idx1, Idx2) = Med2Min
+                Else
+                    Med2(Idx1, Idx2) = Med2Max
+                End If
+            Next Idx2
+        Next Idx1
+
+        'Write the test output file
+        Dim DbgFile2 As String = "C:\Temp\Test_Med2_Limited.fits"
+        If System.IO.File.Exists(DbgFile2) Then System.IO.File.Delete(DbgFile2)
+        cFITSWriter.Write(DbgFile2, Med2, cFITSWriter.eBitPix.Int16)
+
+        MsgBox("OK")
+
     End Sub
 
 End Class

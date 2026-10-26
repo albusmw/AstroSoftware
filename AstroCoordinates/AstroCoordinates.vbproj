@@ -39,8 +39,10 @@
     <Compile Include="..\..\MyLib\Extensions.vb" Link="MyLib\Extensions.vb" />
     <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.Designer.vb" Link="MyLib\frmAstroBinSearch.Designer.vb" />
     <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.vb" Link="MyLib\frmAstroBinSearch.vb" />
-    <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="MyLib\frmLogDisplay.Designer.vb" />
-    <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="MyLib\frmLogDisplay.vb" />
+    <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstrobinURLDecoder.Designer.vb" Link="frmAstrobinURLDecoder.Designer.vb" />
+    <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstrobinURLDecoder.vb" Link="frmAstrobinURLDecoder.vb" />
+    <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="frmLogDisplay.Designer.vb" />
+    <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="frmLogDisplay.vb" />
 	  <Compile Include="..\..\MyLib\frmVizieR.Designer.vb" Link="MyLib\frmVizieR.Designer.vb" />
 	  <Compile Include="..\..\MyLib\frmVizieR.vb" Link="MyLib\frmVizieR.vb" />
     <Compile Include="..\..\MyLib\frmSelectFromList.Designer.vb" Link="MyLib\frmSelectFromList.Designer.vb" />
@@ -74,7 +76,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="..\..\MyLib\frmAstroBinSearch\frmAstroBinSearch.resx" Link="MyLib\frmAstroBinSearch.resx" />
-    <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="MyLib\frmLogDisplay.resx" />
+    <EmbeddedResource Include="..\..\MyLib\frmAstroBinSearch\frmAstrobinURLDecoder.resx" Link="frmAstrobinURLDecoder.resx" />
+    <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="frmLogDisplay.resx" />
 	  <EmbeddedResource Include="..\..\MyLib\frmVizieR.resx" Link="MyLib\frmVizieR.resx" />
     <EmbeddedResource Include="..\..\MyLib\frmSelectFromList.resx" Link="MyLib\frmSelectFromList.resx" />
     <EmbeddedResource Include="catalogs\messier.txt">
@@ -118,12 +121,12 @@
     <PackageReference Include="AstroAlgo" Version="2.3.1" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="DG.AdvancedDataGridView" Version="1.2.30115.18" />
-    <PackageReference Include="FastLZMA2Net" Version="1.0.0" />
-    <PackageReference Include="GeoTimeZone" Version="6.0.0" />
-    <PackageReference Include="MessagePack" Version="3.1.4" />
+    <PackageReference Include="FastLZMA2Net" Version="1.1.0" />
+    <PackageReference Include="GeoTimeZone" Version="6.1.0" />
+    <PackageReference Include="MessagePack" Version="3.1.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="SharpCompress" Version="0.41.0" />
-    <PackageReference Include="VSOP87.NET" Version="1.2.1" />
+    <PackageReference Include="SharpCompress" Version="0.49.1" />
+    <PackageReference Include="VSOP87.NET" Version="2.0.0" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
 

@@ -61,6 +61,7 @@ Partial Class MainForm
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
         RawGotoCommandToolStripMenuItem = New ToolStripMenuItem()
         tResetCopyColor = New Timer(components)
+        tsmiOpenInView = New ToolStripMenuItem()
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -208,7 +209,7 @@ Partial Class MainForm
         ' 
         ' msMain
         ' 
-        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo, tsmiOpenInView})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
         msMain.Size = New Size(504, 24)
@@ -279,31 +280,31 @@ Partial Class MainForm
         ' tsmiEnter_RA
         ' 
         tsmiEnter_RA.Name = "tsmiEnter_RA"
-        tsmiEnter_RA.Size = New Size(183, 22)
+        tsmiEnter_RA.Size = New Size(228, 22)
         tsmiEnter_RA.Text = "RA (Right ascension)"
         ' 
         ' tsmiEnter_Dec
         ' 
         tsmiEnter_Dec.Name = "tsmiEnter_Dec"
-        tsmiEnter_Dec.Size = New Size(183, 22)
+        tsmiEnter_Dec.Size = New Size(228, 22)
         tsmiEnter_Dec.Text = "DEC (Declination)"
         ' 
         ' ToolStripMenuItem2
         ' 
         ToolStripMenuItem2.Name = "ToolStripMenuItem2"
-        ToolStripMenuItem2.Size = New Size(180, 6)
+        ToolStripMenuItem2.Size = New Size(225, 6)
         ' 
         ' tsmiEnter_RADeg
         ' 
         tsmiEnter_RADeg.Name = "tsmiEnter_RADeg"
-        tsmiEnter_RADeg.Size = New Size(183, 22)
+        tsmiEnter_RADeg.Size = New Size(228, 22)
         tsmiEnter_RADeg.Text = "RA [°]"
         ' 
         ' tsmiEnter_ParseClipboard
         ' 
         tsmiEnter_ParseClipboard.Name = "tsmiEnter_ParseClipboard"
-        tsmiEnter_ParseClipboard.Size = New Size(183, 22)
-        tsmiEnter_ParseClipboard.Text = "Parse clipboard"
+        tsmiEnter_ParseClipboard.Size = New Size(228, 22)
+        tsmiEnter_ParseClipboard.Text = "Parse coordinates / clipboard"
         ' 
         ' tsmiGoTo
         ' 
@@ -339,6 +340,12 @@ Partial Class MainForm
         ' tResetCopyColor
         ' 
         tResetCopyColor.Interval = 2000
+        ' 
+        ' tsmiOpenInView
+        ' 
+        tsmiOpenInView.Name = "tsmiOpenInView"
+        tsmiOpenInView.Size = New Size(98, 20)
+        tsmiOpenInView.Text = "Open InView ..."
         ' 
         ' MainForm
         ' 
@@ -399,4 +406,5 @@ Partial Class MainForm
     Friend WithEvents RawGotoCommandToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents tsmiFile_VizieRTools As ToolStripMenuItem
     Friend WithEvents tResetCopyColor As Timer
+    Friend WithEvents tsmiOpenInView As ToolStripMenuItem
 End Class
