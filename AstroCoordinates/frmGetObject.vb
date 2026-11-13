@@ -1,6 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
+Imports System.ComponentModel
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.ListView
 Imports AstroCoordinates.Astronomy.Net
 
@@ -58,6 +59,7 @@ Public Class frmGetObject
     Private TimeCalc As cTimeZoneCalc
 
     '''<summary>Catalog where custom entries are located.</summary>
+    <DefaultValue("")>
     Public Property CustomCat As String = System.IO.Path.Combine(MyPath, "CustomCatalog.txt")
 
     Public ReadOnly Property CurrentUTC() As DateTime
@@ -681,6 +683,10 @@ Public Class frmGetObject
 
         tspgMain.Value = 0
 
+    End Sub
+
+    Private Sub adgvObjects_DataError(sender As Object, e As DataGridViewDataErrorEventArgs) Handles adgvObjects.DataError
+        'Ignore data errors
     End Sub
 
 End Class

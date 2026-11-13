@@ -160,9 +160,14 @@ Partial Class frmGetObject
         ' 
         ' adgvObjects
         ' 
+        adgvObjects.AllowUserToAddRows = False
+        adgvObjects.AllowUserToDeleteRows = False
+        adgvObjects.AllowUserToResizeColumns = False
+        adgvObjects.AllowUserToResizeRows = False
         adgvObjects.Anchor = AnchorStyles.Top Or AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
         adgvObjects.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         adgvObjects.ContextMenuStrip = cmsTable
+        adgvObjects.EditMode = DataGridViewEditMode.EditProgrammatically
         adgvObjects.FilterAndSortEnabled = True
         adgvObjects.FilterStringChangedInvokeBeforeDatasourceUpdate = True
         adgvObjects.Location = New Point(3, 3)
@@ -189,6 +194,7 @@ Partial Class frmGetObject
         ' pgFilter
         ' 
         pgFilter.Anchor = AnchorStyles.Bottom Or AnchorStyles.Left Or AnchorStyles.Right
+        pgFilter.BackColor = SystemColors.Control
         pgFilter.HelpVisible = False
         pgFilter.Location = New Point(0, 453)
         pgFilter.Name = "pgFilter"

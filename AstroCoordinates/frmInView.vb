@@ -9,8 +9,10 @@ Public Class frmInView
 
     Public Shared ReadOnly Property MyPath As String = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
 
+#Disable Warning WFO1000 ' Missing code serialization configuration for property content
     '''<summary>InView calculation.</summary>
     Public WithEvents AstroInView As New cAstroInView
+#Enable Warning WFO1000 ' Missing code serialization configuration for property content
     '''<summary>InView calculation properties.</summary>
     Public Props As New cAstroInView.cProps
     '''<summary>InView plot properties.</summary>
@@ -25,7 +27,7 @@ Public Class frmInView
     Private TraceStyle_Object As New cZEDGraph.sGraphStyle(Color.Black, cZEDGraph.eCurveMode.Lines)
     Private TraceStyle_MoonAltitude As New cZEDGraph.sGraphStyle(Color.DarkBlue, cZEDGraph.eCurveMode.Lines)
     Private TraceStyle_MoonIllumination As New cZEDGraph.sGraphStyle(Color.LightBlue, cZEDGraph.eCurveMode.Lines)
-    Private TraceStyle_Observable As New cZEDGraph.sGraphStyle(Color.DarkGreen, cZEDGraph.eCurveMode.LinesAndPoints, PlotConfig.ObservableTraceDotSize)
+    Private TraceStyle_Observable As New cZEDGraph.sGraphStyle(Color.Green, cZEDGraph.eCurveMode.LinesAndPoints, PlotConfig.ObservableTraceDotSize)
     Private TraceStyle_Now As New cZEDGraph.sGraphStyle(Color.Red, cZEDGraph.eCurveMode.Lines)
 
     '──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

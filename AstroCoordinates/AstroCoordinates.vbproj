@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <TargetFramework>net10.0-windows8.0</TargetFramework>
     <StartupObject>AstroCoordinates.MainForm</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
@@ -125,8 +125,7 @@
     <PackageReference Include="GeoTimeZone" Version="7.0.0" />
     <PackageReference Include="MessagePack" Version="3.1.12" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="SharpCompress" Version="0.50.8" />
-    <PackageReference Include="VSOP87.NET" Version="3.0.0" />
+    <PackageReference Include="SharpCompress" Version="0.50.9" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
 

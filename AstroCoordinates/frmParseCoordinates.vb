@@ -1,10 +1,15 @@
 ﻿Option Explicit On
 Option Strict On
 
+Imports System.ComponentModel
+
 Public Class frmParseCoordinates
 
-    Public Property ParsedRA As Double = Double.NaN
-    Public Property ParsedDec As Double = Double.NaN
+    <DefaultValue(Double.NaN)>
+    Public ReadOnly Property ParsedRA As Double = Double.NaN
+
+    <DefaultValue(Double.NaN)>
+    Public ReadOnly Property ParsedDec As Double = Double.NaN
 
     Private Sub tbCoordinatesText_TextChanged(sender As Object, e As EventArgs) Handles tbCoordinatesText.TextChanged
 
