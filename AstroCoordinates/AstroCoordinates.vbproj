@@ -43,15 +43,18 @@
     <Compile Include="..\..\MyLib\frmAstroBinSearch\frmAstrobinURLDecoder.vb" Link="frmAstrobinURLDecoder.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.Designer.vb" Link="frmLogDisplay.Designer.vb" />
     <Compile Include="..\..\MyLib\frmLogDisplay.vb" Link="frmLogDisplay.vb" />
-	  <Compile Include="..\..\MyLib\frmVizieR.Designer.vb" Link="MyLib\frmVizieR.Designer.vb" />
-	  <Compile Include="..\..\MyLib\frmVizieR.vb" Link="MyLib\frmVizieR.vb" />
+	<Compile Include="..\..\MyLib\frmVizieR.Designer.vb" Link="MyLib\frmVizieR.Designer.vb" />
+	<Compile Include="..\..\MyLib\frmVizieR.vb" Link="MyLib\frmVizieR.vb" />
     <Compile Include="..\..\MyLib\frmSelectFromList.Designer.vb" Link="MyLib\frmSelectFromList.Designer.vb" />
     <Compile Include="..\..\MyLib\frmSelectFromList.vb" Link="MyLib\frmSelectFromList.vb" />
+    <Compile Include="..\..\MyLib\frmZEDGraph\frmZEDGraph.Designer.vb" Link="frmZEDGraph.Designer.vb" />
+    <Compile Include="..\..\MyLib\frmZEDGraph\frmZEDGraph.vb" Link="frmZEDGraph.vb" />
     <Compile Include="..\..\MyLib\GetBuildDateTime.vb" Link="MyLib\GetBuildDateTime.vb" />
     <Compile Include="..\..\MyLib\TimeZoneCalc.vb" Link="MyLib\TimeZoneCalc.vb" />
     <Compile Include="..\..\MyLib\Utils.vb" Link="MyLib\Utils.vb" />
     <Compile Include="..\..\MyLib\VSOPEx.vb" Link="MyLib\VSOPEx.vb" />
 	<Compile Include="..\..\MyLib\Astronomy.NET.vb" Link="MyLib\Astronomy.NET.vb" />
+	<Compile Include="..\..\MyLib\cHorizons_Loader.vb" Link="MyLib\cHorizons_Loader.vb" />
     <Compile Include="..\..\src\atomics\AstroCalc.vb" Link="common\AstroCalc.vb" />
     <Compile Include="..\..\src\atomics\cAstroParser.vb" Link="common\cAstroParser.vb" />
     <Compile Include="..\..\src\atomics\cDownloader.vb" Link="common\cDownloader.vb" />
@@ -80,6 +83,7 @@
     <EmbeddedResource Include="..\..\MyLib\frmLogDisplay.resx" Link="frmLogDisplay.resx" />
 	  <EmbeddedResource Include="..\..\MyLib\frmVizieR.resx" Link="MyLib\frmVizieR.resx" />
     <EmbeddedResource Include="..\..\MyLib\frmSelectFromList.resx" Link="MyLib\frmSelectFromList.resx" />
+    <EmbeddedResource Include="..\..\MyLib\frmZEDGraph\frmZEDGraph.resx" Link="frmZEDGraph.resx" />
     <EmbeddedResource Include="catalogs\messier.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
@@ -120,12 +124,14 @@
   <ItemGroup>
     <PackageReference Include="AstroAlgo" Version="2.3.1" />
     <PackageReference Include="ClosedXML" Version="0.105.1" />
+    <PackageReference Include="CosineKitty.AstronomyEngine" Version="2.1.19" />
     <PackageReference Include="DG.AdvancedDataGridView" Version="1.2.32219.20" />
     <PackageReference Include="FastLZMA2Net" Version="1.1.0" />
     <PackageReference Include="GeoTimeZone" Version="7.0.0" />
     <PackageReference Include="MessagePack" Version="3.1.12" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="SharpCompress" Version="0.50.9" />
+    <PackageReference Include="VSOP87.NET" Version="3.0.0" />
     <PackageReference Include="ZedGraph6" Version="6.0.0" />
   </ItemGroup>
 

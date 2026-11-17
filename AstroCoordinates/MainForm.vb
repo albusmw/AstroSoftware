@@ -1,5 +1,6 @@
 ﻿Option Explicit On
 Option Strict On
+Imports VSOP87
 
 Public Class MainForm
 
@@ -256,6 +257,11 @@ Public Class MainForm
             .Recalc()
         End With
 
+    End Sub
+
+    Private Sub tsmiTest_Ephem_Click(sender As Object, e As EventArgs) Handles tsmiTest_Ephem.Click
+        Dim X As New frmEphemTest
+        X.Show()
     End Sub
 
 End Class

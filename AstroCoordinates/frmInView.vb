@@ -276,7 +276,7 @@ Public Class frmInView
         'UTCStart = New DateTime(2025, 4, 5, 0, 0, 0, IsUTC)
         'UTCEnd = New DateTime(2025, 4, 7, 0, 0, 0, IsUTC)
 
-        Dim UTCTimes As List(Of DateTime) = Props.GetUTCVector(UTCStart, CalcStepping, UTCEnd)
+        Dim UTCTimes As List(Of DateTime) = cAstroInView.GetUTCVector(UTCStart, CalcStepping, UTCEnd)
         Dim PosVec As Double() = AstroCalc.NET.Sun.SunAlt(UTCTimes, Props.GetLocation.Longitude, Props.GetLocation.Latitude)
 
         'Calculate sun raise and set times for UTC time

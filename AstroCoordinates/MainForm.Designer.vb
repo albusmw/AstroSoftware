@@ -60,8 +60,10 @@ Partial Class MainForm
         tsmiGoTo_ZenithAndStop = New ToolStripMenuItem()
         tsmiGoTo_SunOpposition = New ToolStripMenuItem()
         RawGotoCommandToolStripMenuItem = New ToolStripMenuItem()
-        tResetCopyColor = New Timer(components)
         tsmiOpenInView = New ToolStripMenuItem()
+        tsmiTest = New ToolStripMenuItem()
+        tsmiTest_Ephem = New ToolStripMenuItem()
+        tResetCopyColor = New Timer(components)
         tlpMain.SuspendLayout()
         msMain.SuspendLayout()
         SuspendLayout()
@@ -209,7 +211,7 @@ Partial Class MainForm
         ' 
         ' msMain
         ' 
-        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo, tsmiOpenInView})
+        msMain.Items.AddRange(New ToolStripItem() {tsmiFile, tsmiEnter, tsmiGoTo, tsmiOpenInView, tsmiTest})
         msMain.Location = New Point(0, 0)
         msMain.Name = "msMain"
         msMain.Size = New Size(504, 24)
@@ -226,48 +228,48 @@ Partial Class MainForm
         ' tsmiFile_OpenEXE
         ' 
         tsmiFile_OpenEXE.Name = "tsmiFile_OpenEXE"
-        tsmiFile_OpenEXE.Size = New Size(180, 22)
+        tsmiFile_OpenEXE.Size = New Size(178, 22)
         tsmiFile_OpenEXE.Text = "Open EXE folder"
         ' 
         ' tsmiFile_DropBoxCAT
         ' 
         tsmiFile_DropBoxCAT.Name = "tsmiFile_DropBoxCAT"
-        tsmiFile_DropBoxCAT.Size = New Size(180, 22)
+        tsmiFile_DropBoxCAT.Size = New Size(178, 22)
         tsmiFile_DropBoxCAT.Text = "Load Dropbox CAT"
         ' 
         ' tsmiFile_LoadVizier
         ' 
         tsmiFile_LoadVizier.Name = "tsmiFile_LoadVizier"
-        tsmiFile_LoadVizier.Size = New Size(180, 22)
+        tsmiFile_LoadVizier.Size = New Size(178, 22)
         tsmiFile_LoadVizier.Text = "Load Vizier catalogs"
         ' 
         ' tsmiFile_VizieRTools
         ' 
         tsmiFile_VizieRTools.Name = "tsmiFile_VizieRTools"
-        tsmiFile_VizieRTools.Size = New Size(180, 22)
+        tsmiFile_VizieRTools.Size = New Size(178, 22)
         tsmiFile_VizieRTools.Text = "VizieR tools"
         ' 
         ' tsmiFile_AstroBin
         ' 
         tsmiFile_AstroBin.Name = "tsmiFile_AstroBin"
-        tsmiFile_AstroBin.Size = New Size(180, 22)
+        tsmiFile_AstroBin.Size = New Size(178, 22)
         tsmiFile_AstroBin.Text = "AstroBin around"
         ' 
         ' tsmiFile_InTheSky
         ' 
         tsmiFile_InTheSky.Name = "tsmiFile_InTheSky"
-        tsmiFile_InTheSky.Size = New Size(180, 22)
+        tsmiFile_InTheSky.Size = New Size(178, 22)
         tsmiFile_InTheSky.Text = "In the sky"
         ' 
         ' ToolStripMenuItem1
         ' 
         ToolStripMenuItem1.Name = "ToolStripMenuItem1"
-        ToolStripMenuItem1.Size = New Size(177, 6)
+        ToolStripMenuItem1.Size = New Size(175, 6)
         ' 
         ' tsmiFile_End
         ' 
         tsmiFile_End.Name = "tsmiFile_End"
-        tsmiFile_End.Size = New Size(180, 22)
+        tsmiFile_End.Size = New Size(178, 22)
         tsmiFile_End.Text = "Exit"
         ' 
         ' tsmiEnter
@@ -337,15 +339,28 @@ Partial Class MainForm
         RawGotoCommandToolStripMenuItem.Size = New Size(206, 22)
         RawGotoCommandToolStripMenuItem.Text = "Raw goto command ..."
         ' 
-        ' tResetCopyColor
-        ' 
-        tResetCopyColor.Interval = 2000
-        ' 
         ' tsmiOpenInView
         ' 
         tsmiOpenInView.Name = "tsmiOpenInView"
         tsmiOpenInView.Size = New Size(98, 20)
         tsmiOpenInView.Text = "Open InView ..."
+        ' 
+        ' tsmiTest
+        ' 
+        tsmiTest.DropDownItems.AddRange(New ToolStripItem() {tsmiTest_Ephem})
+        tsmiTest.Name = "tsmiTest"
+        tsmiTest.Size = New Size(40, 20)
+        tsmiTest.Text = "Test"
+        ' 
+        ' tsmiTest_Ephem
+        ' 
+        tsmiTest_Ephem.Name = "tsmiTest_Ephem"
+        tsmiTest_Ephem.Size = New Size(203, 22)
+        tsmiTest_Ephem.Text = "Ephemerides calculation"
+        ' 
+        ' tResetCopyColor
+        ' 
+        tResetCopyColor.Interval = 2000
         ' 
         ' MainForm
         ' 
@@ -407,4 +422,6 @@ Partial Class MainForm
     Friend WithEvents tsmiFile_VizieRTools As ToolStripMenuItem
     Friend WithEvents tResetCopyColor As Timer
     Friend WithEvents tsmiOpenInView As ToolStripMenuItem
+    Friend WithEvents tsmiTest As ToolStripMenuItem
+    Friend WithEvents tsmiTest_Ephem As ToolStripMenuItem
 End Class
